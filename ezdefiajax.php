@@ -3,8 +3,11 @@
 require_once 'init.php';
 
 use WHMCS\Database\Capsule;
-use WHMCS\Module\Gateway\Ezpay\EzpayConfig;
-use WHMCS\Module\Gateway\Ezpay\EzpayApi;
+use WHMCS\Module\Gateway\Ezdefi\Ezdefi;
+use WHMCS\Module\Gateway\Ezdefi\EzdefiDb;
+use WHMCS\Module\Gateway\Ezdefi\EzdefiApi;
+
+$ezpay = new Ezdefi();
 
 if(!isset($_POST['action'])) {
 	return;
@@ -13,7 +16,7 @@ if(!isset($_POST['action'])) {
 if($_POST['action'] === 'save_currency') {
 	$data = $_POST['currency'];
 
-	$config = new EzpayConfig();
+	$config = new EzdefiDb();
 	$response = $config->saveCurrency($data);
 
 	echo $response;
@@ -28,7 +31,7 @@ if($_POST['action'] === 'get_token') {
 
 	$api_url = $_POST['api_url'];
 
-	$api = new EzpayApi($api_url);
+	$api = new EzdefiApi($api_url);
 
 	$response = $api->getToken($keyword);
 
@@ -40,7 +43,7 @@ if($_POST['action'] === 'check_wallet') {
 	$apiUrl = $_POST['apiUrl'];
 	$apiKey = $_POST['apiKey'];
 
-	$api = new EzpayApi($apiUrl, $apiKey);
+	$api = new EzdefiApi($apiUrl, $apiKey);
 
 	$response = $api->getListWallet();
 
@@ -63,29 +66,18 @@ if($_POST['action'] === 'check_wallet') {
 
 if($_POST['action'] === 'create_payment') {
 	$uoid = $_POST['uoid'];
-	$currency = $_POST['currency'];
-	$amount = $_POST['amount'];
 	$symbol = $_POST['symbol'];
+	$method = $_POST['method'];
 
-	$order_data = array(
-		'uoid' => $uoid,
-		'currency' => $currency,
-		'amount' => $amount
-	);
+	$payment = $ezpay->createEzpayPayment($uoid, $symbol, $method);
 
-	$currency_data = (new EzpayConfig())->getCurrencyBySymbol($symbol);
-
-	$response = (new EzpayApi())->createPayment($order_data, $currency_data);
-
-	$response = json_decode($response, true);
-
-	echo json_encode($response['data']);
+	echo $payment;
 }
 
 if($_POST['action'] === 'check_invoice') {
 	$invoiceId = $_POST['invoice_id'];
 
-	$config = new EzpayConfig();
+	$config = new EzdefiDb();
 	$invoiceStatus = $config->getInvoiceStatus($invoiceId);
 
 	echo $invoiceStatus;

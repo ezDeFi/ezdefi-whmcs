@@ -1,9 +1,5 @@
-#whmcs_ezpay_qrcode {
+#whmcs_ezdefi_qrcode {
   text-align: center;
-  font-size: 16px;
-  width: 100%;
-  max-width: 680px;
-  margin: 0 auto;
 
   .selected-currency {
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -151,12 +147,53 @@
     }
   }
 
-  .ezpay-payment {
+  .ezdefi-payment-tabs {
     margin-bottom: 20px;
-    background: #f8f8f8;
-    padding: 20px 0 10px 0;
+
+    ul {
+      margin: 0;
+      padding: 0;
+      text-align: left;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+      li {
+        display: inline-block;
+        margin-bottom: -1px;
+
+        &.ui-tabs-active {
+          a {
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom-color: transparent;
+          }
+        }
+
+        a {
+          background-color: #fff;
+          padding: 10px 20px;
+          display: block;
+          text-decoration: none;
+
+          &#tab-ezdefi_wallet {
+            img {
+              float: left;
+              margin-top: 3px;
+              margin-right: 6px;
+            }
+          }
+        }
+      }
+    }
+
+    .ezdefi-payment-panel {
+      padding: 10px 20px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      border-top: none;
+    }
+  }
+
+  .ezdefi-payment {
+    padding: 20px 20px 0 20px;
     text-align: center;
-    display: none;
 
     .exchange {
       text-transform: uppercase;
@@ -178,6 +215,10 @@
     img.qrcode {
       display: block;
       margin: 0 auto;
+    }
+
+    span.currency {
+      text-transform: uppercase;
     }
   }
 

@@ -1,19 +1,19 @@
 <?php
 
-namespace WHMCS\Module\Gateway\Ezpay;
+namespace WHMCS\Module\Gateway\Ezdefi;
 
-class EzpayApi {
+class EzdefiApi {
 	protected $apiUrl;
 
 	protected $apiKey;
 
-	protected $config;
+	protected $db;
 
 	public function __construct($apiUrl = '', $apiKey = '') {
 		$this->apiUrl = $apiUrl;
 		$this->apiKey = $apiKey;
 
-		$this->config = new EzpayConfig();
+		$this->db = new EzdefiDb();
 	}
 
 	public function setApiUrl( $apiUrl )
@@ -24,7 +24,7 @@ class EzpayApi {
 	public function getApiUrl()
 	{
 		if( empty( $this->apiUrl ) ) {
-			$apiUrl = $this->config->getApiUrl();
+			$apiUrl = $this->db->getApiUrl();
 			$this->setApiUrl($apiUrl);
 		}
 
@@ -39,7 +39,7 @@ class EzpayApi {
 	public function getApiKey()
 	{
 		if( empty( $this->apiKey ) ) {
-			$apiKey = $this->config->getApiKey();
+			$apiKey = $this->db->getApiKey();
 			$this->setApiKey($apiKey);
 		}
 
@@ -104,21 +104,37 @@ class EzpayApi {
 		return $response;
 	}
 
-	public function createPayment($order_data, $currency_data)
+	public function createPayment($order_data, $currency_data, $amountId = false)
 	{
 		$subtotal = intval($order_data['amount']);
 		$discount = intval($currency_data['discount']);
 		$value = $subtotal - ($subtotal * ($discount / 100));
 
+		if( $amountId ) {
+			$value = $this->db->generate_amount_id( $value, $currency_data['symbol'] );
+		}
+
+		if( ! $value ) {
+			return false;
+		}
+
+		$uoid = intval($order_data['uoid']);
+
+		if( $amountId ) {
+			$uoid = $uoid . '-1';
+		} else {
+			$uoid = $uoid . '-0';
+		}
+
 		$data = [
-			'uoid' => intval($order_data['uoid']),
+			'uoid' => $uoid,
 			'to' => $currency_data['wallet'],
 			'value' => $value,
 			'currency' => $order_data['currency'] . ':' . $currency_data['symbol'],
 			'safedist' => ( isset( $currency_data['block_confirm'] ) ) ? $currency_data['block_confirm'] : '',
 			'duration' => ( isset( $currency_data['lifetime'] ) ) ? $currency_data['lifetime'] : '',
-//			'callback' => $this->config->getSystemUrl() . '/modules/gateways/callback/ezpay.php'
-			'callback' => 'http://4d70fbed.ngrok.io/modules/gateways/callback/ezpay.php'
+//			'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php'
+			'callback' => 'http://4d70fbed.ngrok.io/modules/gateways/callback/ezdefi.php'
 		];
 
 		$response = $this->call('payment/create', 'post', $data);

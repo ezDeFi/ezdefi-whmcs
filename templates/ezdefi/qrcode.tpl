@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="{$BASE_PATH_CSS}/ezpay-qrcode.css">
-<div id="whmcs_ezpay_qrcode">
+<link rel="stylesheet" href="{$BASE_PATH_CSS}/ezdefi-qrcode.css">
+<div id="whmcs_ezdefi_qrcode">
     <script type="application/json" id="order-data">{$order_data}</script>
     <script type="application/json" id="url-data">{$url_data}</script>
     <div class="selected-currency">
@@ -38,10 +38,26 @@
         </div>
         {/foreach}
     </div>
-    <div class="ezpay-payment">
-        <div class="loading"></div>
+    <div class="ezdefi-payment-tabs">
+        <ul>
+            {foreach $payment_method as $method}
+                <li>
+                    <a href="#{$method}" id="tab-{$method}">
+                        {if $method === 'amount_id'}
+                            <span>Simple method</span>
+                        {elseif $method === 'ezdefi_wallet'}
+                            <img width="18" src=""> <span> Pay with ezPay wallet</span>
+                        {/if}
+                    </a>
+                </li>
+            {/foreach}
+        </ul>
+        {foreach $payment_method as $method}
+            <div id="{$method}" class="ezdefi-payment-panel"></div>
+        {/foreach}
     </div>
     <button class="submitBtn">Confirm</button>
 </div>
 <script src="{$BASE_PATH_JS}/jquery.blockUI.js"></script>
-<script src="{$BASE_PATH_JS}/ezpay-qrcode.js"></script>
+<script src="{$BASE_PATH_JS}/jquery-ui.min.js"></script>
+<script src="{$BASE_PATH_JS}/ezdefi-qrcode.js"></script>

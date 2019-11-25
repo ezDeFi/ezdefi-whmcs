@@ -1,22 +1,26 @@
 jQuery(function($) {
-    var whmcs_ezpay_admin = function() {
-        this.ezpayData = JSON.parse($('#ezpay-data').text());
-        this.configUrl = this.ezpayData.config_url;
+    var selectors = {
+        amountIdCheckbox: 'input[name="field[simpleMethod]"]',
+    };
+
+    var whmcs_ezdefi_admin = function() {
+        this.ezdefiData = JSON.parse($('#ezdefi-data').text());
+        this.configUrl = this.ezdefiData.config_url;
 
         var init = this.init.bind(this);
 
         init();
     };
 
-    whmcs_ezpay_admin.prototype.init = function() {
+    whmcs_ezdefi_admin.prototype.init = function() {
         var self = this;
 
         this.addCurrencyTable();
 
-        self.table = $('#ezpay-currency-table');
+        self.table = $('#ezdefi-currency-table');
         self.form = self.table.closest('form');
 
-        var currency = self.ezpayData.gateway_params.token;
+        var currency = self.ezdefiData.gateway_params.token;
 
         if(currency === '') {
             self.addDefaultCurrency();
@@ -36,22 +40,27 @@ jQuery(function($) {
         var toggleEdit = this.toggleEdit.bind(this);
         var saveCurrency = self.saveCurrency.bind(this);
         var checkWalletAddress = this.checkWalletAddress.bind(this);
+        var toggleAmountSetting = this.toggleAmountSetting.bind(this);
 
-        $(self.table).on('click', '.addBtn', addCurrency)
-                    .on('click', '.editBtn', toggleEdit)
-                    .on('click', '.cancelBtn', toggleEdit)
-                    .on('click', '.deleteBtn', removeCurrency)
-                    .on('click', '.saveBtn', saveCurrency)
-                    .on('keyup', '.wallet input', checkWalletAddress);
+        self.toggleAmountSetting(this);
+
+        $(self.form)
+            .on('click', '.addBtn', addCurrency)
+            .on('click', '.editBtn', toggleEdit)
+            .on('click', '.cancelBtn', toggleEdit)
+            .on('click', '.deleteBtn', removeCurrency)
+            .on('click', '.saveBtn', saveCurrency)
+            .on('keyup', '.wallet input', checkWalletAddress)
+            .on('change', selectors.amountIdCheckbox, toggleAmountSetting);
     };
 
-    whmcs_ezpay_admin.prototype.addCurrencyTable = function() {
-        var settingsTable = $('#Payment-Gateway-Config-ezpay');
+    whmcs_ezdefi_admin.prototype.addCurrencyTable = function() {
+        var settingsTable = $('#Payment-Gateway-Config-ezdefi');
 
         var currencySettingRow = $("<tr><td class='fieldlabel'>Accepted Currency</td><td class='fieldarea'></td></tr>");
         settingsTable.find('tr:last').before(currencySettingRow);
 
-        var table = $("<table id='ezpay-currency-table'></table>")
+        var table = $("<table id='ezdefi-currency-table'></table>")
         table.appendTo(currencySettingRow.find('.fieldarea'));
 
         var tableHead = $(
@@ -70,12 +79,12 @@ jQuery(function($) {
         tableFoot.appendTo(table);
     };
 
-    whmcs_ezpay_admin.prototype.addDefaultCurrency = function() {
+    whmcs_ezdefi_admin.prototype.addDefaultCurrency = function() {
         var rows = $(
             "<tr class='editing'>" +
                 "<td class='sortable-handle'><span><i class='fas fa-align-justify'></i></span></td>" +
                 "<td class='logo'>" +
-                    "<img src='https://s2.coinmarketcap.com/static/img/coins/64x64/2714.png' class='ezpay-currency-logo'>" +
+                    "<img src='https://s2.coinmarketcap.com/static/img/coins/64x64/2714.png' class='ezdefi-currency-logo'>" +
                 "</td>" +
                 "<td class='name'>" +
                     "<input class='currency-symbol' type='hidden' name='currency[0][symbol]' value='nusd'>" +
@@ -99,7 +108,7 @@ jQuery(function($) {
             "<tr class='editing'>" +
                 "<td class='sortable-handle'><span><i class='fas fa-align-justify'></i></span></td>" +
                 "<td class='logo'>" +
-                    "<img src='https://s2.coinmarketcap.com/static/img/coins/64x64/2714.png' class='ezpay-currency-logo'>" +
+                    "<img src='https://s2.coinmarketcap.com/static/img/coins/64x64/2714.png' class='ezdefi-currency-logo'>" +
                 "</td>" +
                 "<td class='name'>" +
                     "<input class='currency-symbol' type='hidden' name='currency[1][symbol]' value='ntf'>" +
@@ -124,7 +133,7 @@ jQuery(function($) {
         rows.appendTo(this.table.find('tbody'));
     };
 
-    whmcs_ezpay_admin.prototype.renderCurrency = function(currency) {
+    whmcs_ezdefi_admin.prototype.renderCurrency = function(currency) {
         var rows = '';
         for (var i = 0; i < currency.length; i++) {
             var config = currency[i];
@@ -132,7 +141,7 @@ jQuery(function($) {
                 "<tr>" +
                     "<td class='sortable-handle'><span><i class='fas fa-align-justify'></i></span></td>" +
                     "<td class='logo'>" +
-                        "<img src='"+config['logo']+"' class='ezpay-currency-logo'>" +
+                        "<img src='"+config['logo']+"' class='ezdefi-currency-logo'>" +
                     "</td>" +
                     "<td class='name'>" +
                         "<input class='currency-symbol' type='hidden' name='currency["+i+"][symbol]' value='"+config['symbol']+"'>" +
@@ -158,7 +167,7 @@ jQuery(function($) {
         $(rows).appendTo(this.table.find('tbody'));
     };
 
-    whmcs_ezpay_admin.prototype.initValidation = function() {
+    whmcs_ezdefi_admin.prototype.initValidation = function() {
         var self = this;
 
         this.form.validate({
@@ -175,7 +184,24 @@ jQuery(function($) {
                 },
                 'field[apiKey]': {
                     required: true
+                },
+                'field[variation]': {
+                    required: {
+                        depends: function(element) {
+                            return self.form.find(selectors.amountIdCheckbox).is(':checked');
+                        }
+                    },
+                    number: true
+                },
+                'field[decimal]': {
+                    required: {
+                        depends: function(element) {
+                            return self.form.find(selectors.amountIdCheckbox).is(':checked');
+                        }
+                    },
+                    digits: true
                 }
+
             }
         });
 
@@ -185,7 +211,7 @@ jQuery(function($) {
         });
     };
 
-    whmcs_ezpay_admin.prototype.initSort = function() {
+    whmcs_ezdefi_admin.prototype.initSort = function() {
         var self = this;
         this.table.find('tbody').sortable({
             handle: '.sortable-handle span',
@@ -199,7 +225,7 @@ jQuery(function($) {
         }).disableSelection();
     };
 
-    whmcs_ezpay_admin.prototype.addValidationRule = function(row) {
+    whmcs_ezdefi_admin.prototype.addValidationRule = function(row) {
         var self = this;
         row.find('input, select').each(function() {
             var name = $(this).attr('name');
@@ -239,7 +265,23 @@ jQuery(function($) {
         });
     };
 
-    whmcs_ezpay_admin.prototype.checkWalletAddress = function(e) {
+    whmcs_ezdefi_admin.prototype.toggleAmountSetting = function() {
+        var checked = this.form.find(selectors.amountIdCheckbox).is(':checked');
+        var amount_settings = this.form.find(
+            'input[name="field[variation]"], input[name="field[decimal]"], select[name="field[cronRecurrence]"]'
+        ).closest('tr');
+        if(checked) {
+            amount_settings.each(function() {
+                $(this).show();
+            });
+        } else {
+            amount_settings.each(function() {
+                $(this).hide();
+            });
+        }
+    };
+
+    whmcs_ezdefi_admin.prototype.checkWalletAddress = function(e) {
         var self = this;
         var apiUrl = self.form.find('input[name="field[apiUrl]"]').val();
         var apiKey = self.form.find('input[name="field[apiKey]"]').val();
@@ -297,7 +339,7 @@ jQuery(function($) {
         });
     };
 
-    whmcs_ezpay_admin.prototype.initCurrencySelect = function(element) {
+    whmcs_ezdefi_admin.prototype.initCurrencySelect = function(element) {
         var self = this;
         element.select2({
             width: '100%',
@@ -331,7 +373,7 @@ jQuery(function($) {
         element.on('select2:select', self.onSelect2Select);
     };
 
-    whmcs_ezpay_admin.prototype.formatCurrencyOption = function(currency) {
+    whmcs_ezdefi_admin.prototype.formatCurrencyOption = function(currency) {
         if(currency.loading) {
             return currency.text;
         }
@@ -346,11 +388,11 @@ jQuery(function($) {
         return $container;
     };
 
-    whmcs_ezpay_admin.prototype.formatCurrencySelection = function(currency) {
+    whmcs_ezdefi_admin.prototype.formatCurrencySelection = function(currency) {
         return currency.name || currency.text ;
     };
 
-    whmcs_ezpay_admin.prototype.addCurrency = function(e) {
+    whmcs_ezdefi_admin.prototype.addCurrency = function(e) {
         e.preventDefault();
 
         var $row = this.table.find('tbody tr:last');
@@ -376,7 +418,7 @@ jQuery(function($) {
         return false;
     };
 
-    whmcs_ezpay_admin.prototype.removeCurrency = function(e) {
+    whmcs_ezdefi_admin.prototype.removeCurrency = function(e) {
         e.preventDefault();
 
         var self = this;
@@ -397,7 +439,7 @@ jQuery(function($) {
         return false;
     };
 
-    whmcs_ezpay_admin.prototype.toggleEdit = function(e) {
+    whmcs_ezdefi_admin.prototype.toggleEdit = function(e) {
         e.preventDefault();
 
         var self = this;
@@ -410,7 +452,7 @@ jQuery(function($) {
         $row.toggleClass('editing');
     };
 
-    whmcs_ezpay_admin.prototype.saveCurrency = function(e) {
+    whmcs_ezdefi_admin.prototype.saveCurrency = function(e) {
         e.preventDefault();
 
         var self = this;
@@ -450,7 +492,7 @@ jQuery(function($) {
         })
     };
 
-    whmcs_ezpay_admin.prototype.onSelect2Select = function(e) {
+    whmcs_ezdefi_admin.prototype.onSelect2Select = function(e) {
         var td = $(e.target).closest('td');
         var tr = $(e.target).closest('tr');
         var data = e.params.data;
@@ -466,7 +508,7 @@ jQuery(function($) {
         td.find('.view span').text(data.name);
     };
 
-    whmcs_ezpay_admin.prototype.updateAttr = function(row, number) {
+    whmcs_ezdefi_admin.prototype.updateAttr = function(row, number) {
         row.find('input, select').each(function () {
             var name = $(this).attr('name');
             name = name.replace(/\[(\d+)\]/, '[' + parseInt(number) + ']');
@@ -474,11 +516,11 @@ jQuery(function($) {
         });
     };
 
-    whmcs_ezpay_admin.prototype.removeAttr = function(row) {
+    whmcs_ezdefi_admin.prototype.removeAttr = function(row) {
         row.find('input, select').each(function () {
             $(this).removeAttr('aria-describedby').removeAttr('aria-invalid');
         });
     };
 
-    new whmcs_ezpay_admin();
+    new whmcs_ezdefi_admin();
 });

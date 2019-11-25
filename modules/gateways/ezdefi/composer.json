@@ -1,0 +1,14 @@
+{
+    "name": "nexty/ezdefi-gateway-module",
+    "description": "ezDefi gateway integration for WHMCS",
+    "authors": [
+        {
+            "name": "Tien Nguyen",
+            "email": "mrtienhp97@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "8"
+    }
+}

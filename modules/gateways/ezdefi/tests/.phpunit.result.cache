@@ -1,0 +1,1 @@
+C:30:"PHPUnit\Runner\TestResultCache":264:{a:2:{s:7:"defects";a:2:{s:46:"EzpayDbTest::testCanGetAmountIdsWithRightOrder";i:3;s:36:"EzpayDbTest::testCanGenerateAmountId";i:3;}s:5:"times";a:2:{s:46:"EzpayDbTest::testCanGetAmountIdsWithRightOrder";d:0.051;s:36:"EzpayDbTest::testCanGenerateAmountId";d:0.223;}}}

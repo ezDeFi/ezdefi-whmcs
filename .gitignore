@@ -1,28 +1,29 @@
 /*
 !/.gitignore
-!ezpayajax.php
-!ezpaypayment.php
+!ezdefiajax.php
+!ezdefipayment.php
 
 !/assets/
 /assets/*
 !/assets/css/
 /assets/css/*
-!/assets/css/ezpay-qrcode.scss
-!/assets/css/ezpay-qrcode.css
-!/assets/css/ezpay-qrcode.css.map
+!/assets/css/ezdefi-qrcode.scss
+!/assets/css/ezdefi-qrcode.css
+!/assets/css/ezdefi-qrcode.css.map
 !/assets/js/
 /assets/js/*
-!/assets/js/ezpay-qrcode.js
+!/assets/js/ezdefi-qrcode.js
 !/assets/js/jquery.blockUI.js
 
 
 !/templates/
 /templates/*
-!/templates/ezpay/
+!/templates/ezdefi/
 
 !/modules/
 /modules/*
 !/modules/gateways/
 /modules/gateways/*
-!/modules/gateways/ezpay.php
-!/modules/gateways/ezpay/
+!/modules/gateways/ezdefi.php
+!/modules/gateways/ezdefi/
+/modules/gateways/ezdefi/vendor
