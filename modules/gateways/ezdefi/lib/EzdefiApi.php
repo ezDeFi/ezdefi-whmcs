@@ -133,8 +133,8 @@ class EzdefiApi {
 			'currency' => $order_data['currency'] . ':' . $currency_data['symbol'],
 			'safedist' => ( isset( $currency_data['block_confirm'] ) ) ? $currency_data['block_confirm'] : '',
 			'duration' => ( isset( $currency_data['lifetime'] ) ) ? $currency_data['lifetime'] : '',
-//			'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php'
-			'callback' => 'http://4d70fbed.ngrok.io/modules/gateways/callback/ezdefi.php'
+			'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php'
+//			'callback' => 'http://4d70fbed.ngrok.io/modules/gateways/callback/ezdefi.php'
 		];
 
 		$response = $this->call('payment/create', 'post', $data);

@@ -41,5 +41,4 @@ add_hook('AdminAreaFooterOutput', 1, function($vars) {
 
 	return getInstance()->getAdminFooterOutput($gatewayParams);
 });
-
 getInstance()->init();

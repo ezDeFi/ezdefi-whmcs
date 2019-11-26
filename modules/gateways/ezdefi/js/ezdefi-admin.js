@@ -479,6 +479,9 @@ jQuery(function($) {
             beforeSend: function() {
                 self.table.closest('td').block({ message: null });
             },
+            error: function() {
+                self.table.closest('td').block({message: 'Can not save currency config. Please try again'});
+            },
             success:function(response) {
                 self.table.closest('td').unblock();
                 self.table.find('tbody input').each(function() {

@@ -24,6 +24,9 @@
 /modules/*
 !/modules/gateways/
 /modules/gateways/*
+!/modules/gateways/callback
+/modules/gateways/callback/*
+!/modules/gateways/callback/ezdefi.php
 !/modules/gateways/ezdefi.php
 !/modules/gateways/ezdefi/
 /modules/gateways/ezdefi/vendor

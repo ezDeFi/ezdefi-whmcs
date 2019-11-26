@@ -42,7 +42,6 @@ jQuery(function($) {
             activate: function(event, ui) {
                 if(!ui.newPanel || ui.newPanel.is(':empty')) {
                     var method = ui.newPanel.attr('id');
-                    console.log(method);
                     self.createEzpayPayment.call(self, method, ui.newPanel);
                 }
             }
@@ -95,7 +94,7 @@ jQuery(function($) {
             method: 'post',
             data: {
                 action: 'create_payment',
-                uoid: paymentData.uoid,
+                uoid: self.paymentData.uoid,
                 symbol: symbol,
                 method: method
             },
@@ -106,11 +105,7 @@ jQuery(function($) {
                 $.blockUI({message: null});
             },
             success:function(response) {
-                if(response.success) {
-                    active.html($(response.data));
-                } else {
-                    active.html(response.data);
-                }
+                active.html(response);
                 var endTime = active.find('.count-down').attr('data-endtime');
                 self.setTimeRemaining.call(self, endTime);
                 $.unblockUI();
@@ -145,8 +140,10 @@ jQuery(function($) {
                 });
                 $.blockUI({message: null});
             },
+            error: function() {
+                $.blockUI({message: 'Something wrong happend. Please contact admin.'});
+            },
             success:function(response) {
-                console.log(response);
                 panel.html(response.data);
                 var endTime = panel.find('.count-down').attr('data-endtime');
                 self.setTimeRemaining.call(self, endTime);
@@ -155,35 +152,32 @@ jQuery(function($) {
                 self.$submitBtn.prop('disabled', false).text('Confirm').hide();
                 self.checkOrderStatus.call(self);
             },
-            error: function(e) {
-                console.log(e);
-            }
         });
     };
 
-    whmcs_ezdefi_qrcode.prototype.checkOrderStatus = function(uoid) {
+    whmcs_ezdefi_qrcode.prototype.checkOrderStatus = function() {
         var self = this;
-        // setInterval(function() {
-        //     $.ajax({
-        //         url: self.urlData.ajaxUrl,
-        //         method: 'post',
-        //         data: {
-        //             action: 'check_invoice',
-        //             invoice_id: uoid
-        //         },
-        //         beforeSend: function(jqXHR) {
-        //             self.xhrPool.push(jqXHR);
-        //         },
-        //         success: function(response) {
-        //             if(response.toLowerCase() === 'paid') {
-        //                 $.each(self.xhrPool, function(index, jqXHR) {
-        //                     jqXHR.abort();
-        //                 });
-        //                 self.success();
-        //             }
-        //         }
-        //     });
-        // }, 600);
+        setInterval(function() {
+            $.ajax({
+                url: self.urlData.ajaxUrl,
+                method: 'post',
+                data: {
+                    action: 'check_invoice',
+                    invoice_id: self.paymentData.uoid
+                },
+                beforeSend: function(jqXHR) {
+                    self.xhrPool.push(jqXHR);
+                },
+                success: function(response) {
+                    if(response.toLowerCase() === 'paid') {
+                        $.each(self.xhrPool, function(index, jqXHR) {
+                            jqXHR.abort();
+                        });
+                        self.success();
+                    }
+                }
+            });
+        }, 600);
     };
 
     whmcs_ezdefi_qrcode.prototype.setTimeRemaining = function(endTime) {
@@ -195,7 +189,7 @@ jQuery(function($) {
 
             if(t.total < 0) {
                 clearInterval(self.timeLoop);
-                self.timeout();
+                self.timeout.call(self);
             }
 
             countDown.text(
@@ -234,22 +228,40 @@ jQuery(function($) {
         self.$container.empty();
         self.$container.append($content);
 
+        $.each(self.xhrPool, function(index, jqXHR) {
+            jqXHR.abort();
+        });
+
         setTimeout(function(){ window.location = self.urlData.clientArea; }, 3000);
     };
 
     whmcs_ezdefi_qrcode.prototype.timeout = function() {
         var self = this;
 
-        var $content = $(
-            "<p>Timeout. You will be redirect to checkout page in 3 seconds. If it does not, click " +
-            "<a href='" + self.urlData.cart + "'>here</a>" +
-            "</p>"
-        );
+        var $content = $("<p>Timeout. You will be redirect to cart page</p>");
 
         self.$container.empty();
         self.$container.append($content);
 
-        setTimeout(function(){ window.location = self.urlData.cart; }, 3000);
+        $.each(self.xhrPool, function(index, jqXHR) {
+            jqXHR.abort();
+        });
+
+        var paymentid = self.$tabs.find('#amount_id .ezdefi-payment').attr('data-paymentid');
+
+        if(paymentid) {
+            $.ajax({
+                url: self.urlData.ajaxUrl,
+                method: 'post',
+                data: {
+                    action: 'payment_timeout',
+                    paymentid: paymentid
+                },
+                success: function (response) {
+                    window.location = self.urlData.cart
+                }
+            });
+        }
     };
 
     new whmcs_ezdefi_qrcode();

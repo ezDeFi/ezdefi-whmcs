@@ -53,15 +53,17 @@ class EzdefiDb {
 	{
 		$data = base64_encode(serialize($data));
 
-		try {
-			Capsule::table( 'tblpaymentgateways' )
-			       ->where( 'gateway', 'ezdefi' )
-			       ->where( 'setting', 'token' )
-			       ->update(['value' => $data]);
-			return true;
-		} catch (\Exception $e) {
-			return false;
+		$saved = Capsule::table( 'tblpaymentgateways' )->where( 'gateway', 'ezdefi' )->where( 'setting', 'token' )->get();
+
+		if($saved) {
+			return Capsule::table( 'tblpaymentgateways' )->where( 'gateway', 'ezdefi' )->where( 'setting', 'token' )->update(['value' => $data]);
 		}
+
+		return Capsule::table( 'tblpaymentgateways' )->insert([
+			'gateway' => 'ezdefi',
+			'setting' => 'token',
+			'value' => $data
+		]);
 	}
 
 	public function getPaymentMethod()
@@ -125,6 +127,7 @@ class EzdefiDb {
 				$table->integer('amount_decimal');
 				$table->boolean('amount_valid');
 				$table->string('currency');
+				$table->timestamp('created_at');
 				$table->primary(['amount_id', 'currency']);
 			});
 
@@ -138,32 +141,34 @@ class EzdefiDb {
 	{
 		$amount_decimal = $this->get_amount_decimals();
 
-		$amount_ids = $this->get_amount_ids( $price, $amount_decimal, $currency );
+		$amount_ids = $this->get_amount_ids($price, $amount_decimal, $currency);
 
 		$one_unit = 1 / pow(10, $amount_decimal );
 
 		if( empty( $amount_ids ) ) {
 			$amount_id = $price;
-			return $this->save_amount_id( $price, $amount_id, $amount_decimal, $currency );
+			return $this->save_amount_id($price, $amount_id, $amount_decimal, $currency);
 		}
 
-		$valid_index = array_search( '1', array_column( $amount_ids, 'amount_valid' ) );
+		$valid_index = array_search('1', array_column($amount_ids, 'amount_valid'));
 
-		if( $valid_index !== false ) {
-			return floatval( $amount_ids[$valid_index]['amount_id'] );
+		if($valid_index !== false) {
+			$amount_id = floatval($amount_ids[$valid_index]['amount_id']);
+			$this->set_amount_id_invalid($amount_id, $currency);
+			return $amount_id;
 		}
 
-		if( count( $amount_ids ) === 1 ) {
+		if(count( $amount_ids ) === 1) {
 			$amount_id = $price + $one_unit;
-			return $this->save_amount_id( $price, $amount_id, $amount_decimal, $currency );
+			return $this->save_amount_id($price, $amount_id, $amount_decimal, $currency);
 		}
 
 		$counts = array_count_values(array_column($amount_ids, 'amount_abs'));
 
 		$abs = null;
 
-		foreach( $counts as $amount_abs => $count ) {
-			if( floatval($amount_abs) > 0 && $count < 2 ) {
+		foreach($counts as $amount_abs => $count) {
+			if(floatval($amount_abs) > 0 && $count < 2) {
 				$abs = $amount_abs;
 				break;
 			}
@@ -171,19 +176,19 @@ class EzdefiDb {
 
 		if( ! $abs ) {
 			$id = end($amount_ids)['amount_id'] + $one_unit;
-			return $this->save_amount_id( $price, $id, $amount_decimal, $currency );
+			return $this->save_amount_id($price, $id, $amount_decimal, $currency);
 		}
 
-		$index = array_search( $abs, array_column( $amount_ids, 'amount_abs' ) );
+		$index = array_search($abs, array_column($amount_ids, 'amount_abs'));
 
 		$amount_id = $amount_ids[$index];
 
-		if( $amount_id['amount_id'] > $amount_id['price'] ) {
+		if($amount_id['amount_id'] > $amount_id['price']) {
 			$id = $amount_id['price'] - $abs;
-			return $this->save_amount_id( $price, $id, $amount_decimal, $currency );
+			return $this->save_amount_id($price, $id, $amount_decimal, $currency);
 		} else {
 			$id = $amount_id['price'] + $abs;
-			return $this->save_amount_id( $price, $id, $amount_decimal, $currency );
+			return $this->save_amount_id($price, $id, $amount_decimal, $currency);
 		}
 
 		return false;
@@ -234,8 +239,9 @@ class EzdefiDb {
 				'price' => $price,
 				'amount_id' => $amount_id,
 				'amount_decimal' => $amount_decimal,
-				'amount_valid' => 1,
-				'currency' => $currency
+				'amount_valid' => 0,
+				'currency' => $currency,
+				'created_at' => date('Y-m-d H:i:s')
 			]
 		);
 
@@ -244,5 +250,30 @@ class EzdefiDb {
 		}
 
 		return floatval($amount_id);
+	}
+
+	public function set_amount_id_invalid($amount_id, $currency)
+	{
+		return Capsule::table('tblezdefiamountids')
+		              ->where('amount_id', $amount_id)
+		              ->where('currency', $currency)
+		              ->update(['amount_valid' => 0]);
+	}
+
+	public function set_amount_id_valid($amount_id, $currency)
+	{
+		return Capsule::table('tblezdefiamountids')
+	                ->where('amount_id', $amount_id)
+					->where('currency', $currency)
+					->update(['amount_valid' => 1]);
+	}
+
+	public function delete_old_amount_id()
+	{
+		$date = new \DateTime();
+		$date->modify('-1 day');
+		$date = $date->format('Y-m-d H:i:s');
+
+		return Capsule::table('tblezdefiamountids')->where('created_at', '<=', $date)->delete();
 	}
 }

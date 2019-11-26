@@ -2,6 +2,8 @@
 
 namespace WHMCS\Module\Gateway\Ezdefi;
 
+require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '\includes\invoicefunctions.php';
+
 class Ezdefi {
 	private static $instance = null;
 
@@ -77,17 +79,7 @@ class Ezdefi {
 				'Type' => 'text',
 				'Default' => '6',
 				'Description' => 'Description',
-			),
-			'cronRecurrence' => array(
-				'FriendlyName' => 'Clear AmountId Recurrence',
-				'Type' => 'dropdown',
-				'Options' => array(
-					'daily' => 'Daily',
-					'weekly' => 'Once a week',
-					'monthly' => 'Monthly',
-				),
-				'Description' => 'Description',
-			),
+			)
 		);
 	}
 
@@ -126,6 +118,51 @@ class Ezdefi {
 		<?php return ob_get_clean();
 	}
 
+	public function saveCurrencyConfig($data)
+    {
+        try {
+            $this->db->saveCurrency($data);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function getToken($api_url, $keyword = '')
+    {
+        $api = new EzdefiApi($api_url);
+        $response = $api->getToken($keyword);
+
+        return $response;
+    }
+
+    public function checkWalletAddress($data)
+    {
+	    $address = $data['address'];
+	    $apiUrl = $data['apiUrl'];
+	    $apiKey = $data['apiKey'];
+
+	    $api = new EzdefiApi($apiUrl, $apiKey);
+
+	    $response = $api->getListWallet();
+
+	    $response = json_decode($response, true);
+
+	    $list_wallet = $response['data'];
+
+	    $key = array_search( $address, array_column( $list_wallet, 'address' ) );
+
+	    if($key !== false) {
+		    $status = $list_wallet[$key]['status'];
+
+		    if($status === 'ACTIVE') {
+			    return 'true';
+		    }
+	    } else {
+		    return 'false';
+	    }
+    }
+
 	public function createEzdefiPayment($invoiceId, $symbol, $method)
     {
         $invoice = $this->db->getInvoice($invoiceId);
@@ -142,13 +179,22 @@ class Ezdefi {
 
         $payment = $this->api->createPayment($order_data, $currency_data, $amount_id);
 
+        $payment = json_decode($payment, true);
+
+        if($payment['code'] == -1 && isset($payment['error'])) {
+            return false;
+        }
+
+        $payment = $payment['data'];
+
         return $this->renderPaymentHtml($payment);
     }
 
     public function renderPaymentHtml($payment)
     {
 	    ob_start(); ?>
-        <div class="ezdefi-payment">
+        <?php echo $payment['_id']; ?>
+        <div class="ezdefi-payment" data-paymentid="<?php echo $payment['_id']; ?>">
             <?php $value = $payment['value'] / pow( 10, $payment['decimal'] ); ?>
             <p class="exchange">
                 <span><?php echo $payment['originCurrency']; ?> <?php echo $payment['originValue']; ?></span>
@@ -161,7 +207,7 @@ class Ezdefi {
                     <img class="qrcode" src="<?php echo $payment['qr']; ?>" />
                 </a>
             </p>
-            <?php if( $payment['amountId'] === true ) : ?>
+            <?php if( $payment['amountId'] == true ) : ?>
                 <p>
                     <strong>Address:</strong> <?php echo $payment['to']; ?><br/>
                     <strong>Amount:</strong> <?php echo $value; ?> <span class="currency"><?php echo $payment['currency']; ?></span><br/>
@@ -175,5 +221,71 @@ class Ezdefi {
             <?php endif; ?>
         </div>
 	    <?php return ob_get_clean();
+    }
+
+    public function checkInvoice($invoiceId)
+    {
+	    return $this->db->getInvoiceStatus($invoiceId);
+    }
+
+    public function callbackHandle($invoiceId, $paymentId)
+    {
+        $invoiceId = substr( $invoiceId, 0, strpos( $invoiceId,'-' ) );
+	    $invoiceId = checkCbInvoiceID($invoiceId, 'ezdefi');
+
+	    checkCbTransID($paymentId);
+
+	    $response = $this->api->getPayment($paymentId);
+
+	    $payment = json_decode($response, true);
+
+	    if($payment['code'] == -1 && isset($payment['error'])) {
+		    die();
+	    }
+
+	    $payment = $payment['data'];
+
+	    $status = $payment['status'];
+
+	    logTransaction('ezdefi', $_GET, $status);
+
+	    if($status === 'DONE') {
+		    $paymentFee = 0;
+		    $symbol = $payment['symbol'];
+		    $currency = $this->db->getCurrencyBySymbol($symbol);
+		    $paymentAmount = $payment['originValue'];
+		    $paymentAmount = $paymentAmount / (100 - $currency['discount']) * 100;
+
+		    addInvoicePayment(
+			    $invoiceId,
+			    $paymentId,
+			    $paymentAmount,
+			    $paymentFee,
+			    'ezdefi'
+		    );
+
+		    if($payment['amountId'] == true) {
+			    $this->db->delete_old_amount_id();
+			    $amount_id = $payment['originValue'];
+			    if($amount_id && ! empty($amount_id)) {
+				    $this->db->set_amount_id_invalid($amount_id, $payment['currency']);
+			    }
+		    }
+	    }
+    }
+
+    public function set_amount_id_valid($paymentid)
+    {
+	    $payment = $this->api->getPayment($paymentid);
+
+	    $payment = json_decode($payment, true);
+
+	    if($payment['code'] == -1 && isset($payment['error'])) {
+		    return;
+	    }
+
+	    $payment = $payment['data'];
+
+        $this->db->set_amount_id_valid($payment['originValue'], $payment['currency']);
     }
 }
