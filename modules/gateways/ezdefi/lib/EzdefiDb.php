@@ -145,7 +145,7 @@ class EzdefiDb {
 
 		$one_unit = 1 / pow(10, $amount_decimal );
 
-		if( empty( $amount_ids ) ) {
+		if(empty( $amount_ids)) {
 			$amount_id = $price;
 			return $this->save_amount_id($price, $amount_id, $amount_decimal, $currency);
 		}

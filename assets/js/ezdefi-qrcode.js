@@ -42,7 +42,7 @@ jQuery(function($) {
             activate: function(event, ui) {
                 if(!ui.newPanel || ui.newPanel.is(':empty')) {
                     var method = ui.newPanel.attr('id');
-                    self.createEzpayPayment.call(self, method, ui.newPanel);
+                    self.onActivateTab.call(self, method, ui.newPanel);
                 }
             }
         });
@@ -51,7 +51,7 @@ jQuery(function($) {
         var active = self.$tabs.find(selectors.panel + ':eq('+index+')');
         var method = active.attr('id');
 
-        self.createEzpayPayment.call(self, method, active);
+        self.onActivateTab.call(self, method, active);
     };
 
     whmcs_ezdefi_qrcode.prototype.onChange = function(e) {
@@ -78,54 +78,52 @@ jQuery(function($) {
 
     whmcs_ezdefi_qrcode.prototype.onSubmit = function(e) {
         var self = this;
-        var symbol = this.$container.find(selectors.selected).find('.symbol').text();
-        if(!symbol) {
-            return false;
-        }
         var index = self.$tabs.tabs( "option", "active" );
         var active = self.$tabs.find(selectors.panel + ':eq('+index+')');
         var method = active.attr('id');
         self.$currencySelect.hide();
         self.$tabs.hide();
         self.$submitBtn.prop('disabled', true).text('Loading...');
-        self.$tabs.find(selectors.panel).empty();
-        $.ajax({
-            url: self.urlData.ajaxUrl,
-            method: 'post',
-            data: {
-                action: 'create_payment',
-                uoid: self.paymentData.uoid,
-                symbol: symbol,
-                method: method
-            },
-            beforeSend: function() {
-                $.each(self.xhrPool, function(index, jqXHR) {
-                    jqXHR.abort();
-                });
-                $.blockUI({message: null});
-            },
-            success:function(response) {
-                active.html(response);
+        $.blockUI({message: null});
+        var paymentid = self.$tabs.find('#amount_id .ezdefi-payment').attr('data-paymentid');
+        self.setAmountIdValid.call(self, paymentid).done(function() {
+            self.createEzpayPayment.call(self, method).success(function(response) {
+                self.$tabs.find(selectors.panel).empty();
+                active.html(response.data);
                 var endTime = active.find('.count-down').attr('data-endtime');
                 self.setTimeRemaining.call(self, endTime);
                 $.unblockUI();
                 self.$tabs.show();
                 self.$submitBtn.prop('disabled', false).text('Confirm').hide();
                 self.checkOrderStatus.call(self);
-            },
-            error: function(e) {
-                console.log(e);
-            }
+            });
         });
     };
 
-    whmcs_ezdefi_qrcode.prototype.createEzpayPayment = function(method, panel) {
+    whmcs_ezdefi_qrcode.prototype.onActivateTab = function(method, panel) {
+        var self = this;
+        self.createEzpayPayment.call(self, method).success(function(response) {
+            panel.html(response.data);
+            var endTime = panel.find('.count-down').attr('data-endtime');
+            self.setTimeRemaining.call(self, endTime);
+            $.unblockUI();
+            self.$tabs.show();
+            self.$submitBtn.prop('disabled', false).text('Confirm').hide();
+            self.checkOrderStatus.call(self);
+        });
+    };
+
+    whmcs_ezdefi_qrcode.prototype.createEzpayPayment = function(method) {
         var self = this;
         var symbol = self.$container.find(selectors.selected).find('.symbol').text();
         if(!symbol) {
             return false;
         }
-        $.ajax({
+        $.each(self.xhrPool, function(index, jqXHR) {
+            jqXHR.abort();
+        });
+        $.blockUI({message: null});
+        return $.ajax({
             url: self.urlData.ajaxUrl,
             method: 'post',
             data: {
@@ -134,24 +132,9 @@ jQuery(function($) {
                 symbol: symbol,
                 method: method
             },
-            beforeSend: function() {
-                $.each(self.xhrPool, function(index, jqXHR) {
-                    jqXHR.abort();
-                });
-                $.blockUI({message: null});
-            },
             error: function() {
                 $.blockUI({message: 'Something wrong happend. Please contact admin.'});
-            },
-            success:function(response) {
-                panel.html(response.data);
-                var endTime = panel.find('.count-down').attr('data-endtime');
-                self.setTimeRemaining.call(self, endTime);
-                $.unblockUI();
-                self.$tabs.show();
-                self.$submitBtn.prop('disabled', false).text('Confirm').hide();
-                self.checkOrderStatus.call(self);
-            },
+            }
         });
     };
 
@@ -170,9 +153,6 @@ jQuery(function($) {
                 },
                 success: function(response) {
                     if(response.toLowerCase() === 'paid') {
-                        $.each(self.xhrPool, function(index, jqXHR) {
-                            jqXHR.abort();
-                        });
                         self.success();
                     }
                 }
@@ -250,18 +230,22 @@ jQuery(function($) {
         var paymentid = self.$tabs.find('#amount_id .ezdefi-payment').attr('data-paymentid');
 
         if(paymentid) {
-            $.ajax({
-                url: self.urlData.ajaxUrl,
-                method: 'post',
-                data: {
-                    action: 'payment_timeout',
-                    paymentid: paymentid
-                },
-                success: function (response) {
-                    window.location = self.urlData.cart
-                }
+            self.setAmountIdValid.call(self, paymentid).success(function() {
+                window.location = self.urlData.cart
             });
         }
+    };
+
+    whmcs_ezdefi_qrcode.prototype.setAmountIdValid = function(paymentid) {
+        var self = this;
+        return $.ajax({
+            url: self.urlData.ajaxUrl,
+            method: 'post',
+            data: {
+                action: 'payment_timeout',
+                paymentid: paymentid
+            }
+        });
     };
 
     new whmcs_ezdefi_qrcode();

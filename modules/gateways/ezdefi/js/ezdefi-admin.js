@@ -191,7 +191,8 @@ jQuery(function($) {
                             return self.form.find(selectors.amountIdCheckbox).is(':checked');
                         }
                     },
-                    number: true
+                    number: true,
+                    min: 0
                 },
                 'field[decimal]': {
                     required: {
@@ -199,7 +200,9 @@ jQuery(function($) {
                             return self.form.find(selectors.amountIdCheckbox).is(':checked');
                         }
                     },
-                    digits: true
+                    digits: true,
+                    min: 2,
+                    max: 10
                 }
 
             }
@@ -232,6 +235,7 @@ jQuery(function($) {
 
             if(name.indexOf('discount') > 0) {
                 $('input[name="'+name+'"]').rules('add', {
+                    min: 0,
                     max: 100
                 });
             }
@@ -262,6 +266,17 @@ jQuery(function($) {
                     }
                 });
             }
+
+            if(name.indexOf('lifetime') > 0) {
+                var $input = $('input[name="'+name+'"]');
+                $input.rules('add', {
+                    digits: {
+                        depends: function(element) {
+                            return ($input.val().length > 0);
+                        }
+                    }
+                });
+            }
         });
     };
 
@@ -286,6 +301,8 @@ jQuery(function($) {
         var apiUrl = self.form.find('input[name="field[apiUrl]"]').val();
         var apiKey = self.form.find('input[name="field[apiKey]"]').val();
         var $input = $(e.target);
+        var $row = $(e.target).closest('tr');
+        var currency_chain = $row.find('.currency-chain').val();
         var $checking = $(
             "<div class='checking'><span class='text'>Checking wallet address</span>" +
             "<div class='dots'>" +
@@ -298,7 +315,7 @@ jQuery(function($) {
         $input.rules('add', {
             remote: {
                 depends: function(element) {
-                    return apiUrl !== '' && apiKey !== '';
+                    return apiUrl !== '' && apiKey !== '' && currency_chain !== '';
                 },
                 param: {
                     url: self.configUrl,
@@ -314,6 +331,9 @@ jQuery(function($) {
                         apiKey: function() {
                             return apiKey;
                         },
+                        currency_chain: function() {
+                            return currency_chain;
+                        }
                     },
                     beforeSend: function() {
                         $input.closest('td').find('span.error').hide();
@@ -429,6 +449,12 @@ jQuery(function($) {
                 $(this).find('.select2-container').remove();
                 var $select = $(this).find('.select-select2');
                 self.initCurrencySelect($select);
+
+                if($(this).hasClass('editing')) {
+                    var name = $(this).find('.currency-name').val();
+                    $(this).find('.select2-selection__rendered').attr('title', name);
+                    $(this).find('.select2-selection__rendered').text(name);
+                }
 
                 var row = $(this);
                 var number = rowIndex - 1;
