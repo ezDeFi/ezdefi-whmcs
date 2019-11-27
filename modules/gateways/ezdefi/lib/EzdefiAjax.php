@@ -187,7 +187,6 @@ class EzdefiAjax
 	protected function renderPaymentHtml($payment)
 	{
 		ob_start(); ?>
-		<?php echo $payment['_id']; ?>
 		<div class="ezdefi-payment" data-paymentid="<?php echo $payment['_id']; ?>">
 			<?php $value = $payment['value'] / pow( 10, $payment['decimal'] ); ?>
 			<p class="exchange">
