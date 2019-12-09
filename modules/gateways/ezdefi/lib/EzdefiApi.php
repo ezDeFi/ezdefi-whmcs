@@ -110,11 +110,11 @@ class EzdefiApi {
 		$discount = intval($currency_data['discount']);
 		$value = $subtotal - ($subtotal * ($discount / 100));
 
-		if( $amountId ) {
-			$value = $this->db->generate_amount_id( $value, $currency_data['symbol'] );
+		if($amountId) {
+			$value = $this->generateAmountId($order_data['currency'], $value, $currency_data );
 		}
 
-		if( ! $value ) {
+		if(!$value) {
 			return false;
 		}
 
@@ -130,7 +130,6 @@ class EzdefiApi {
 			'uoid' => $uoid,
 			'to' => $currency_data['wallet'],
 			'value' => $value,
-			'currency' => $order_data['currency'] . ':' . $currency_data['symbol'],
 			'safedist' => ( isset( $currency_data['block_confirm'] ) ) ? $currency_data['block_confirm'] : '',
 			'duration' => ( isset( $currency_data['lifetime'] ) ) ? $currency_data['lifetime'] : '',
 			'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php',
@@ -139,10 +138,41 @@ class EzdefiApi {
 
 		if($amountId) {
 			$data['amountId'] = true;
+			$data['currency'] = $currency_data['symbol'] . ':' . $currency_data['symbol'];
+		} else {
+			$data['currency'] = $order_data['currency'] . ':' . $currency_data['symbol'];
 		}
 
 		$response = $this->call('payment/create', 'post', $data);
 
 		return $response;
+	}
+
+	public function generateAmountId($fiat, $value, $currency_data)
+	{
+		$rate = $this->getTokenExchange($fiat, $currency_data['symbol']);
+
+		if(!$rate) {
+			return null;
+		}
+
+		$value = $value * $rate;
+
+		$value = $this->db->generate_amount_id($value, $currency_data);
+
+		return $value;
+	}
+
+	public function getTokenExchange($fiat, $token)
+	{
+		$response = $this->call( 'token/exchange/' . $fiat . ':' . $token, 'get' );
+
+		$response = json_decode( $response, true );
+
+		if( $response['code'] === -1 ) {
+			return null;
+		}
+
+		return $response['data'];
 	}
 }

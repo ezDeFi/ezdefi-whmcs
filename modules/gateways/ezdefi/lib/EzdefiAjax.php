@@ -181,16 +181,19 @@ class EzdefiAjax
 
 		$payment = $payment['data'];
 
-		return $this->renderPaymentHtml($payment);
+		return $this->renderPaymentHtml($payment, $order_data);
 	}
 
-	protected function renderPaymentHtml($payment)
+	protected function renderPaymentHtml($payment, $order_data)
 	{
+		$total = $order_data['amount'];
+		$discount = $this->db->getCurrencyBySymbol( $payment['currency'] )['discount'];
+		$total = $total - ( $total * ( $discount / 100 ) );
 		ob_start(); ?>
 		<div class="ezdefi-payment" data-paymentid="<?php echo $payment['_id']; ?>">
 			<?php $value = $payment['value'] / pow( 10, $payment['decimal'] ); ?>
 			<p class="exchange">
-				<span><?php echo $payment['originCurrency']; ?> <?php echo $payment['originValue']; ?></span>
+				<span><?php echo $payment['originCurrency']; ?> <?php echo $total; ?></span>
 				<img width="16" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAHdElNRQfjChgQMyxZjA7+AAACP0lEQVRo3u2YvWsUQRTAf8nFQs5LCEY0aCGIB1ErRVMoFpYGTGNlo2AnBxHlrLQJKVSwiV//gqCV4gemEGJhiBYXRAtBDIhICiUGL8GP3Fjs7rs5vN0o5M1LsW+a2XkDv9/MvF12t4B2dDDODqbVOan46zgaVKzwN3A4O4VuarGAo8EZC4VeXnoKJruQK+QKa12hI2VyFyUFhY08Ymfcd1S49feU7VSZ5DPL4qrXGpxuhW/iJj8DgJutTrGJ38vHoPCobUnwg9QN8HeTItzGNP2yF7M85D11lTvhLAPSn2CYpah7R5zmOUmnChrgsrf6p6xPhvfRiAe/slsNnoqHcRketsDDbDw8ZYPvlsR5CzwMSGpICT+WhYdBSR4Ov3p9gbGV8Hr3PEAPx6XvPXZC7sBm3qSvPoRApJCB71KB+jHHERbab34YAZjLSuoW4T+EuYBNHJXC32W+A2taYAN9lgJFHjDZfGsNHUWe4XC8VVHwirD9hBLPZcpM+mN0NQTaHUGR+xySq3vpj1Gd8FfvuKjCyDiC5OyjdklpkSeE0N+aCLF6gNGY8IuCBb4zfklxzFjg4ZRQRi3wB/guB1AOjV9HhUXh3Ibo87zEYw7KpFqUWPUoUWaIrXL9gf18iRSeGPyamGdPYlI2wL/zflPQx4+g8CWu0tN6OiNBwL/5xAQjXhWQFCFc4IqMvOYY3xSKcIHlrPQ5z/UVvSr3wQqRK+QKuYIfVU9hSuGt+L924ZoFvqmgji+kZl6wSI2qtsAfm/EoPAbFFD0AAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMTAtMjRUMTY6NTE6NDQrMDA6MDBiAik3AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTEwLTI0VDE2OjUxOjQ0KzAwOjAwE1+RiwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=" />
 				<span class="currency"><?php echo $value . ' ' . $payment['currency']; ?></span>
 			</p>
@@ -202,10 +205,11 @@ class EzdefiAjax
 			</p>
 			<?php if($payment['amountId'] == true) : ?>
 				<p>
+                    <strong>Pay Manually:</strong> <?php echo $payment['token']['name'] . ' ' . $payment['token']['symbol']; ?><br/>
 					<strong>Address:</strong> <?php echo $payment['to']; ?><br/>
 					<strong>Amount:</strong> <?php echo $value; ?> <span class="currency"><?php echo $payment['currency']; ?></span><br/>
 				</p>
-				<p>You have to pay an exact amount so that you payment can be recognized.</p>
+				<p>You have to pay exact amount so that your order can be handle property. If you have difficulty for sending exact amount, try to use <a href="" class="ezdefiEnableBtn">ezDeFi Wallet</a></p>
 			<?php else : ?>
 				<p>
 					<a href="">Download ezDeFi for IOS</a><br />
@@ -316,6 +320,84 @@ class EzdefiAjax
 			'message' => $data
 		));
 	}
+
+	public function get_exception()
+    {
+        $exceptions = $this->db->get_exceptions();
+
+        if(empty($exceptions)) {
+            return '<tr><td>Empty</td></tr>';
+        }
+
+        ob_start();
+
+	    foreach($exceptions as $e) : ?>
+            <tr>
+                <td>
+                    <?php echo $e->amount_id; ?>
+                    <input type="hidden" value="<?php echo $e->amount_id; ?>" id="amount-id">
+                </td>
+                <td>
+                    <?php echo $e->currency; ?>
+                    <input type="hidden" value="<?php echo $e->currency; ?>" id="currency">
+                </td>
+                <td><?php echo $e->created_at; ?></td>
+                <td class="order-select">
+                    <select name="" id="">
+                        <?php if( $e->order_id ) : ?>
+                            <option value="<?php echo $e->order_id; ?>" selected></option>
+                        <?php endif; ?>
+                        <?php echo $e->order_id; ?>
+                    </select>
+                </td>
+                <td>
+                    <button class="button button-primary assignBtn">Assign</button>
+                    <button class="button removeBtn">Remove</button>
+                </td>
+            </tr>
+        <?php
+        endforeach;
+        return ob_get_clean();
+    }
+
+    public function assign_amount_id($data)
+    {
+	    if(!isset($data['amount_id']) || !isset($data['invoice_id']) || !isset($data['currency'])) {
+		    return $this->json_error_response();
+	    }
+
+	    $amount_id = $data['amount_id'];
+
+	    $currency = $data['currency'];
+
+	    $invoice_id = $data['invoice_id'];
+
+        $exist = $this->db->check_invoice_exist($invoice_id);
+
+        if(!$exist) {
+            return $this->json_error_response();
+        }
+
+	    $this->db->delete_amount_id_exception($amount_id, $currency);
+
+        $this->db->update_invoice_status($invoice_id, 'Paid');
+
+	    return $this->json_success_response();
+    }
+
+    public function delete_amount_id($data)
+    {
+	    if(!isset($data['amount_id']) || !isset($data['currency'])) {
+		    return $this->json_error_response();
+	    }
+
+        $amount_id = $data['amount_id'];
+
+	    $currency = $data['currency'];
+
+	    $this->db->delete_amount_id_exception($amount_id, $currency);
+    }
+
 
 	protected function json_success_response($data = '') {
 		return $this->json_response(200, $data);

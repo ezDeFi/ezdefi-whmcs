@@ -147,10 +147,11 @@
   display: block;
   text-decoration: none;
 }
-#whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a#tab-ezdefi_wallet img {
-  float: left;
-  margin-top: 3px;
-  margin-right: 6px;
+#whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a#tab-ezdefi_wallet {
+  background-size: 18px 18px;
+  background-position: 18px center;
+  background-repeat: no-repeat;
+  padding-left: 44px;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs .ezdefi-payment-panel {
   padding: 10px 20px;

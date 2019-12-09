@@ -29,6 +29,9 @@ class Ezdefi {
 	public function init()
 	{
 		$this->db->createAmountIdTable();
+		$this->db->createExceptionTable();
+		$this->db->addProcedure();
+		$this->db->addScheduleEvents();
 	}
 
 	public function getMetaData()
@@ -73,12 +76,6 @@ class Ezdefi {
 				'Type' => 'text',
 				'Default' => '0.01',
 				'Description' => 'Description',
-			),
-			'decimal' => array(
-				'FriendlyName' => 'Decimals',
-				'Type' => 'text',
-				'Default' => '6',
-				'Description' => 'Description',
 			)
 		);
 	}
@@ -102,9 +99,15 @@ class Ezdefi {
 	{
 		$systemUrl = $this->db->getSystemUrl();
 		$ezdefiConfigUrl = $systemUrl . 'ezdefiajax.php';
+		$unpaid_invoices = $this->db->get_unpaid_invoices();
+		$currency = $this->db->getDefaultCurrency();
+		foreach($unpaid_invoices as $invoice) {
+		    $invoice->currency = $currency;
+        }
 		$data = array(
 			'gateway_params' => $gatewayParams,
-			'config_url' => $ezdefiConfigUrl
+			'config_url' => $ezdefiConfigUrl,
+            'unpaid_invoices' => $unpaid_invoices
 		);
 		ob_start(); ?>
 		<link rel="stylesheet" href="<?php echo $systemUrl . '/modules/gateways/ezdefi/css/select2.min.css'; ?>">
@@ -137,6 +140,10 @@ class Ezdefi {
 
 	    $status = $payment['status'];
 
+	    $amount_id = $payment['value'] / pow( 10, $payment['decimal'] );
+
+	    $currency = $payment['currency'];
+
 	    logTransaction('ezdefi', $_GET, $status);
 
 	    if($status === 'DONE') {
@@ -154,13 +161,9 @@ class Ezdefi {
 			    'ezdefi'
 		    );
 
-		    if($payment['amountId'] == true) {
-			    $this->db->delete_old_amount_id();
-			    $amount_id = $payment['originValue'];
-			    if($amount_id && ! empty($amount_id)) {
-				    $this->db->set_amount_id_invalid($amount_id, $payment['currency']);
-			    }
-		    }
+		    $this->db->delete_amount_id_exception($amount_id, $currency['symbol']);
+	    } elseif($status === 'EXPIRED_DONE') {
+		    $this->db->add_uoid_to_exception($amount_id, $currency, $invoiceId);
 	    }
     }
 }

@@ -42,13 +42,15 @@
         <ul>
             {foreach $payment_method as $method}
                 <li>
-                    <a href="#{$method}" id="tab-{$method}">
-                        {if $method === 'amount_id'}
+                    {if $method === 'amount_id'}
+                        <a href="#{$method}" id="tab-{$method}">
                             <span>Simple method</span>
-                        {elseif $method === 'ezdefi_wallet'}
-                            <img width="18" src=""> <span> Pay with ezPay wallet</span>
-                        {/if}
-                    </a>
+                        </a>
+                    {elseif $method === 'ezdefi_wallet'}
+                        <a href="#{$method}" id="tab-{$method}" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">
+                            <span>Pay with ezPay wallet</span>
+                        </a>
+                    {/if}
                 </li>
             {/foreach}
         </ul>

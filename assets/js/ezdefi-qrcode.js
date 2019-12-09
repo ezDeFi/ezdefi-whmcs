@@ -10,7 +10,8 @@ jQuery(function($) {
         submitBtn: '.submitBtn',
         ezdefiPayment: '.ezdefi-payment',
         tabs: '.ezdefi-payment-tabs',
-        panel: '.ezdefi-payment-panel'
+        panel: '.ezdefi-payment-panel',
+        ezdefiEnableBtn: '.ezdefiEnableBtn',
     };
 
     var whmcs_ezdefi_qrcode = function() {
@@ -21,18 +22,21 @@ jQuery(function($) {
         this.paymentData = JSON.parse(this.$container.find(selectors.paymentData).text());
         this.xhrPool = [];
         this.urlData = JSON.parse(this.$container.find(selectors.urlData).text());
+        this.checkOrderLoop;
 
         var init = this.init.bind(this);
         var onChange = this.onChange.bind(this);
         var onSelectItem = this.onSelectItem.bind(this);
         var onSubmit = this.onSubmit.bind(this);
+        var onClickEzdefiLink = this.onClickEzdefiLink.bind(this);
 
         init();
 
         $(document.body)
             .on('click', selectors.changeBtn, onChange)
             .on('click', selectors.item, onSelectItem)
-            .on('click', selectors.submitBtn, onSubmit);
+            .on('click', selectors.submitBtn, onSubmit)
+            .on('click', selectors.ezdefiEnableBtn, onClickEzdefiLink);;
     };
 
     whmcs_ezdefi_qrcode.prototype.init = function() {
@@ -78,25 +82,50 @@ jQuery(function($) {
 
     whmcs_ezdefi_qrcode.prototype.onSubmit = function(e) {
         var self = this;
+        var symbol = self.$container.find(selectors.selected).find('.symbol').text();
+        if(!symbol) {
+            return false;
+        }
         var index = self.$tabs.tabs( "option", "active" );
         var active = self.$tabs.find(selectors.panel + ':eq('+index+')');
         var method = active.attr('id');
-        self.$currencySelect.hide();
-        self.$tabs.hide();
-        self.$submitBtn.prop('disabled', true).text('Loading...');
-        $.blockUI({message: null});
-        var paymentid = self.$tabs.find('#amount_id .ezdefi-payment').attr('data-paymentid');
-        self.setAmountIdValid.call(self, paymentid).done(function() {
-            self.createEzpayPayment.call(self, method).success(function(response) {
+
+        $.ajax({
+            url: self.urlData.ajaxUrl,
+            method: 'post',
+            data: {
+                action: 'create_payment',
+                uoid: self.paymentData.uoid,
+                symbol: symbol,
+                method: method
+            },
+            beforeSend: function() {
+                self.$currencySelect.hide();
+                self.$tabs.hide();
+                self.$submitBtn.prop('disabled', true).text('Loading...');
+                $.blockUI({message: null});
+                clearInterval(self.checkOrderLoop);
+                $.each(self.xhrPool, function(index, jqXHR) {
+                    jqXHR.abort();
+                });
+            },
+            success:function(response) {
                 self.$tabs.find(selectors.panel).empty();
-                active.html(response.data);
+                if(response.success) {
+                    active.html($(response.data));
+                } else {
+                    active.html(response.data);
+                }
                 var endTime = active.find('.count-down').attr('data-endtime');
                 self.setTimeRemaining.call(self, endTime);
                 $.unblockUI();
                 self.$tabs.show();
                 self.$submitBtn.prop('disabled', false).text('Confirm').hide();
                 self.checkOrderStatus.call(self);
-            });
+            },
+            error: function(e) {
+                console.log(e);
+            }
         });
     };
 
@@ -138,9 +167,15 @@ jQuery(function($) {
         });
     };
 
+    whmcs_ezdefi_qrcode.prototype.onClickEzdefiLink = function(e) {
+        var self = this;
+        e.preventDefault();
+        self.$tabs.tabs('option', 'active', 1);
+    };
+
     whmcs_ezdefi_qrcode.prototype.checkOrderStatus = function() {
         var self = this;
-        setInterval(function() {
+        self.checkOrderLoop = setInterval(function() {
             $.ajax({
                 url: self.urlData.ajaxUrl,
                 method: 'post',

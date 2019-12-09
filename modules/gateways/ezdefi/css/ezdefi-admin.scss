@@ -149,6 +149,41 @@
       }
     }
   }
+
+  #ezdefi-exception-table {
+    font-size: 13px;
+    width: 100%;
+
+    thead {
+      th {
+        padding: 3px 5px;
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          vertical-align: middle;
+          &.order-select {
+            width: 30%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.select2-order {
+  .select2-order__row {
+    font-size: 13px;
+    margin-bottom: 2px;
+    display: flex;
+    justify-content: space-between;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .select2-currency {

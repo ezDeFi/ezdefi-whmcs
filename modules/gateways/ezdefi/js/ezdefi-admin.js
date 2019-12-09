@@ -1,10 +1,14 @@
 jQuery(function($) {
     var selectors = {
+        exceptionTable: '#ezdefi-exception-table',
         amountIdCheckbox: 'input[name="field[simpleMethod]"]',
+        assignBtn: '.assignBtn',
+        removeBtn: '.removeBtn'
     };
 
     var whmcs_ezdefi_admin = function() {
         this.ezdefiData = JSON.parse($('#ezdefi-data').text());
+        this.unpaid_invoices = this.ezdefiData.unpaid_invoices;
         this.configUrl = this.ezdefiData.config_url;
 
         var init = this.init.bind(this);
@@ -16,6 +20,7 @@ jQuery(function($) {
         var self = this;
 
         this.addCurrencyTable();
+        this.addExceptionTable.call(this);
 
         self.table = $('#ezdefi-currency-table');
         self.form = self.table.closest('form');
@@ -41,6 +46,8 @@ jQuery(function($) {
         var saveCurrency = self.saveCurrency.bind(this);
         var checkWalletAddress = this.checkWalletAddress.bind(this);
         var toggleAmountSetting = this.toggleAmountSetting.bind(this);
+        var onAssign = this.onAssign.bind(this);
+        var onRemove = this.onRemove.bind(this);
 
         self.toggleAmountSetting(this);
 
@@ -51,7 +58,9 @@ jQuery(function($) {
             .on('click', '.deleteBtn', removeCurrency)
             .on('click', '.saveBtn', saveCurrency)
             .on('keyup', '.wallet input', checkWalletAddress)
-            .on('change', selectors.amountIdCheckbox, toggleAmountSetting);
+            .on('change', selectors.amountIdCheckbox, toggleAmountSetting)
+            .on('click', selectors.assignBtn, onAssign)
+            .on('click', selectors.removeBtn, onRemove);
     };
 
     whmcs_ezdefi_admin.prototype.addCurrencyTable = function() {
@@ -65,7 +74,7 @@ jQuery(function($) {
 
         var tableHead = $(
             "<thead>" +
-            "<tr><th></th><th></th><th>Currency</th><th>Discount</th><th>Lifetime</th><th>Wallet</th><th>BC</th><th></th></tr>" +
+            "<tr><th></th><th></th><th>Currency</th><th>Discount</th><th>Lifetime</th><th>Wallet</th><th>BC</th><th>Decimal</th><th></th></tr>" +
             "</thead>"
         );
         tableHead.appendTo(table);
@@ -77,6 +86,137 @@ jQuery(function($) {
             "<tfoot><tr><td colspan='6'><button class='saveBtn'>Save currency</button> <button class='addBtn'>Add currency</button></td></tr></tfoot>"
         );
         tableFoot.appendTo(table);
+    };
+
+    whmcs_ezdefi_admin.prototype.addExceptionTable = function() {
+        var self = this;
+        var settingsTable = $('#Payment-Gateway-Config-ezdefi');
+
+        var exceptionRow = $("<tr><td class='fieldlabel'>Manage Exceptions</td><td class='fieldarea'></td></tr>");
+        settingsTable.find('tr:last').before(exceptionRow);
+
+        var table = $("<table id='ezdefi-exception-table'></table>")
+        table.appendTo(exceptionRow.find('.fieldarea'));
+
+        var tableHead = $(
+            "<thead>" +
+            "<tr><th>#</th><th>Received Amount</th><th>Currency</th><th>Received At</th><th>Assign To</th><th></th></tr>" +
+            "</thead>"
+        );
+        tableHead.appendTo(table);
+
+        var tableBody = $("<tbody></tbody>");
+        tableBody.appendTo(table);
+
+        $.ajax({
+            url: self.configUrl,
+            method: 'post',
+            data: {
+                action: 'get_exception',
+            },
+            success: function(response) {
+                tableBody.append(response);
+                table.find('tr select').each(function() {
+                    self.initInvoiceSelect.call(self, $(this));
+                });
+            }
+        });
+    };
+
+    whmcs_ezdefi_admin.prototype.initInvoiceSelect = function(element) {
+        var self = this;
+        element.select2({
+            width: '100%',
+            data: self.unpaid_invoices,
+            placeholder: 'Select Invoice',
+            templateResult: self.formatInvoiceOption,
+            templateSelection: self.formatInvoiceSelection,
+            minimumResultsForSearch: -1
+        });
+    };
+
+    whmcs_ezdefi_admin.prototype.formatInvoiceOption = function(order) {
+        var $container = $(
+            "<div class='select2-order'>" +
+            "<div class='select2-order__row'>" +
+            "<div class='left'><strong>Invoice ID:</strong></div>" +
+            "<div class='right'>" + order['id'] + "</div>" +
+            "</div>" +
+            "<div class='select2-order__row'>" +
+            "<div class='left'><strong>Total:</strong></div>" +
+            "<div class='right'>" + order['currency'] + " " + order['total'] + "</div>" +
+            "</div>" +
+            "<div class='select2-order__row'>" +
+            "<div class='left'><strong>Email:</strong></div>" +
+            "<div class='right'>" + order['email'] + "</div>" +
+            "</div>" +
+            "<div class='select2-order__row'>" +
+            "<div class='left'><strong>Date:</strong></div>" +
+            "<div class='right'>" + order['date'] + "</div>" +
+            "</div>" +
+            "</div>"
+        );
+        return $container;
+    };
+
+    whmcs_ezdefi_admin.prototype.formatInvoiceSelection = function(order) {
+        return 'Order ID: ' + order['id'];
+    };
+
+    whmcs_ezdefi_admin.prototype.onAssign = function(e) {
+        var self = this;
+        e.preventDefault();
+        var row = $(e.target).closest('tr');
+        var invoice_id = row.find('select').val();
+        var amount_id = row.find('#amount-id').val();
+        var currency = row.find('#currency').val();
+        var data = {
+            action: 'assign_amount_id',
+            invoice_id: invoice_id,
+            amount_id: amount_id,
+            currency: currency
+        };
+        this.callAjax.call(this, data, row).success(function() {
+            $(selectors.exceptionTable).unblock();
+            $(selectors.exceptionTable).find('tr select').each(function() {
+                $(this).find('option[value="' + invoice_id + '"]').remove();
+            });
+            row.remove();
+        });
+    };
+
+    whmcs_ezdefi_admin.prototype.onRemove = function(e) {
+        e.preventDefault();
+        if(!confirm('Do you want to delete this amount ID')) {
+            return false;
+        }
+        var row = $(e.target).closest('tr');
+        var amount_id = row.find('#amount-id').val();
+        var currency = row.find('#currency').val();
+        var data = {
+            action: 'delete_amount_id',
+            amount_id: amount_id,
+            currency: currency
+        };
+        this.callAjax.call(this, data, row).success(function() {
+            $(selectors.exceptionTable).unblock();
+            row.remove();
+        });
+    };
+
+    whmcs_ezdefi_admin.prototype.callAjax = function(data) {
+        var self = this;
+        return $.ajax({
+            url: self.configUrl,
+            method: 'post',
+            data: data,
+            beforeSend: function() {
+                $(selectors.exceptionTable).block({message: 'Waiting...'});
+            },
+            error: function(e) {
+                $(selectors.exceptionTable).block({message: 'Something wrong happend.'});
+            }
+        });
     };
 
     whmcs_ezdefi_admin.prototype.addDefaultCurrency = function() {
@@ -100,6 +240,7 @@ jQuery(function($) {
                 "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[0][lifetime]' /></div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[0][wallet]' /></div></td>" +
                 "<td class='block_comfirm'><div class='view'></div><div class='edit'><input type='number' name='currency[0][block_confirm]' /></div></td>" +
+                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[0][decimal]' /></div></td>" +
                 "<td>" +
                     "<div class='view'><a class='editBtn' href=''>Edit</a> <a class='deleteBtn' href=''>Delete</a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -124,6 +265,7 @@ jQuery(function($) {
                 "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[1][lifetime]' /></div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[1][wallet]' /></div></td>" +
                 "<td class='block_comfirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
+                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' /></div></td>" +
                 "<td>" +
                     "<div class='view'><a class='editBtn' href=''>Edit</a> <a class='deleteBtn' href=''>Delete</a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -157,6 +299,7 @@ jQuery(function($) {
                     "<td class='lifetime'><div class='view'><span>"+config['lifetime']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+config['lifetime']+"' /></div></td>" +
                     "<td class='wallet'><div class='view'><span>"+config['wallet']+"</span></div><div class='edit'><input type='text' name='currency["+i+"][wallet]' value='"+config['wallet']+"' /></div></td>" +
                     "<td class='block_comfirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
+                    "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' /></div></td>" +
                     "<td>" +
                     "<div class='view'><a class='editBtn' href=''>Edit</a> <a class='deleteBtn' href=''>Delete</a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -282,9 +425,7 @@ jQuery(function($) {
 
     whmcs_ezdefi_admin.prototype.toggleAmountSetting = function() {
         var checked = this.form.find(selectors.amountIdCheckbox).is(':checked');
-        var amount_settings = this.form.find(
-            'input[name="field[variation]"], input[name="field[decimal]"], select[name="field[cronRecurrence]"]'
-        ).closest('tr');
+        var amount_settings = this.form.find('input[name="field[variation]"]').closest('tr');
         if(checked) {
             amount_settings.each(function() {
                 $(this).show();
