@@ -1,128 +1,91 @@
 #whmcs_ezdefi_qrcode {
   text-align: center;
+  margin: 0 auto;
+  width: 100%;
 }
-#whmcs_ezdefi_qrcode .selected-currency {
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  justify-content: space-between;
-}
-#whmcs_ezdefi_qrcode .selected-currency .left {
-  display: flex;
-  align-items: center;
-}
-#whmcs_ezdefi_qrcode .selected-currency .left .logo img {
-  width: 36px;
-  margin-right: 15px;
-}
-#whmcs_ezdefi_qrcode .selected-currency .left .text {
-  text-align: left;
-}
-#whmcs_ezdefi_qrcode .selected-currency .left .text .symbol {
-  text-transform: uppercase;
-  margin-right: 5px;
-  font-weight: bold;
-}
-#whmcs_ezdefi_qrcode .selected-currency .left .text .name {
-  text-transform: capitalize;
-  margin-left: 5px;
+@media screen and (min-width: 768px) {
+  #whmcs_ezdefi_qrcode {
+    width: 630px;
+  }
 }
 #whmcs_ezdefi_qrcode .currency-select {
-  display: none;
-  max-height: 400px;
-  overflow-y: scroll;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -5px;
+}
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap {
+  width: 140px;
+  padding: 0 5px;
   margin-bottom: 20px;
 }
-#whmcs_ezdefi_qrcode .currency-select .currency-item {
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   display: flex;
-  align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 10px 20px;
+  padding: 5px;
+  transition: all 0.3s;
+  cursor: pointer;
+  color: #212529;
+  font-size: 16px;
 }
-#whmcs_ezdefi_qrcode .currency-select .currency-item:last-child {
-  border-bottom: none;
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item:hover, #whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item.selected {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
 }
-#whmcs_ezdefi_qrcode .currency-select .currency-item input {
-  margin-right: 20px;
-  margin-bottom: 0;
-}
-#whmcs_ezdefi_qrcode .currency-select .currency-item label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-grow: 1;
-  margin: 0;
-}
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .left {
-  display: flex;
-  align-items: center;
-}
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .left img {
-  width: 32px;
-  margin-right: 20px;
-}
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .left .symbol {
-  text-transform: uppercase;
-  font-weight: 700;
-}
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .right {
-  display: flex;
-  align-items: center;
-}
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .right .name {
-  text-transform: capitalize;
-  margin-right: 20px;
-}
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .right .discount {
-  color: #666;
-  margin-right: 20px;
-}
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .right .more {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #eee;
-  text-align: center;
-  line-height: 18px;
-  border-radius: 100%;
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__logo {
+  margin-right: 5px;
   position: relative;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAACiUlEQVRYhe2XzWsTYRDGn+luQkz9ogpii6UiCFKPWilFvAki9OJBwUYDZd+EHEQEexAPwX9AoQaym49DF0/xogfx4MfFk0r1ItiDUIQGDLaLH02w3X3HSwuhZDe72Y0n57LsPPPO/PYdmGEJEVg2m51yHOcOEU0A2GDmp47jzFWr1V/dzqphi2cymctSykdEpGz7iCgbi8X2AJjpdp7CFM/lcrtt214GcKCDbFuWNVir1Ta8cgyEAbBt+7RLcQAYSCQSsW45QgEQkVcL35mmud5XAFVVFwH87CBtAsj5yREKoFAorDLzFQArWy4HwBtmnjAMYzFM7qBGQojDQojkvyz63yKxUIMIAFKp1GAymbwkpZwkojEiKuq6/qTvAEKIYwBuArgGYG+btDY8PHwon8/bfvIE3gXpdHp/PB6/C+AGgE6TbqjRaCQA/I4cQNO0q0T0AMBBjzBHUZRNvzl9AWz1+SEzp32Ef56fn/8TGYAQYhTAc2Y+AcAG8ALAd7iv2vd+iwM+RnGr1VoFsIuZF6SUxw3DuMDML93iiehVEICuN2Ca5roQYrxUKjXbikx4ALjCdTJfy8gwjOYO11mX0KVisbjiovUO0G6zs7NDAE520oJ+fU8AqqpOuWlSykD97wmAmd2un6WUr/sOQERuAB8qlcpaXwGEEElmPuUiB+4/EHwXnPE483HrSZqmXQdwfmRkZCafz8soASbdBGZWNE2bJqJbAM4B+FGv148C+BIlwLibQEQLba/LRHRR13XP4pECbBszv2Xm6XK5/M1PwqAA+zy0JhHdsyzrfrffsZ4BiGiJmcd2uB0AjwHM6br+NUi+wADMfBvAEQCjAD4x8zNFUSpB53+7/QXcy9kpGcIPfQAAAABJRU5ErkJggg==");
-  background-size: 8px;
-  background-position: center;
-  background-repeat: no-repeat;
 }
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .right .more .tooltip {
-  visibility: hidden;
-  min-width: 280px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
-  border-radius: 6px;
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__logo img {
+  width: 22px;
+  margin-top: 6px;
+}
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__logo .item__desc {
+  text-align: left;
   position: absolute;
-  z-index: 1;
-  top: -5px;
-  bottom: auto;
-  right: 150%;
-  opacity: 0;
-  transition: opacity 0.3s;
+  max-width: 200px;
+  min-width: 160px;
+  font-size: 13px;
+  color: #fff;
+  background: #343a40;
+  left: 25px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  top: 4px;
+  display: none;
+  z-index: 99;
 }
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .right .more .tooltip::after {
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__logo .item__desc:after {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 100%;
+  top: 14px;
+  right: 100%;
   margin-top: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent transparent #555;
+  border-color: transparent #343a40 transparent transparent;
 }
-#whmcs_ezdefi_qrcode .currency-select .currency-item label .right .more:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__logo:hover .item__desc {
+  display: initial;
+}
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__text {
+  text-align: left;
+  flex-grow: 1;
+}
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__text .item__info {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 90%;
+}
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__text .item__info .item__symbol {
+  text-transform: uppercase;
+}
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__text .item__info .item__discount {
+  color: #dc3545;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs {
   margin-bottom: 20px;
@@ -131,14 +94,25 @@
   margin: 0;
   padding: 0;
   text-align: left;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul {
+    display: flex;
+  }
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li {
   display: inline-block;
   margin-bottom: -1px;
+  margin-left: 0 !important;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li {
+    width: 50%;
+  }
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li.ui-tabs-active a {
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.125);
   border-bottom-color: transparent;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a {
@@ -146,6 +120,14 @@
   padding: 10px 20px;
   display: block;
   text-decoration: none;
+  font-size: 16px;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a {
+    padding: 5px;
+    font-size: 15px;
+    text-align: center;
+  }
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a#tab-ezdefi_wallet {
   background-size: 18px 18px;
@@ -153,14 +135,48 @@
   background-repeat: no-repeat;
   padding-left: 44px;
 }
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a#tab-ezdefi_wallet {
+    background-size: 16px 16px;
+    background-position: 8px center;
+    padding-left: 20px;
+  }
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a span.large-screen {
+  display: initial;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a span.large-screen {
+    display: none;
+  }
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a span.small-screen {
+  display: none;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a span.small-screen {
+    display: initial;
+  }
+}
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs .ezdefi-payment-panel {
-  padding: 10px 20px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 10px 0;
+  border: 1px solid rgba(0, 0, 0, 0.125);
   border-top: none;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment {
   padding: 20px 20px 0 20px;
   text-align: center;
+  color: #212529;
+  font-size: 16px;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment p {
+  margin-bottom: 1rem;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment {
+    padding: 6px 6px 0 6px;
+    font-size: 16px;
+  }
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment .exchange {
   text-transform: uppercase;
@@ -173,18 +189,204 @@
 #whmcs_ezdefi_qrcode .ezdefi-payment .exchange span {
   padding: 0 10px;
 }
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment .exchange span {
+    padding: 0 5px;
+  }
+}
 #whmcs_ezdefi_qrcode .ezdefi-payment .exchange img {
   width: 16px;
 }
-#whmcs_ezdefi_qrcode .ezdefi-payment img.qrcode {
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment .exchange img {
+    width: 12px;
+  }
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .count-down {
+  color: #f73f2e;
+  font-weight: bold;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode {
+  display: inline-block;
+  position: relative;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode.expired:before {
+  content: "";
+  position: absolute;
+  background: rgba(255, 255, 255, 0.6);
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode.expired:after {
+  content: "Expired. Click to renew";
+  color: #f73f2e;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  width: 100%;
+  text-align: center;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode.expired img {
+  opacity: 0.5;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode img {
   display: block;
   margin: 0 auto;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode .blockUI::before {
+  display: none;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode .blockMsg {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%);
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .amount {
+  text-transform: uppercase;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .receive-address {
+  margin-bottom: 0;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .payment-amount {
+  margin-bottom: 0.5rem;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .payment-amount span.copy-content {
+  display: inline-block;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .payment-amount span.amount {
+  padding-left: 1px;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment .receive-address, #whmcs_ezdefi_qrcode .ezdefi-payment .payment-amount {
+    display: flex;
+    justify-content: space-between;
+  }
+  #whmcs_ezdefi_qrcode .ezdefi-payment .receive-address {
+    margin-bottom: 0.5rem;
+  }
+  #whmcs_ezdefi_qrcode .ezdefi-payment .payment-amount {
+    margin-bottom: 1rem;
+  }
+  #whmcs_ezdefi_qrcode .ezdefi-payment .payment-amount span.copy-content {
+    max-width: 100px;
+  }
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard {
+  padding: 1px 22px 1px 6px;
+  background-color: rgba(0, 0, 0, 0.03);
+  position: relative;
+  border-radius: 4px;
+  cursor: pointer;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard {
+    max-width: 160px;
+    display: inline-block;
+  }
+  #whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard span.copy-content {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: inline-block;
+    float: left;
+  }
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard:before {
+  content: "";
+  display: none;
+  position: absolute;
+  z-index: 9998;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #333;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard:after {
+  content: "Copy to Clipboard";
+  display: none;
+  position: absolute;
+  z-index: 9999;
+  top: calc(100% + 5px);
+  left: 50%;
+  width: 130px;
+  height: auto;
+  color: #fff;
+  font-size: 12px;
+  transform: translateX(-50%);
+  padding: 3px 6px;
+  text-align: center;
+  background: #333;
+  border-radius: 3px;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard:hover:before, #whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard:hover:after {
+  display: block;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard.copied:after {
+  content: "Copied!";
+  width: auto;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard img {
+  width: 14px;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 3px;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .note {
+  color: #f73f2e;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment .note {
+    text-align: left;
+    font-size: 15px;
+    margin-bottom: 0.5rem;
+  }
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment span.currency {
   text-transform: uppercase;
 }
-#whmcs_ezdefi_qrcode button.submitBtn {
-  margin-bottom: 20px;
+#whmcs_ezdefi_qrcode .ezdefi-payment .app-link-list a {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .app-link-list a img {
+  width: 20px;
+  margin-right: 5px;
+}
+#whmcs_ezdefi_qrcode .whmcs-ezdefi-loader {
+  border: 3px solid #eee;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  border-top: 3px solid #333;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 20px auto;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /*# sourceMappingURL=ezdefi-qrcode.css.map */

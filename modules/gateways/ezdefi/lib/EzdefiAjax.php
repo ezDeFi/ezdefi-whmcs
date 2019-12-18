@@ -199,22 +199,33 @@ class EzdefiAjax
 			</p>
 			<p>You have <span class="count-down" data-endtime="<?php echo $payment['expiredTime']; ?>"></span> to scan this QR Code</p>
 			<p>
-				<a href="<?php echo $payment['deepLink']; ?>">
-					<img class="qrcode" src="<?php echo $payment['qr']; ?>" />
+				<a class="qrcode" href="<?php echo $payment['deepLink']; ?>">
+					<img src="<?php echo $payment['qr']; ?>" />
 				</a>
 			</p>
-			<?php if($payment['amountId'] == true) : ?>
-				<p>
-                    <strong>Pay Manually:</strong> <?php echo $payment['token']['name'] . ' ' . $payment['token']['symbol']; ?><br/>
-					<strong>Address:</strong> <?php echo $payment['to']; ?><br/>
-					<strong>Amount:</strong> <?php echo $value; ?> <span class="currency"><?php echo $payment['currency']; ?></span><br/>
-				</p>
-				<p>You have to pay exact amount so that your order can be handle property. If you have difficulty for sending exact amount, try to use <a href="" class="ezdefiEnableBtn">ezDeFi Wallet</a></p>
+			<?php if(isset( $payment['amountId'] ) && $payment['amountId'] == true) : ?>
+                <p class="receive-address">
+                    <strong>Address:</strong>
+                    <span class="copy-to-clipboard" data-clipboard-text="<?php echo $payment['to']; ?>" title="Copy to clipboard">
+                        <span class="copy-content"><?php echo $payment['to']; ?></span>
+                        <img src="<?php echo $this->db->getSystemUrl() .  '/assets/img/copy-icon.svg'; ?>" />
+                    </span>
+                </p>
+                <p class="payment-amount">
+                    <strong>Amount:</strong>
+                    <span class="copy-to-clipboard" data-clipboard-text="<?php echo $payment['originValue']; ?>" title="Copy to clipboard">
+                        <span class="copy-content"><?php echo $payment['originValue']; ?></span>
+                        <span class="amount"><?php echo $payment['token']['symbol'] ?></span>
+                        <img src="<?php echo $this->db->getSystemUrl() . '/assets/img/copy-icon.svg'; ?>" />
+                    </span>
+                </p>
+                <p class="note">You have to pay exact amount so that your order can be handle property.<br/></p>
+                <p class="note">If you have difficulty for sending exact amount, try to use <a href="" class="ezdefiEnableBtn">ezDeFi Wallet</a></p>
 			<?php else : ?>
-				<p>
-					<a href="">Download ezDeFi for IOS</a><br />
-					<a href="">Download ezDeFi for Android</a>
-				</p>
+                <p class="app-link-list">
+                    <a href=""><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/android-icon.png'; ?>" />Download ezDefi for IOS</a>
+                    <a href=""><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/ios-icon.png'; ?>" />Download ezDefi for Android</a>
+                </p>
 			<?php endif; ?>
 		</div>
 		<?php return ob_get_clean();

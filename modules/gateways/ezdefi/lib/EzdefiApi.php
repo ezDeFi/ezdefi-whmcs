@@ -175,4 +175,19 @@ class EzdefiApi {
 
 		return $response['data'];
 	}
+
+	public function getTokenExchanges($value, $from, $to)
+	{
+		$url = "token/exchanges?amount=$value&from=$from&to=$to";
+
+		$response = $this->call( $url, 'get' );
+
+		$response = json_decode( $response, true );
+
+		if( $response['code'] < 0 ) {
+			return null;
+		}
+
+		return $response['data'];
+	}
 }
