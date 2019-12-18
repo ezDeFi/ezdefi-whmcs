@@ -124,8 +124,8 @@ class EzdefiDb {
 			Capsule::schema()->create('tblezdefiamountids', function($table) {
 				$table->increments('id');
 				$table->integer('amount_key');
-				$table->decimal('price', 18, 10);
-				$table->decimal('amount_id', 18, 10);
+				$table->decimal('price', 20, 12);
+				$table->decimal('amount_id', 20, 12);
 				$table->string('currency');
 				$table->timestamp('expired_time');
 				$table->unique(['amount_id', 'currency']);
@@ -147,10 +147,13 @@ class EzdefiDb {
 
 		try {
 			Capsule::schema()->create('tblezdefiexceptions', function($table) {
-				$table->decimal('amount_id', 18, 10);
+				$table->increments('id');
+				$table->decimal('amount_id', 20, 12);
 				$table->string('currency');
 				$table->integer('order_id');
-				$table->timestamp('created_at');
+				$table->string('status');
+				$table->string('payment_method');
+				$table->string('explorer_url');
 			});
 
 			return true;
@@ -167,21 +170,25 @@ class EzdefiDb {
 		try {
 			$pdo->exec("
 				CREATE PROCEDURE IF NOT EXISTS `ezdefi_generate_amount_id`(
-		            IN value DECIMAl(18,10),
+		            IN value DECIMAl(20,12),
 				    IN token VARCHAR(10),
 				    IN decimal_number INT(2),
 				    IN life_time INT(11),
-				    OUT amount_id DECIMAL(18,10)
+				    OUT amount_id DECIMAL(20,12)
 				)
 				BEGIN
 				    DECLARE unique_id INT(11) DEFAULT 0;
 				    IF EXISTS (SELECT 1 FROM tblezdefiamountids WHERE `currency` = token AND `price` = value) THEN
-				        SELECT MIN(t1.amount_key+1) INTO unique_id FROM tblezdefiamountids t1 LEFT JOIN tblezdefiamountids t2 ON t1.amount_key + 1 = t2.amount_key AND t2.price = value AND t2.currency = token AND t2.expired_time > NOW() WHERE t2.amount_key IS NULL;
-				        IF((unique_id % 2) = 0) THEN
-				            SET amount_id = value + ((unique_id / 2) / POW(10, decimal_number));
-				        ELSE
-				            SET amount_id = value - ((unique_id - (unique_id DIV 2)) / POW(10, decimal_number));
-				        END IF;
+				        IF EXISTS (SELECT 1 FROM tblezdefiamountids WHERE `currency` = token AND `price` = value AND `amount_key` = 0 AND `expired_time` > NOW()) THEN
+					        SELECT MIN(t1.amount_key+1) INTO unique_id FROM tblezdefiamountids t1 LEFT JOIN tblezdefiamountids t2 ON t1.amount_key + 1 = t2.amount_key AND t2.price = value AND t2.currency = token AND t2.expired_time > NOW() WHERE t2.amount_key IS NULL;
+					        IF((unique_id % 2) = 0) THEN
+					            SET amount_id = value + ((unique_id / 2) / POW(10, decimal_number));
+					        ELSE
+					            SET amount_id = value - ((unique_id - (unique_id DIV 2)) / POW(10, decimal_number));
+					        END IF;
+			            ELSE
+			                SET amount_id = value;
+			            END IF;
 				    ELSE
 				        SET amount_id = value;
 				    END IF;
