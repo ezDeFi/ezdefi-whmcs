@@ -1,4 +1,10 @@
 #Payment-Gateway-Config-ezdefi {
+  table-layout: fixed;
+
+  td.fieldarea {
+    overflow: auto;
+  }
+
   span.error {
     display: block;
     color: #cc0000;;
@@ -51,8 +57,12 @@
           }
 
           &.name {
-            min-width: 150px;
+            min-width: 200px;
             text-transform: capitalize;
+          }
+
+          &.discount, &.lifetime, &.decimal {
+            min-width: 80px;
           }
 
           &.wallet {
@@ -114,6 +124,14 @@
                 }
               }
             }
+          }
+
+          &.block_confirm {
+            min-width: 136px;
+          }
+
+          &.actions {
+            min-width: 100px;
           }
 
           input {

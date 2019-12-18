@@ -73,7 +73,7 @@ jQuery(function($) {
 
         var tableHead = $(
             "<thead>" +
-            "<tr><th></th><th></th><th>Currency</th><th>Discount</th><th>Expiration</th><th>Wallet</th><th>BC</th><th>Decimal</th><th></th></tr>" +
+            "<tr><th></th><th></th><th>Currency</th><th>Discount</th><th>Expiration</th><th>Wallet</th><th>Block Confirmation</th><th>Decimal</th><th></th></tr>" +
             "</thead>"
         );
         tableHead.appendTo(table);
@@ -82,7 +82,7 @@ jQuery(function($) {
         tableBody.appendTo(table);
 
         var tableFoot = $(
-            "<tfoot><tr><td colspan='6'><button class='saveBtn'>Save currency</button> <button class='addBtn'>Add currency</button></td></tr></tfoot>"
+            "<tfoot><tr><td colspan='6'><button class='saveBtn btn btn-primary btn-sm'>Save currency</button> <button class='addBtn btn btn-primary btn-sm'>Add currency</button></td></tr></tfoot>"
         );
         tableFoot.appendTo(table);
     };
@@ -236,13 +236,13 @@ jQuery(function($) {
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[0][discount]' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[0][lifetime]' /> second</div></td>" +
+                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[0][lifetime]' /> s</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[0][wallet]' /></div></td>" +
-                "<td class='block_comfirm'><div class='view'></div><div class='edit'><input type='number' name='currency[0][block_confirm]' /></div></td>" +
+                "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[0][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[0][decimal]' /></div></td>" +
-                "<td>" +
-                    "<div class='view'><a class='editBtn' href=''>Edit</a> <a class='deleteBtn' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
+                "<td class='actions'>" +
+                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
+                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
                 "</td>" +
             "</tr>" +
             "<tr class='editing'>" +
@@ -261,13 +261,13 @@ jQuery(function($) {
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[1][discount]' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[1][lifetime]' /> second</div></td>" +
+                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[1][lifetime]' /> s</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[1][wallet]' /></div></td>" +
-                "<td class='block_comfirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
+                "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' /></div></td>" +
-                "<td>" +
-                    "<div class='view'><a class='editBtn' href=''>Edit</a> <a class='deleteBtn' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
+                "<td class='actions'>" +
+                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
+                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
                 "</td>" +
             "</tr>"
         );
@@ -295,13 +295,13 @@ jQuery(function($) {
                         "</select></div>" +
                     "</td>" +
                     "<td class='discount'><div class='view'><span>"+((config['discount'].length > 0) ? config['discount'] : 0)+"%</span></div><div class='edit'><input type='number' name='currency["+i+"][discount]' value='"+config['discount']+"' /> %</div></td>" +
-                    "<td class='lifetime'><div class='view'><span>"+((config['lifetime']).length > 0 ? config['lifetime'] + 's' : '')+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+config['lifetime']+"' /> second</div></td>" +
+                    "<td class='lifetime'><div class='view'><span>"+((config['lifetime']).length > 0 ? config['lifetime'] + 's' : '')+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+config['lifetime']+"' /> s</div></td>" +
                     "<td class='wallet'><div class='view'><span>"+config['wallet']+"</span></div><div class='edit'><input type='text' name='currency["+i+"][wallet]' value='"+config['wallet']+"' /></div></td>" +
-                    "<td class='block_comfirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
+                    "<td class='block_confirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
                     "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' /></div></td>" +
-                    "<td>" +
-                    "<div class='view'><a class='editBtn' href=''>Edit</a> <a class='deleteBtn' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
+                    "<td class='actions'>" +
+                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
+                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
                     "</td>" +
                 "</tr>";
             rows += row;

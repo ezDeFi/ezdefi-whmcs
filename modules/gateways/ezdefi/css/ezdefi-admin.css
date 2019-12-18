@@ -1,3 +1,9 @@
+#Payment-Gateway-Config-ezdefi {
+  table-layout: fixed;
+}
+#Payment-Gateway-Config-ezdefi td.fieldarea {
+  overflow: auto;
+}
 #Payment-Gateway-Config-ezdefi span.error {
   display: block;
   color: #cc0000;
@@ -35,8 +41,11 @@
   width: 26px;
 }
 #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.name {
-  min-width: 150px;
+  min-width: 200px;
   text-transform: capitalize;
+}
+#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.discount, #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.lifetime, #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.decimal {
+  min-width: 80px;
 }
 #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.wallet input {
   width: 100%;
@@ -87,6 +96,12 @@
     -ms-transform: translateY(-4px);
     transform: translateY(-4px);
   }
+}
+#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.block_confirm {
+  min-width: 136px;
+}
+#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.actions {
+  min-width: 100px;
 }
 #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td input {
   font-size: 13px;
