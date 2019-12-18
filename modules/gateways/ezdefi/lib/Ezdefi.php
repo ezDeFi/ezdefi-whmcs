@@ -58,24 +58,24 @@ class Ezdefi {
 			'apiKey' => array(
 				'FriendlyName' => 'Gateway API Key',
 				'Type' => 'text',
-				'Default' => '',
+				'Default' => 'https://merchant-api.ezdefi.com/v1/',
 				'Description' => 'Enter your gateway API Key',
 			),
-			'simpleMethod' => array(
-				'FriendlyName' => 'Simple method',
+			'amountId' => array(
+				'FriendlyName' => 'Pay with any crypto wallet',
 				'Type' => 'yesno',
-				'Description' => 'Allow client to pay without using ezDefi wallet',
+				'Description' => 'This method will adjust payment amount of each order by an acceptable number to help payment gateway identifying the uniqueness of that order.',
 			),
 			'ezdefiWallet' => array(
-				'FriendlyName' => 'ezDefi Wallet',
+				'FriendlyName' => 'Pay with ezDeFi wallet',
 				'Type' => 'yesno',
-				'Description' => 'Allow client to pay using ezDefi wallet',
+				'Description' => 'This method is more powerful when amount uniqueness above method reaches allowable limit. Users just need to install ezDeFi wallet then import their private key to pay using qrCode.',
 			),
 			'variation' => array(
 				'FriendlyName' => 'Acceptable Variation',
 				'Type' => 'text',
 				'Default' => '0.01',
-				'Description' => 'Description',
+				'Description' => 'Allowable amount variation (%)',
 			)
 		);
 	}

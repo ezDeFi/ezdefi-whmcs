@@ -1,7 +1,8 @@
 jQuery(function($) {
     var selectors = {
         exceptionTable: '#ezdefi-exception-table',
-        amountIdCheckbox: 'input[name="field[simpleMethod]"]',
+        amountIdCheckbox: 'input[name="field[amountId]"]',
+        ezdefiWalletCheckbox: 'input[name="field[ezdefiWallet]"]',
         assignBtn: '.assignBtn',
         removeBtn: '.removeBtn'
     };
@@ -44,7 +45,6 @@ jQuery(function($) {
         var removeCurrency = this.removeCurrency.bind(this);
         var toggleEdit = this.toggleEdit.bind(this);
         var saveCurrency = self.saveCurrency.bind(this);
-        var checkWalletAddress = this.checkWalletAddress.bind(this);
         var toggleAmountSetting = this.toggleAmountSetting.bind(this);
         var onAssign = this.onAssign.bind(this);
         var onRemove = this.onRemove.bind(this);
@@ -57,7 +57,6 @@ jQuery(function($) {
             .on('click', '.cancelBtn', toggleEdit)
             .on('click', '.deleteBtn', removeCurrency)
             .on('click', '.saveBtn', saveCurrency)
-            .on('keyup', '.wallet input', checkWalletAddress)
             .on('change', selectors.amountIdCheckbox, toggleAmountSetting)
             .on('click', selectors.assignBtn, onAssign)
             .on('click', selectors.removeBtn, onRemove);
@@ -74,7 +73,7 @@ jQuery(function($) {
 
         var tableHead = $(
             "<thead>" +
-            "<tr><th></th><th></th><th>Currency</th><th>Discount</th><th>Lifetime</th><th>Wallet</th><th>BC</th><th>Decimal</th><th></th></tr>" +
+            "<tr><th></th><th></th><th>Currency</th><th>Discount</th><th>Expiration</th><th>Wallet</th><th>BC</th><th>Decimal</th><th></th></tr>" +
             "</thead>"
         );
         tableHead.appendTo(table);
@@ -236,8 +235,8 @@ jQuery(function($) {
                         "<option value='nusd' selected='selected'>nusd</option>" +
                     "</select></div>" +
                 "</td>" +
-                "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[0][discount]' /></div></td>" +
-                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[0][lifetime]' /></div></td>" +
+                "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[0][discount]' /> %</div></td>" +
+                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[0][lifetime]' /> second</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[0][wallet]' /></div></td>" +
                 "<td class='block_comfirm'><div class='view'></div><div class='edit'><input type='number' name='currency[0][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[0][decimal]' /></div></td>" +
@@ -261,8 +260,8 @@ jQuery(function($) {
                     "<option value='ntf' selected='selected'>ntf</option>" +
                     "</select></div>" +
                 "</td>" +
-                "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[1][discount]' /></div></td>" +
-                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[1][lifetime]' /></div></td>" +
+                "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[1][discount]' /> %</div></td>" +
+                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[1][lifetime]' /> second</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[1][wallet]' /></div></td>" +
                 "<td class='block_comfirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' /></div></td>" +
@@ -295,8 +294,8 @@ jQuery(function($) {
                             "<option value='"+config['symbol']+"' selected='selected'>"+config['symbol']+"</option>" +
                         "</select></div>" +
                     "</td>" +
-                    "<td class='discount'><div class='view'><span>"+config['discount']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][discount]' value='"+config['discount']+"' /></div></td>" +
-                    "<td class='lifetime'><div class='view'><span>"+config['lifetime']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+config['lifetime']+"' /></div></td>" +
+                    "<td class='discount'><div class='view'><span>"+((config['discount'].length > 0) ? config['discount'] : 0)+"%</span></div><div class='edit'><input type='number' name='currency["+i+"][discount]' value='"+config['discount']+"' /> %</div></td>" +
+                    "<td class='lifetime'><div class='view'><span>"+((config['lifetime']).length > 0 ? config['lifetime'] + 's' : '')+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+config['lifetime']+"' /> second</div></td>" +
                     "<td class='wallet'><div class='view'><span>"+config['wallet']+"</span></div><div class='edit'><input type='text' name='currency["+i+"][wallet]' value='"+config['wallet']+"' /></div></td>" +
                     "<td class='block_comfirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
                     "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' /></div></td>" +
@@ -335,19 +334,31 @@ jQuery(function($) {
                         }
                     },
                     number: true,
-                    min: 0
+                    min: 0,
+                    max: 100
                 },
-                'field[decimal]': {
+                'field[amountId]': {
                     required: {
                         depends: function(element) {
-                            return self.form.find(selectors.amountIdCheckbox).is(':checked');
+                            return ! self.form.find(selectors.ezdefiWalletCheckbox).is(':checked');
                         }
-                    },
-                    digits: true,
-                    min: 2,
-                    max: 10
+                    }
+                },
+                'field[ezdefiWallet]': {
+                    required: {
+                        depends: function(element) {
+                            return ! self.form.find(selectors.amountIdCheckbox).is(':checked');
+                        }
+                    }
                 }
-
+            },
+            messages: {
+                'field[amountId]': {
+                    required: 'Please select at least one payment method'
+                },
+                'field[ezdefiWallet]': {
+                    required: 'Please select at least one payment method'
+                }
             }
         });
 
@@ -410,6 +421,26 @@ jQuery(function($) {
                 });
             }
 
+            if(name.indexOf('block_confirm') > 0) {
+                var $input = $('input[name="'+name+'"]');
+                $input.rules('add', {
+                    min: 0
+                });
+            }
+
+            if(name.indexOf('decimal') > 0) {
+                var $input = $('input[name="'+name+'"]');
+                $input.rules('add', {
+                    required: true,
+                    min: 2,
+                    max: 12,
+                    messages: {
+                        required: 'Please enter number of decimal',
+                        min: 'Please enter number equal or greater than 2',
+                    }
+                });
+            }
+
             if(name.indexOf('lifetime') > 0) {
                 var $input = $('input[name="'+name+'"]');
                 $input.rules('add', {
@@ -417,7 +448,8 @@ jQuery(function($) {
                         depends: function(element) {
                             return ($input.val().length > 0);
                         }
-                    }
+                    },
+                    min: 0
                 });
             }
         });
@@ -435,69 +467,6 @@ jQuery(function($) {
                 $(this).hide();
             });
         }
-    };
-
-    whmcs_ezdefi_admin.prototype.checkWalletAddress = function(e) {
-        var self = this;
-        var apiUrl = self.form.find('input[name="field[apiUrl]"]').val();
-        var apiKey = self.form.find('input[name="field[apiKey]"]').val();
-        var $input = $(e.target);
-        var $row = $(e.target).closest('tr');
-        var currency_chain = $row.find('.currency-chain').val();
-        var $checking = $(
-            "<div class='checking'><span class='text'>Checking wallet address</span>" +
-            "<div class='dots'>" +
-            "<div class='dot'></div>" +
-            "<div class='dot'></div>" +
-            "<div class='dot'></div>" +
-            "</div>" +
-            "</div>"
-        );
-        $input.rules('add', {
-            remote: {
-                depends: function(element) {
-                    return apiUrl !== '' && apiKey !== '' && currency_chain !== '';
-                },
-                param: {
-                    url: self.configUrl,
-                    type: 'POST',
-                    data: {
-                        action: 'check_wallet',
-                        address: function () {
-                            return $input.val();
-                        },
-                        apiUrl: function() {
-                            return apiUrl;
-                        },
-                        apiKey: function() {
-                            return apiKey;
-                        },
-                        currency_chain: function() {
-                            return currency_chain;
-                        }
-                    },
-                    beforeSend: function() {
-                        $input.closest('td').find('span.error').hide();
-                        $input.closest('.edit').append($checking);
-                    },
-                    complete: function (data) {
-                        var response = data.responseText;
-                        var $inputWrapper = $input.closest('td');
-                        if (response === 'true') {
-                            $inputWrapper.find('.checking').empty().append('<span class="correct">Correct</span>');
-                            window.setTimeout(function () {
-                                $inputWrapper.find('.checking').remove();
-                            }, 1000);
-                        } else {
-                            $inputWrapper.find('.checking').remove();
-                        }
-                    }
-                }
-            },
-            messages: {
-                remote: "This address is not active. Please check again in <a href='http://163.172.170.35/profile/info'>your profile</a>."
-            }
-        });
     };
 
     whmcs_ezdefi_admin.prototype.initCurrencySelect = function(element) {
