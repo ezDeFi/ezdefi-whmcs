@@ -42,7 +42,7 @@
                     {elseif $method === 'ezdefi_wallet'}
                         <a href="#{$method}" id="tab-{$method}" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">
                             <span class="large-screen">Pay with ezDeFi wallet</span>
-                            <span class="small-screen">ezDeFi wallet</span>
+                            <span class="small-screen" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">ezDeFi wallet</span>
                         </a>
                     {/if}
                 </li>

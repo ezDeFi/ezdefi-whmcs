@@ -79,10 +79,12 @@
 
         .item__text {
           text-align: left;
-          flex-grow: 1;
+          width: calc(100% - 28px);
 
           .item__price {
-
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
 
           .item__info {
@@ -154,9 +156,15 @@
             padding-left: 44px;
 
             @media screen and (max-width: 575.98px) {
-              background-size: 16px 16px;
-              background-position: 8px center;
-              padding-left: 20px;
+              background-image: none !important;
+              padding-left: 0 !important;
+
+              span.small-screen {
+                background-size: 16px 16px;
+                background-position: 0 center;
+                padding-left: 20px;
+                background-repeat: no-repeat;
+              }
             }
           }
 

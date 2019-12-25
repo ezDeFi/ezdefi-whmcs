@@ -149,30 +149,29 @@ jQuery(function($) {
 
     whmcs_ezdefi_qrcode.prototype.checkOrderStatus = function() {
         var self = this;
-        self.checkOrderLoop = setInterval(function() {
-            $.ajax({
-                url: self.urlData.ajaxUrl,
-                method: 'post',
-                data: {
-                    action: 'check_invoice',
-                    invoice_id: self.paymentData.uoid
-                },
-                beforeSend: function(jqXHR) {
-                    self.xhrPool.push(jqXHR);
-                },
-                success: function(response) {
-                    if(response.toLowerCase() === 'paid') {
-                        self.success();
-                    }
-                }
-            });
-        }, 600);
+        // self.checkOrderLoop = setInterval(function() {
+        //     $.ajax({
+        //         url: self.urlData.ajaxUrl,
+        //         method: 'post',
+        //         data: {
+        //             action: 'check_invoice',
+        //             invoice_id: self.paymentData.uoid
+        //         },
+        //         beforeSend: function(jqXHR) {
+        //             self.xhrPool.push(jqXHR);
+        //         },
+        //         success: function(response) {
+        //             if(response.toLowerCase() === 'paid') {
+        //                 self.success();
+        //             }
+        //         }
+        //     });
+        // }, 600);
     };
 
     whmcs_ezdefi_qrcode.prototype.setTimeRemaining = function(panel) {
         var self = this;
-        clearInterval(self.timeLoop);
-        self.timeLoop = setInterval(function() {
+        var timeLoop = setInterval(function() {
             var endTime = panel.find('.count-down').attr('data-endtime');
             var t = self.getTimeRemaining(endTime);
             var countDown = panel.find(selectors.ezdefiPayment).find('.count-down');
@@ -217,7 +216,7 @@ jQuery(function($) {
         setTimeout(function(){ window.location = self.urlData.clientArea; }, 3000);
     };
 
-    whmcs_ezdefi_qrcode.prototype.timeout = function() {
+    whmcs_ezdefi_qrcode.prototype.timeout = function(panel) {
         panel.find('.qrcode').addClass('expired');
     };
 

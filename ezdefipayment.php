@@ -49,9 +49,10 @@ $to = implode(',', array_map(function ( $currency ) {
 $exchanges = $api->getTokenExchanges($amount, $currency, $to);
 
 foreach ($currency_config as $i => $c) {
-	$index = array_search( $c['symbol'], array_column( $exchanges, 'token' ) );
+	$discount = (intval($c['discount']) > 0) ? $c['discount'] : 0;
+	$index = array_search( $c['symbol'], array_column($exchanges, 'token'));
 	$amount = $exchanges[$index]['amount'];
-	$amount = $amount - ( $amount * ( $c['discount'] / 100 ) );
+	$amount = $amount - ($amount * ($discount / 100));
 	$currency_config[$i]['price'] = number_format( $amount, 8 );
 }
 

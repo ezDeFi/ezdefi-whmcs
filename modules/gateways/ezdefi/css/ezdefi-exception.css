@@ -1,0 +1,132 @@
+#ezdefi-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 99;
+  display: none;
+  overflow: hidden;
+  outline: 0;
+}
+#ezdefi-modal #ezdefi-modal__overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 98;
+}
+#ezdefi-modal #ezdefi-modal__content {
+  width: 80%;
+  margin: 0 auto;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99;
+  height: 80%;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table {
+  width: 100%;
+  max-height: calc(100% - 58px);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table thead {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table thead th {
+  padding: 0 16px;
+  height: 44px;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody {
+  display: block;
+  max-height: calc(100% - 88px);
+  overflow: auto;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr td {
+  height: 40px;
+  padding: 0 16px;
+  overflow: hidden;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr td .explorer-url {
+  display: block;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr td.currency-column {
+  text-transform: uppercase;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr td.invoice-select-column {
+  min-width: 250px;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tfoot {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tfoot tr {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tfoot tr td {
+  padding: 0 16px;
+  height: 44px;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tfoot tr td ul.pagination {
+  margin: 6px 0 0 0 !important;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tfoot tr td ul.pagination li a {
+  padding: 2px 6px;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search {
+  padding: 0 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  height: 58px;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search input, #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search select {
+  display: block;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  margin: 4px;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search a.clearFilterBtn {
+  margin-left: 4px;
+}
+
+.whmcs-ezdefi-loader {
+  border: 2px solid #eee;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  border-top: 2px solid #333;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+body.ezdefi-modal-open {
+  overflow: hidden;
+}
+
+/*# sourceMappingURL=ezdefi-exception.css.map */

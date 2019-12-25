@@ -150,10 +150,10 @@ class EzdefiDb {
 				$table->increments('id');
 				$table->decimal('amount_id', 20, 12);
 				$table->string('currency');
-				$table->integer('order_id');
-				$table->string('status');
-				$table->string('payment_method');
-				$table->string('explorer_url');
+				$table->integer('order_id')->nullable();
+				$table->string('status')->nullable();
+				$table->string('payment_method')->nullable();
+				$table->string('explorer_url')->nullable();
 			});
 
 			return true;
@@ -193,9 +193,8 @@ class EzdefiDb {
 				        SET amount_id = value;
 				    END IF;
 				    INSERT INTO tblezdefiamountids (amount_key, price, amount_id, currency, expired_time) 
-				        VALUES (unique_id, value, amount_id, token, NOW() + INTERVAL life_time SECOND)
-	                    ON DUPLICATE KEY UPDATE `expired_time` = NOW() + INTERVAL life_time SECOND;
-	                INSERT INTO tblezdefiexceptions (amount_id, currency) VALUES (amount_id, token);
+				        VALUES (unique_id, value, amount_id, token, NOW() + INTERVAL life_time SECOND + INTERVAL 10 SECOND)
+	                    ON DUPLICATE KEY UPDATE `expired_time` = NOW() + INTERVAL life_time SECOND + INTERVAL 10 SECOND;
 				END
 			");
 
@@ -286,22 +285,6 @@ class EzdefiDb {
 		return $amount_id;
 	}
 
-	public function delete_amount_id_exception($amount_id, $currency)
-	{
-		return Capsule::table('tblezdefiexceptions')
-		                     ->where('amount_id', $amount_id)
-		                     ->where('currency', $currency)
-		                     ->delete();
-	}
-
-	public function add_uoid_to_exception($amount_id, $currency, $uoid)
-	{
-		return Capsule::table('tblpaymentgateways')
-						->where('amount_id', $amount_id)
-						->where('currency', $currency)
-						->update(['order_id' => $uoid]);
-	}
-
 	public function get_amount_decimals()
 	{
 		return Capsule::table('tblpaymentgateways')
@@ -318,11 +301,9 @@ class EzdefiDb {
 		              ->value('value');
 	}
 
-	public function get_exceptions()
+	public function get_invoice($id)
 	{
-		return Capsule::table('tblezdefiexceptions')
-						->get();
-
+		return Capsule::table('tblinvoices')->find($id);
 	}
 
 	public function get_unpaid_invoices()
@@ -346,8 +327,96 @@ class EzdefiDb {
 
 	public function update_invoice_status($invoiceId, $status)
 	{
-		return Capsule::table('tblinvoices')
-					->where('id', $invoiceId)
-					->update(['status' => $status]);
+		$sql = Capsule::table('tblinvoices')->where('id', $invoiceId);
+
+		if($status === 'Paid') {
+			return $sql->update([
+				'status' => $status,
+				'datepaid' => date('Y-m-d H:i:s')
+			]);
+		}
+
+		return $sql->update([
+			'status' => $status,
+			'datepaid' => null
+		]);
+	}
+
+	public function add_exception($data)
+	{
+		return Capsule::table('tblezdefiexceptions')->insert($data);
+	}
+
+	public function get_exceptions($params = array(), $offset, $per_page)
+	{
+		$sql = Capsule::table('tblezdefiexceptions')
+			->leftJoin('tblinvoices', 'tblezdefiexceptions.order_id', '=', 'tblinvoices.id')
+			->leftJoin('tblclients', 'tblinvoices.userid', '=', 'tblclients.id')
+			->select('tblezdefiexceptions.*', 'tblclients.firstname', 'tblclients.lastname', 'tblclients.id as clientid');
+
+		foreach($params as $column => $param) {
+			if(!empty($param)) {
+				switch ($column) {
+					case 'clientid':
+						$sql = $sql->where('tblclients.id', '=', $param);
+						break;
+					case 'amount_id':
+						$amount_id = $params['amount_id'];
+						$sql = $sql->where('amount_id', 'rlike', '^'.$amount_id);
+						break;
+					default:
+						$sql = $sql->where("tblezdefiexceptions.$column", '=', "$param");
+				}
+			}
+		}
+
+		$sql = $sql->orderBy('tblezdefiexceptions.id', 'desc');
+
+		$data = array();
+
+		$data['total'] = $sql->count();
+
+		$data['data'] = $sql->offset($offset)->limit($per_page)->get();
+
+		return $data;
+	}
+
+	public function delete_exceptions($amount_id, $currency, $invoice_id)
+	{
+		$sql = Capsule::table('tblezdefiexceptions')
+		              ->where('amount_id', $amount_id)
+		              ->where('currency', $currency)
+		              ->where('order_id', $invoice_id);
+
+		if(is_null($invoice_id)) {
+			return $sql->limit(1)->delete();
+		}
+
+		return $sql->delete();
+	}
+
+	public function delete_exceptions_by_invoice_id($invoice_id)
+	{
+		return Capsule::table('tblezdefiexceptions')->where('order_id', $invoice_id)->delete();
+	}
+
+	public function update_exception($wheres = array(), $data = array())
+	{
+		$sql = Capsule::table('tblezdefiexceptions');
+
+		if(empty($data) || empty($wheres)) {
+			return;
+		}
+
+		foreach($wheres as $column => $value)  {
+			$sql->where($column, $value);
+		}
+
+		return $sql->update($data);
+	}
+
+	public function get_clients()
+	{
+		return Capsule::table('tblclients')->get();
 	}
 }

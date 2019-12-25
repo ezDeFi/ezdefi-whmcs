@@ -72,7 +72,12 @@
 }
 #whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__text {
   text-align: left;
-  flex-grow: 1;
+  width: calc(100% - 28px);
+}
+#whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__text .item__price {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #whmcs_ezdefi_qrcode .currency-select .currency-item__wrap .currency-item .item__text .item__info {
   flex-grow: 1;
@@ -137,9 +142,14 @@
 }
 @media screen and (max-width: 575.98px) {
   #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a#tab-ezdefi_wallet {
+    background-image: none !important;
+    padding-left: 0 !important;
+  }
+  #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a#tab-ezdefi_wallet span.small-screen {
     background-size: 16px 16px;
-    background-position: 8px center;
+    background-position: 0 center;
     padding-left: 20px;
+    background-repeat: no-repeat;
   }
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a span.large-screen {

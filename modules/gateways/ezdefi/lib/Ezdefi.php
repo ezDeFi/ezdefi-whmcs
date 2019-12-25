@@ -5,6 +5,8 @@ namespace WHMCS\Module\Gateway\Ezdefi;
 require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '\includes\invoicefunctions.php';
 
 class Ezdefi {
+	const EXPLORER_URL = 'https://explorer.nexty.io/tx/';
+
 	private static $instance = null;
 
 	protected $config;
@@ -15,6 +17,7 @@ class Ezdefi {
 	{
 		$this->db = new EzdefiDb();
 		$this->api = new EzdefiApi();
+		$this->ajax = new EzdefiAjax();
 	}
 
 	public static function instance()
@@ -99,25 +102,23 @@ class Ezdefi {
 	{
 		$systemUrl = $this->db->getSystemUrl();
 		$ezdefiConfigUrl = $systemUrl . 'ezdefiajax.php';
-		$unpaid_invoices = $this->db->get_unpaid_invoices();
-		$currency = $this->db->getDefaultCurrency();
-		foreach($unpaid_invoices as $invoice) {
-		    $invoice->currency = $currency;
-        }
+		$ezdefiAdminUrl = $systemUrl . 'admin/';
 		$data = array(
 			'gateway_params' => $gatewayParams,
 			'config_url' => $ezdefiConfigUrl,
-            'unpaid_invoices' => $unpaid_invoices
+			'admin_url' => $ezdefiAdminUrl,
 		);
 		ob_start(); ?>
 		<link rel="stylesheet" href="<?php echo $systemUrl . '/modules/gateways/ezdefi/css/select2.min.css'; ?>">
 		<link rel="stylesheet" href="<?php echo $systemUrl . '/modules/gateways/ezdefi/css/ezdefi-admin.css'; ?>">
+        <link rel="stylesheet" href="<?php echo $systemUrl . '/modules/gateways/ezdefi/css/ezdefi-exception.css'; ?>">
 		<script type="application/json" id="ezdefi-data"><?php echo json_encode( $data ); ?></script>
 		<script src="<?php echo $systemUrl . '/modules/gateways/ezdefi/js/select2.min.js'; ?>"></script>
 		<script src="<?php echo $systemUrl . '/modules/gateways/ezdefi/js/jquery.validate.min.js'; ?>"></script>
 		<script src="<?php echo $systemUrl . '/modules/gateways/ezdefi/js/jquery.blockUI.js'; ?>"></script>
 		<script src="<?php echo $systemUrl . '/modules/gateways/ezdefi/js/jquery-ui.min.js'; ?>"></script>
 		<script src="<?php echo $systemUrl . '/modules/gateways/ezdefi/js/ezdefi-admin.js'; ?>"></script>
+        <script src="<?php echo $systemUrl . '/modules/gateways/ezdefi/js/ezdefi-exception.js'; ?>"></script>
 		<?php return ob_get_clean();
 	}
 
@@ -140,9 +141,32 @@ class Ezdefi {
 
 	    $status = $payment['status'];
 
-	    $amount_id = $payment['value'] / pow( 10, $payment['decimal'] );
+	    if(isset($payment['amountId']) && $payment['amountId'] === true) {
+		    $amount_id = $payment['originValue'];
+	    } else {
+		    $amount_id = $payment['value'] / pow( 10, $payment['decimal'] );
+	    }
+
+	    $amount_id = number_format( $amount_id, 12 );
 
 	    $currency = $payment['currency'];
+
+	    $exception_data = array(
+		    'status' => strtolower($status),
+		    'explorer_url' => (string) self::EXPLORER_URL . $payment['transactionHash']
+	    );
+
+	    $wheres = array(
+		    'amount_id' => $amount_id,
+		    'currency' => (string) $currency,
+		    'order_id' => (int) $invoiceId
+	    );
+
+	    if( isset( $payment['amountId'] ) && $payment['amountId'] = true ) {
+		    $wheres['payment_method'] = 'amount_id';
+	    } else {
+		    $wheres['payment_method'] = 'ezdefi_wallet';
+	    }
 
 	    logTransaction('ezdefi', $_GET, $status);
 
@@ -161,9 +185,15 @@ class Ezdefi {
 			    'ezdefi'
 		    );
 
-		    $this->db->delete_amount_id_exception($amount_id, $currency['symbol']);
+		    $this->db->update_exception( $wheres, $exception_data );
+
+		    if( ! isset( $payment['amountId'] ) || ( isset( $payment['amountId'] ) && $payment['amountId'] != true ) ) {
+			    $this->db->delete_exceptions_by_invoice_id( $wheres['order_id'] );
+		    }
 	    } elseif($status === 'EXPIRED_DONE') {
-		    $this->db->add_uoid_to_exception($amount_id, $currency, $invoiceId);
+		    $this->db->update_exception($wheres, $exception_data);
 	    }
+
+	    die();
     }
 }
