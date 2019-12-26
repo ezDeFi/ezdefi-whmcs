@@ -31,6 +31,7 @@ jQuery(function($) {
             self.renderCurrency.call(this, currency)
         }
 
+        self.customValidationRule.call(this);
         self.initValidation();
         self.initSort.call(this);
 
@@ -189,6 +190,14 @@ jQuery(function($) {
         $(rows).appendTo(this.table.find('tbody'));
     };
 
+    whmcs_ezdefi_admin.prototype.customValidationRule = function() {
+        jQuery.validator.addMethod('paymentMethodRequired', function(value, element) {
+            var amount_id_checked = $(selectors.amountIdCheckbox).is(':checked');
+            var ezdefi_wallet_checked = $(selectors.ezdefiWalletCheckbox).is(':checked');
+            return amount_id_checked || ezdefi_wallet_checked;
+        }, 'Please select at least one payment method');
+    };
+
     whmcs_ezdefi_admin.prototype.initValidation = function() {
         var self = this;
 
@@ -218,26 +227,10 @@ jQuery(function($) {
                     max: 100
                 },
                 'field[amountId]': {
-                    required: {
-                        depends: function(element) {
-                            return ! self.form.find(selectors.ezdefiWalletCheckbox).is(':checked');
-                        }
-                    }
+                    paymentMethodRequired: true
                 },
                 'field[ezdefiWallet]': {
-                    required: {
-                        depends: function(element) {
-                            return ! self.form.find(selectors.amountIdCheckbox).is(':checked');
-                        }
-                    }
-                }
-            },
-            messages: {
-                'field[amountId]': {
-                    required: 'Please select at least one payment method'
-                },
-                'field[ezdefiWallet]': {
-                    required: 'Please select at least one payment method'
+                    paymentMethodRequired: true
                 }
             }
         });
