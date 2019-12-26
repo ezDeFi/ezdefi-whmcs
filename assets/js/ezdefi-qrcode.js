@@ -50,10 +50,7 @@ jQuery(function($) {
                     var method = ui.newPanel.attr('id');
                     self.onActivateTab.call(self, method, ui.newPanel);
                 }
-                var url = ui.newTab.find('a').prop('href');
-                if(url) {
-                    location.href = url;
-                }
+                window.history.replaceState(null, null, ui.newPanel.selector);
             }
         });
 
@@ -133,6 +130,7 @@ jQuery(function($) {
         var active = self.$tabs.find('div.ui-tabs-panel[aria-hidden="false"]');
         var method = active.attr('id');
         self.createEzpayPayment.call(self, method).success(function(response) {
+            self.$tabs.find(selectors.panel).empty();
             active.html(response.data);
             self.setTimeRemaining.call(self, active);
             self.$loader.hide();
