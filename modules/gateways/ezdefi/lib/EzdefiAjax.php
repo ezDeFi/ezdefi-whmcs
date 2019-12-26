@@ -389,7 +389,10 @@ class EzdefiAjax
 	    $currency = $this->db->getDefaultCurrency();
 
 	    foreach($unpaid_invoices as $invoice) {
-		    $invoice->currency = $currency;
+	        $invoice->date = date('Y/m/d', strtotime($invoice->date));
+		    $invoice->duedate = date('Y/m/d', strtotime($invoice->duedate));
+		    $invoice->suffix = $currency['suffix'];
+		    $invoice->prefix = $currency['prefix'];
 	    }
 
 	    return $this->json_success_response($unpaid_invoices);

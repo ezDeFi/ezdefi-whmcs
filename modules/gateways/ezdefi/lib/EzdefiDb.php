@@ -107,9 +107,17 @@ class EzdefiDb {
 
 	public function getDefaultCurrency()
 	{
-		return Capsule::table('tblcurrencies')
+		$default = Capsule::table('tblcurrencies')
 		              ->where('default', 1)
-		              ->value('code');
+		              ->first();
+
+		$prefix = $default->prefix;
+		$suffix = $default->suffix;
+
+		return array(
+			'prefix' => $prefix,
+			'suffix' => $suffix
+		);
 	}
 
 	public function createAmountIdTable()
@@ -312,7 +320,8 @@ class EzdefiDb {
 					->join('tblclients', function($join) {
 						$join->on('tblinvoices.userid', '=', 'tblclients.id')->where('tblinvoices.status', '=', 'Unpaid');
 					})
-					->select('tblinvoices.id', 'tblinvoices.total', 'tblinvoices.date', 'tblclients.email')
+					->select('tblinvoices.id', 'tblinvoices.total', 'tblinvoices.date', 'tblinvoices.duedate', 'tblclients.firstname', 'tblclients.lastname')
+					->orderBy('tblinvoices.date', 'desc')
 					->get();
 	}
 

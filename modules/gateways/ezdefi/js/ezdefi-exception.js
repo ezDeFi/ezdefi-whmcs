@@ -295,20 +295,24 @@ jQuery(function($) {
         var $container = $(
             "<div class='select2-order'>" +
             "<div class='select2-order__row'>" +
-            "<div class='left'><strong>Invoice ID:</strong></div>" +
-            "<div class='right'>" + order['id'] + "</div>" +
+            "<div class='left'><strong>Invoice:</strong></div>" +
+            "<div class='right'>#" + order['id'] + "</div>" +
             "</div>" +
             "<div class='select2-order__row'>" +
-            "<div class='left'><strong>Total:</strong></div>" +
-            "<div class='right'>" + order['currency'] + " " + order['total'] + "</div>" +
+            "<div class='left'><strong>Client Name:</strong></div>" +
+            "<div class='right'>" + order['firstname'] + " " + order['lastname'] + "</div>" +
             "</div>" +
             "<div class='select2-order__row'>" +
-            "<div class='left'><strong>Email:</strong></div>" +
-            "<div class='right'>" + order['email'] + "</div>" +
-            "</div>" +
-            "<div class='select2-order__row'>" +
-            "<div class='left'><strong>Date:</strong></div>" +
+            "<div class='left'><strong>Invoice Date:</strong></div>" +
             "<div class='right'>" + order['date'] + "</div>" +
+            "</div>" +
+            "<div class='select2-order__row'>" +
+            "<div class='left'><strong>Due Date:</strong></div>" +
+            "<div class='right'>" + order['duedate'] + "</div>" +
+            "</div>" +
+            "<div class='select2-order__row'>" +
+            "<div class='left'><strong>Total Due:</strong></div>" +
+            "<div class='right'>" + order['prefix'] + order['total'] + " " + order['suffix'] + "</div>" +
             "</div>" +
             "</div>"
         );
@@ -316,7 +320,7 @@ jQuery(function($) {
     };
 
     whmcs_ezdefi_exception.prototype.formatInvoiceSelection = function(order) {
-        return 'Order ID: ' + order['id'];
+        return 'Invoice ID: #' + order['id'];
     };
 
     whmcs_ezdefi_exception.prototype.formatClientOption = function(client) {
