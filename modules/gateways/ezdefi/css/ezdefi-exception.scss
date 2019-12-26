@@ -30,6 +30,13 @@
     z-index: 99;
     height: 80%;
 
+    .select2-container {
+      .select2-selection {
+        border-color: #ccc;
+        height: 30px;
+      }
+    }
+
     #ezdefi-exception-table {
       width: 100%;
       max-height: calc(100% - 58px);
@@ -60,12 +67,15 @@
           table-layout: fixed;
 
           td {
-            height: 40px;
-            padding: 0 16px;
+            padding: 8px 16px;
             overflow: hidden;
 
             .explorer-url {
               display: block;
+            }
+
+            .actions {
+              margin-top: 4px;
             }
 
             &.currency-column {
@@ -120,14 +130,6 @@
         margin: 4px;
         border-radius: 4px;
       }
-
-      .select2-container {
-        .select2-selection {
-          border-color: #ccc;
-          height: 30px;
-        }
-      }
-
       a.clearFilterBtn {
         margin-left: 4px;
       }

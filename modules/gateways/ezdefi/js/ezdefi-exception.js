@@ -181,7 +181,7 @@ jQuery(function($) {
                 "<select name='' id=''></select>" +
                 "</div>" +
                 "<div class='actions'>" +
-                "<a href='' class='showSelectBtn button'>Assign to different order</a>" +
+                "<a href='' class='showSelectBtn button'><img src='"+ self.adminUrl +"images/icons/orders.png' alt=''> Assign to different invoice</a>" +
                 "<a href='' class='hideSelectBtn button' style='display: none'>Cancel</a>" +
                 "</div>" +
                 "</td>" +
