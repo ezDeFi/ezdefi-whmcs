@@ -72,7 +72,7 @@ class EzdefiDb {
 
 		$simple_method = Capsule::table('tblpaymentgateways')
 		              ->where('gateway', 'ezdefi')
-		              ->where('setting', 'simpleMethod')
+		              ->where('setting', 'amountId')
 		              ->value('value');
 
 		if($simple_method === 'on') {
@@ -113,10 +113,12 @@ class EzdefiDb {
 
 		$prefix = $default->prefix;
 		$suffix = $default->suffix;
+		$code = $default->code;
 
 		return array(
 			'prefix' => $prefix,
-			'suffix' => $suffix
+			'suffix' => $suffix,
+			'code' => $code
 		);
 	}
 

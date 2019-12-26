@@ -161,10 +161,12 @@ class EzdefiAjax
 	{
 		$invoice = $this->db->getInvoice($invoiceId);
 
+		$default_currency = $this->db->getDefaultCurrency();
+
 		$order_data = array(
 			'amount' => $invoice->total,
 			'uoid' => $invoiceId,
-			'currency' => $this->db->getDefaultCurrency()
+			'currency' => $default_currency['code']
 		);
 
 		$currency_data = $this->db->getCurrencyBySymbol($symbol);
@@ -247,8 +249,8 @@ class EzdefiAjax
                 <p class="note">If you have difficulty for sending exact amount, try to use <a href="" class="ezdefiEnableBtn">ezDeFi Wallet</a></p>
 			<?php else : ?>
                 <p class="app-link-list">
-                    <a href=""><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/android-icon.png'; ?>" />Download ezDefi for IOS</a>
-                    <a href=""><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/ios-icon.png'; ?>" />Download ezDefi for Android</a>
+                    <a href=""><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/ios-icon.png'; ?>" />Download ezDefi for IOS</a>
+                    <a href=""><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/android-icon.png'; ?>" />Download ezDefi for Android</a>
                 </p>
 			<?php endif; ?>
 		</div>
