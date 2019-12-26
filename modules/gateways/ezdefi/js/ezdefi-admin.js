@@ -196,6 +196,9 @@ jQuery(function($) {
             var ezdefi_wallet_checked = $(selectors.ezdefiWalletCheckbox).is(':checked');
             return amount_id_checked || ezdefi_wallet_checked;
         }, 'Please select at least one payment method');
+        jQuery.validator.addMethod('greaterThanZero', function(value, element) {
+            return parseFloat(value) > 0;
+        }, 'Please enter a value greater than 0');
     };
 
     whmcs_ezdefi_admin.prototype.initValidation = function() {
@@ -223,7 +226,7 @@ jQuery(function($) {
                         }
                     },
                     number: true,
-                    min: 0,
+                    greaterThanZero: true,
                     max: 100
                 },
                 'field[amountId]': {
