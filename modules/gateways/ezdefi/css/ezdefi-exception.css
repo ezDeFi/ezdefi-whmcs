@@ -98,9 +98,14 @@
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search input, #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search select {
   display: block;
   width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid #ccc;
   padding: 4px;
   margin: 4px;
+  border-radius: 4px;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search .select2-container .select2-selection {
+  border-color: #ccc;
+  height: 30px;
 }
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search a.clearFilterBtn {
   margin-left: 4px;

@@ -18,8 +18,8 @@ jQuery(function($) {
     whmcs_ezdefi_admin.prototype.init = function() {
         var self = this;
 
-        this.addManageExceptionBtn();
         this.addCurrencyTable.call(this);
+        this.addManageExceptionBtn.call(this);
 
         self.table = $('#ezdefi-currency-table');
         self.form = self.table.closest('form');
@@ -65,7 +65,7 @@ jQuery(function($) {
         var exceptionRow = $("<tr><td class='fieldlabel'>Manage Exceptions</td><td class='fieldarea'></td></tr>");
         settingsTable.find('tr:last').before(exceptionRow);
 
-        var btn = $("<a href='' class='btn btn-primary openModalBtn'>Open Exception Table</a>");
+        var btn = $("<a href='' class='openModalBtn'><img src='"+ this.adminUrl +"images/icons/browser.png' alt=''> Open Exception Table</a>");
         btn.appendTo(exceptionRow.find('.fieldarea'));
     };
 
@@ -95,7 +95,7 @@ jQuery(function($) {
         tableBody.appendTo(table);
 
         var tableFoot = $(
-            "<tfoot><tr><td colspan='6'><a class='saveBtn'><img src='"+ this.adminUrl +"images/icons/save.png' alt=''> Save currency</a> <a class='addBtn'><img src='"+ this.adminUrl +"images/icons/add.png' alt=''> Add currency</a></td></tr></tfoot>"
+            "<tfoot><tr><td colspan='6'><a href='' class='saveBtn'><img src='"+ this.adminUrl +"images/icons/save.png' alt=''> Save currency</a> <a href='' class='addBtn'><img src='"+ this.adminUrl +"images/icons/add.png' alt=''> Add currency</a></td></tr></tfoot>"
         );
         tableFoot.appendTo(table);
     };
@@ -429,6 +429,11 @@ jQuery(function($) {
         e.preventDefault();
 
         var self = this;
+
+        if(self.table.find('tbody tr').length === 1) {
+            alert('You must select at least 1 accepted currency');
+            return false;
+        }
 
         if(confirm('Do you want to delete this row')) {
             $(e.target).closest('tr').remove();

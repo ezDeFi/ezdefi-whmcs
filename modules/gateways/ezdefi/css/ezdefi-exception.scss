@@ -115,9 +115,17 @@
       input, select {
         display: block;
         width: 100%;
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        border: 1px solid #ccc;
         padding: 4px;
         margin: 4px;
+        border-radius: 4px;
+      }
+
+      .select2-container {
+        .select2-selection {
+          border-color: #ccc;
+          height: 30px;
+        }
       }
 
       a.clearFilterBtn {

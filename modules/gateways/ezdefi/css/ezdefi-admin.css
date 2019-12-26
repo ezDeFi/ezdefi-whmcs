@@ -86,6 +86,9 @@
 #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr.editing .view {
   display: none;
 }
+#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tfoot td {
+  padding: 7px 5px;
+}
 #Payment-Gateway-Config-ezdefi #ezdefi-exception-table {
   font-size: 13px;
   width: 100%;
