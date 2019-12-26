@@ -35,7 +35,7 @@
 }
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table {
   width: 100%;
-  max-height: calc(100% - 58px);
+  max-height: calc(100% - 70px);
   background: #fff;
   display: flex;
   flex-direction: column;
@@ -99,7 +99,18 @@
   background: #fff;
   display: flex;
   align-items: center;
-  height: 58px;
+  height: 70px;
+  position: relative;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search .closeModalBtn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search .closeModalBtn img {
+  width: 12px;
+  height: 12px;
+  display: block;
 }
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search input, #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search select {
   display: block;

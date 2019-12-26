@@ -39,7 +39,7 @@
 
     #ezdefi-exception-table {
       width: 100%;
-      max-height: calc(100% - 58px);
+      max-height: calc(100% - 70px);
       background: #fff;
       display: flex;
       flex-direction: column;
@@ -120,7 +120,20 @@
       background: #fff;
       display: flex;
       align-items: center;
-      height: 58px;
+      height: 70px;
+      position: relative;
+
+      .closeModalBtn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+
+        img {
+          width: 12px;
+          height: 12px;
+          display: block;
+        }
+      }
 
       input, select {
         display: block;

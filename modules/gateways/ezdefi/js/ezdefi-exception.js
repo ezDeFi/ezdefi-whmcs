@@ -12,15 +12,17 @@ jQuery(function($) {
 
     whmcs_ezdefi_exception.prototype.init = function() {
         this.addExceptionTable.call(this);
+        this.$modal = $('#ezdefi-modal');
         this.$search = $('#ezdefi-exception-search');
         this.$table = $('#ezdefi-exception-table');
         this.$pagination = this.$table.find('.pagination');
 
-        var data = {
-            action: 'get_exceptions',
-        };
+        var openModal = this.openModal.bind(this);
+        var closeModal = this.closeModal.bind(this);
 
-        this.getException.call(this, data);
+        $(document.body).on('click', '.openModalBtn', openModal);
+
+        $(this.$modal).on('click', '.closeModalBtn', closeModal);
 
         var onAssign = this.onAssign.bind(this);
         var onRemove = this.onRemove.bind(this);
@@ -29,7 +31,6 @@ jQuery(function($) {
         var onHideInvoiceSelect = this.onHideInvoiceSelect.bind(this);
         var onNext = this.onNext.bind(this);
         var onPrev = this.onPrev.bind(this);
-        var closeModal = this.closeModal.bind(this);
 
         $(this.$table)
             .on('click', '.next', onNext)
@@ -38,8 +39,7 @@ jQuery(function($) {
             .on('click', '.hideSelectBtn', onHideInvoiceSelect)
             .on('click', '.assignBtn', onAssign)
             .on('click', '.removeBtn', onRemove)
-            .on('click', '.reverseBtn', onReverse)
-            .on('click', '.closeModalBtn', closeModal);
+            .on('click', '.reverseBtn', onReverse);
 
         var onClearFilter = this.onClearFilter.bind(this);
         var onSearch = this.onSearch.bind(this);
@@ -50,10 +50,19 @@ jQuery(function($) {
             .on('change', 'select', onSearch);
     };
 
+    whmcs_ezdefi_exception.prototype.openModal = function(e) {
+        e.preventDefault();
+        $('body').addClass('ezdefi-modal-open');
+        $('#ezdefi-modal').show();
+        this.getException.call(this);
+    };
+
     whmcs_ezdefi_exception.prototype.closeModal = function(e) {
         e.preventDefault();
         $('body').removeClass('ezdefi-modal-open');
         $('#ezdefi-modal').hide();
+        this.onClearFilter.call(this);
+        this.$table.find('tbody tr').not('.spinner-row').remove();
     };
 
     whmcs_ezdefi_exception.prototype.addExceptionTable = function() {
@@ -87,14 +96,13 @@ jQuery(function($) {
             "<tfoot>" +
             "<tr>" +
             "<td colspan='2'><ul class='pagination'><li><a class='prev' href=''><</a></li><li><a class='next' href=''>></a></li></ul></td>" +
-            "<td colspan='2' class='text-right'><a href='' class='closeModalBtn'><img src='"+ self.adminUrl +"images/icons/disabled.png' alt=''>Close</a></td>" +
             "</tr>" +
             "</tfoot>"
         );
         tableFoot.appendTo(table);
 
         var modal = $("<div id='ezdefi-modal'><div id='ezdefi-modal__overlay'></div><div id='ezdefi-modal__content'></div></div>");
-        var search = $("<div id='ezdefi-exception-search'><input type='number' name='amount_id' placeholder='Amount'><input type='text' name='currency' placeholder='Currency'><input type='number' name='order_id' placeholder='Invoice ID'><select name='clientid' id='client'></select><select name='payment_method' id=''><option value='' selected=''>Any Payment Method</option><option value='ezdefi_wallet'>Pay with ezDeFi wallet</option><option value='amount_id'>Pay with any crypto wallet</option></select><select name='status' id=''><option value='' selected=''>Any Status</option><option value='expired_done'>Paid after expired</option><option value='not_paid'>Not paid</option><option value='done'>Paid on time</option></select><a href='' class='clearFilterBtn btn btn-primary btn-sm'>Clear</a></div>");
+        var search = $("<div id='ezdefi-exception-search'><input type='number' name='amount_id' placeholder='Amount'><input type='text' name='currency' placeholder='Currency'><input type='number' name='order_id' placeholder='Invoice ID'><select name='clientid' id='client'></select><select name='payment_method' id=''><option value='' selected=''>Any Payment Method</option><option value='ezdefi_wallet'>Pay with ezDeFi wallet</option><option value='amount_id'>Pay with any crypto wallet</option></select><select name='status' id=''><option value='' selected=''>Any Status</option><option value='expired_done'>Paid after expired</option><option value='not_paid'>Not paid</option><option value='done'>Paid on time</option></select><a href='' class='closeModalBtn'><img src='"+ self.adminUrl +"images/icons/disabled.png' alt=''></a></div>");
         modal.find('#ezdefi-modal__content').append(search);
         $(search).find('#client').select2({
             width: '100%',
@@ -438,7 +446,6 @@ jQuery(function($) {
     };
 
     whmcs_ezdefi_exception.prototype.onClearFilter = function(e) {
-        e.preventDefault();
         var self = this;
         self.$search.find('input, select').each(function() {
             if($(this).is('select#client')) {

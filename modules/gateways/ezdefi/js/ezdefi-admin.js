@@ -45,7 +45,6 @@ jQuery(function($) {
         var toggleEdit = this.toggleEdit.bind(this);
         var saveCurrency = self.saveCurrency.bind(this);
         var toggleAmountSetting = this.toggleAmountSetting.bind(this);
-        var openModal = this.openModal.bind(this);
 
         self.toggleAmountSetting(this);
 
@@ -55,8 +54,7 @@ jQuery(function($) {
             .on('click', '.cancelBtn', toggleEdit)
             .on('click', '.deleteBtn', removeCurrency)
             .on('click', '.saveBtn', saveCurrency)
-            .on('change', selectors.amountIdCheckbox, toggleAmountSetting)
-            .on('click', '.openModalBtn', openModal);
+            .on('change', selectors.amountIdCheckbox, toggleAmountSetting);
     };
 
     whmcs_ezdefi_admin.prototype.addManageExceptionBtn = function() {
@@ -67,12 +65,6 @@ jQuery(function($) {
 
         var btn = $("<a href='' class='openModalBtn'><img src='"+ this.adminUrl +"images/icons/browser.png' alt=''> Open Exception Table</a>");
         btn.appendTo(exceptionRow.find('.fieldarea'));
-    };
-
-    whmcs_ezdefi_admin.prototype.openModal = function(e) {
-        e.preventDefault();
-        $('body').addClass('ezdefi-modal-open');
-        $('#ezdefi-modal').show();
     };
 
     whmcs_ezdefi_admin.prototype.addCurrencyTable = function() {
