@@ -377,6 +377,19 @@ jQuery(function($) {
             return currency.text;
         }
 
+        var excludes = [];
+
+        $('#ezdefi-currency-table').find('tbody tr').each(function() {
+            var symbol = $(this).find('.currency-symbol').val();
+            if(symbol && symbol.length > 0) {
+                excludes.push(symbol);
+            }
+        });
+
+        if(excludes.includes(currency.symbol)) {
+            return;
+        }
+
         var $container = $(
             "<div class='select2-currency'>" +
             "<div class='select2-currency__icon'><img src='" + currency.logo + "' /></div>" +
