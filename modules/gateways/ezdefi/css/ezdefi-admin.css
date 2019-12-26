@@ -57,7 +57,7 @@
   min-width: 136px;
 }
 #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.actions {
-  min-width: 100px;
+  min-width: 50px;
 }
 #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td input {
   font-size: 13px;

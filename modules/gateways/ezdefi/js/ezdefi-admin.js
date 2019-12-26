@@ -8,6 +8,7 @@ jQuery(function($) {
         this.ezdefiData = JSON.parse($('#ezdefi-data').text());
         this.unpaid_invoices = this.ezdefiData.unpaid_invoices;
         this.configUrl = this.ezdefiData.config_url;
+        this.adminUrl = this.ezdefiData.admin_url;
 
         var init = this.init.bind(this);
 
@@ -18,7 +19,7 @@ jQuery(function($) {
         var self = this;
 
         this.addManageExceptionBtn();
-        this.addCurrencyTable();
+        this.addCurrencyTable.call(this);
 
         self.table = $('#ezdefi-currency-table');
         self.form = self.table.closest('form');
@@ -94,7 +95,7 @@ jQuery(function($) {
         tableBody.appendTo(table);
 
         var tableFoot = $(
-            "<tfoot><tr><td colspan='6'><button class='saveBtn btn btn-primary btn-xs'>Save currency</button> <button class='addBtn btn btn-primary btn-xs'>Add currency</button></td></tr></tfoot>"
+            "<tfoot><tr><td colspan='6'><a class='saveBtn'><img src='"+ this.adminUrl +"images/icons/save.png' alt=''> Save currency</a> <a class='addBtn'><img src='"+ this.adminUrl +"images/icons/add.png' alt=''> Add currency</a></td></tr></tfoot>"
         );
         tableFoot.appendTo(table);
     };
@@ -122,8 +123,8 @@ jQuery(function($) {
                 "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[0][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[0][decimal]' /></div></td>" +
                 "<td class='actions'>" +
-                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
+                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
+                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
                 "</td>" +
             "</tr>" +
             "<tr class='editing'>" +
@@ -147,8 +148,8 @@ jQuery(function($) {
                 "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' /></div></td>" +
                 "<td class='actions'>" +
-                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
+                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn btn btn-danger btn-xs' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
+                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
                 "</td>" +
             "</tr>"
         );
@@ -181,8 +182,8 @@ jQuery(function($) {
                     "<td class='block_confirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
                     "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' /></div></td>" +
                     "<td class='actions'>" +
-                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
+                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
+                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
                     "</td>" +
                 "</tr>";
             rows += row;
