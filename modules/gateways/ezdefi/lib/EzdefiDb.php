@@ -122,6 +122,13 @@ class EzdefiDb {
 		);
 	}
 
+	public function get_client_currency($client_id)
+	{
+		return Capsule::table('tblclients')->join('tblcurrencies', function($join) use($client_id) {
+			$join->on('tblclients.currency', '=', 'tblcurrencies.id')->where('tblclients.id', '=', $client_id);
+		})->value('code');
+	}
+
 	public function createAmountIdTable()
 	{
 		$hasTable = Capsule::schema()->hasTable('tblezdefiamountids');
