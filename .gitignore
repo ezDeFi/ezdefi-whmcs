@@ -14,6 +14,13 @@
 /assets/js/*
 !/assets/js/ezdefi-qrcode.js
 !/assets/js/jquery.blockUI.js
+!/assets/js/clipboard.min.js
+!/assets/js/jquery-ui.min.js
+!/assets/img/
+/assets/img/*
+!/assets/img/android-icon.png
+!/assets/img/ios-icon.png
+!/assets/img/ezdefi-icon.png
 
 
 !/templates/
