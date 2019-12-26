@@ -55,13 +55,12 @@ class Ezdefi {
 			'apiUrl' => array(
 				'FriendlyName' => 'Gateway API Url',
 				'Type' => 'text',
-				'Default' => '',
+				'Default' => 'https://merchant-api.ezdefi.com/v1/',
 				'Description' => 'Enter your gateway API Url',
 			),
 			'apiKey' => array(
 				'FriendlyName' => 'Gateway API Key',
 				'Type' => 'text',
-				'Default' => 'https://merchant-api.ezdefi.com/v1/',
 				'Description' => 'Enter your gateway API Key',
 			),
 			'amountId' => array(
