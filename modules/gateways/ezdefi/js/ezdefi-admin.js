@@ -45,6 +45,8 @@ jQuery(function($) {
         var toggleEdit = this.toggleEdit.bind(this);
         var saveCurrency = self.saveCurrency.bind(this);
         var toggleAmountSetting = this.toggleAmountSetting.bind(this);
+        var onChangeDecimal = this.onChangeDecimal.bind(this);
+        var onBlurDecimal = this.onBlurDecimal.bind(this);
 
         self.toggleAmountSetting(this);
 
@@ -54,7 +56,9 @@ jQuery(function($) {
             .on('click', '.cancelBtn', toggleEdit)
             .on('click', '.deleteBtn', removeCurrency)
             .on('click', '.saveBtn', saveCurrency)
-            .on('change', selectors.amountIdCheckbox, toggleAmountSetting);
+            .on('change', selectors.amountIdCheckbox, toggleAmountSetting)
+            .on('focus', '.currency-decimal', onChangeDecimal)
+            .on('blur', '.currency-decimal', onBlurDecimal);
     };
 
     whmcs_ezdefi_admin.prototype.addManageExceptionBtn = function() {
@@ -113,7 +117,7 @@ jQuery(function($) {
                 "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[0][lifetime]' /> s</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[0][wallet]' /></div></td>" +
                 "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[0][block_confirm]' /></div></td>" +
-                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[0][decimal]' /></div></td>" +
+                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[0][decimal]' class='currency-decimal' /></div></td>" +
                 "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -138,7 +142,7 @@ jQuery(function($) {
                 "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[1][lifetime]' /> s</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[1][wallet]' /></div></td>" +
                 "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
-                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' /></div></td>" +
+                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' class='currency-decimal' /></div></td>" +
                 "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn btn btn-danger btn-xs' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -172,7 +176,7 @@ jQuery(function($) {
                     "<td class='lifetime'><div class='view'><span>"+((config['lifetime']).length > 0 ? config['lifetime'] + 's' : '')+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+config['lifetime']+"' /> s</div></td>" +
                     "<td class='wallet'><div class='view'><span>"+config['wallet']+"</span></div><div class='edit'><input type='text' name='currency["+i+"][wallet]' value='"+config['wallet']+"' /></div></td>" +
                     "<td class='block_confirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
-                    "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' /></div></td>" +
+                    "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' class='currency-decimal' /></div></td>" +
                     "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -202,7 +206,19 @@ jQuery(function($) {
             errorElement: 'span',
             errorClass: 'error',
             errorPlacement: function(error, element) {
-                error.appendTo(element.closest('td'));
+                if(element.hasClass('select-select2')) {
+                    error.insertAfter(element.closest('.edit').find('.select2-container'));
+                } else {
+                    if(element.closest('td').find('span.error').length === 0) {
+                        error.appendTo(element.closest('td'));
+                    }
+                }
+            },
+            highlight: function(element) {
+                $(element).closest('td').addClass('form-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).closest('td').removeClass('form-invalid');
             },
             rules: {
                 'field[apiUrl]': {
@@ -336,6 +352,21 @@ jQuery(function($) {
                 $(this).hide();
             });
         }
+    };
+
+    whmcs_ezdefi_admin.prototype.onChangeDecimal = function(e) {
+        var input = $(e.target);
+        if(input.val().length > 0) {
+            var td = $(e.target).closest('td');
+            if(td.find('span.error').length === 0) {
+                td.find('.edit').append('<span class="error">Changing decimal can cause to payment interruption</span>');
+            }
+        }
+    };
+
+    whmcs_ezdefi_admin.prototype.onBlurDecimal = function(e) {
+        var td = $(e.target).closest('td');
+        td.find('.edit').find('.error').remove();
     };
 
     whmcs_ezdefi_admin.prototype.initCurrencySelect = function(element) {
