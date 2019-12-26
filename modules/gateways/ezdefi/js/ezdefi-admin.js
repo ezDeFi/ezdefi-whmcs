@@ -248,7 +248,7 @@ jQuery(function($) {
                 });
                 $(this).find('tr .saveBtn').trigger('click');
             }
-        }).disableSelection();
+        });
     };
 
     whmcs_ezdefi_admin.prototype.addValidationRule = function(row) {
