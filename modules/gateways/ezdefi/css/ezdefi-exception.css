@@ -29,6 +29,10 @@
   z-index: 99;
   height: 80%;
 }
+#ezdefi-modal #ezdefi-modal__content .select2-container .select2-selection {
+  border-color: #ccc;
+  height: 30px;
+}
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table {
   width: 100%;
   max-height: calc(100% - 58px);
@@ -57,12 +61,14 @@
   table-layout: fixed;
 }
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr td {
-  height: 40px;
-  padding: 0 16px;
+  padding: 8px 16px;
   overflow: hidden;
 }
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr td .explorer-url {
   display: block;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr td .actions {
+  margin-top: 4px;
 }
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-table tbody tr td.currency-column {
   text-transform: uppercase;
@@ -98,9 +104,10 @@
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search input, #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search select {
   display: block;
   width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid #ccc;
   padding: 4px;
   margin: 4px;
+  border-radius: 4px;
 }
 #ezdefi-modal #ezdefi-modal__content #ezdefi-exception-search a.clearFilterBtn {
   margin-left: 4px;

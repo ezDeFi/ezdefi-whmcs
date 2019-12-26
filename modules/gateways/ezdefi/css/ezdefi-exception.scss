@@ -30,6 +30,13 @@
     z-index: 99;
     height: 80%;
 
+    .select2-container {
+      .select2-selection {
+        border-color: #ccc;
+        height: 30px;
+      }
+    }
+
     #ezdefi-exception-table {
       width: 100%;
       max-height: calc(100% - 58px);
@@ -60,12 +67,15 @@
           table-layout: fixed;
 
           td {
-            height: 40px;
-            padding: 0 16px;
+            padding: 8px 16px;
             overflow: hidden;
 
             .explorer-url {
               display: block;
+            }
+
+            .actions {
+              margin-top: 4px;
             }
 
             &.currency-column {
@@ -115,11 +125,11 @@
       input, select {
         display: block;
         width: 100%;
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        border: 1px solid #ccc;
         padding: 4px;
         margin: 4px;
+        border-radius: 4px;
       }
-
       a.clearFilterBtn {
         margin-left: 4px;
       }

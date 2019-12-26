@@ -87,7 +87,7 @@ jQuery(function($) {
             "<tfoot>" +
             "<tr>" +
             "<td colspan='2'><ul class='pagination'><li><a class='prev' href=''><</a></li><li><a class='next' href=''>></a></li></ul></td>" +
-            "<td colspan='2' class='text-right'><button class='btn btn-danger btn-sm closeModalBtn'>Close</button></td>" +
+            "<td colspan='2' class='text-right'><a href='' class='closeModalBtn'><img src='"+ self.adminUrl +"images/icons/disabled.png' alt=''>Close</a></td>" +
             "</tr>" +
             "</tfoot>"
         );
@@ -181,7 +181,7 @@ jQuery(function($) {
                 "<select name='' id=''></select>" +
                 "</div>" +
                 "<div class='actions'>" +
-                "<a href='' class='showSelectBtn button'>Assign to different order</a>" +
+                "<a href='' class='showSelectBtn button'><img src='"+ self.adminUrl +"images/icons/orders.png' alt=''> Assign to different invoice</a>" +
                 "<a href='' class='hideSelectBtn button' style='display: none'>Cancel</a>" +
                 "</div>" +
                 "</td>" +
@@ -210,8 +210,8 @@ jQuery(function($) {
             } else {
                 last_td = $(
                     "<td width='220px'>" +
-                    "<button class='btn btn-primary btn-sm button-primary assignBtn'>Confirm Paid</button> " +
-                    "<button class='btn btn-danger btn-sm removeBtn'>Remove</button>" +
+                    "<a href='' class='assignBtn'><img src='"+ self.adminUrl +"images/icons/tick.png' alt=''> Confirm Paid</a> " +
+                    "<a href='' class='removeBtn'><img src='"+ self.adminUrl +"images/icons/delete.png' alt=''> Remove</a>" +
                     "</td>"
                 );
             }

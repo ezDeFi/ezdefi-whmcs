@@ -15,13 +15,14 @@
 
     thead {
       th {
-        padding: 3px 5px;
+        padding: 7px 5px;
       }
     }
 
     tbody {
       tr {
         td {
+          padding: 7px 5px;
           .select2-container {
             .select2-selection {
               text-transform: capitalize;
@@ -35,8 +36,8 @@
             vertical-align: middle;
 
             span {
-              width: 13px;
-              font-size: 13px;
+              width: 10px;
+              font-size: 10px;
               color: #999;
               display: block;
             }
@@ -52,13 +53,19 @@
             text-align: center;
             img {
               display: block;
-              width: 26px;
+              width: 22px;
             }
           }
 
           &.name {
             min-width: 200px;
             text-transform: capitalize;
+
+            .select2-container {
+              .select2-selection {
+                border-color: #ccc !important;
+              }
+            }
           }
 
           &.discount, &.lifetime, &.decimal {
@@ -66,64 +73,7 @@
           }
 
           &.wallet {
-            input {
-              width: 100%;
-            }
-            .checking {
-              display: flex;
-              padding: 2px 0;
 
-              span {
-                font-size: 13px;
-
-                &.text {
-                  color: #0073aa;
-                }
-
-                &.correct {
-                  color: #567622;
-                }
-              }
-
-              .dots {
-                margin-left: 5px;
-                display: flex;
-                padding-bottom: 4px;
-                align-items: flex-end;
-
-                .dot {
-                  display: inline-block;
-                  width: 2px;
-                  height: 2px;
-                  margin-right: 2px;
-                  border-radius: 50%;
-                  background: #0073aa;
-                  -webkit-animation: dot-dot-dot 1.4s linear infinite;
-                  animation: dot-dot-dot 1.4s linear infinite;
-
-                  &:nth-child(2) {
-                    animation-delay: .2s;
-                  }
-
-                  &:nth-child(3) {
-                    animation-delay: .4s;
-                  }
-
-                  @keyframes dot-dot-dot {
-                    0%, 60%, 100% {
-                      -webkit-transform: initial;
-                      -ms-transform: initial;
-                      transform: initial;
-                    }
-                    30% {
-                      -webkit-transform: translateY(-4px);
-                      -ms-transform: translateY(-4px);
-                      transform: translateY(-4px);
-                    }
-                  }
-                }
-              }
-            }
           }
 
           &.block_confirm {
@@ -131,11 +81,17 @@
           }
 
           &.actions {
-            min-width: 100px;
+            min-width: 50px;
           }
 
           input {
             font-size: 13px;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 4px 8px;
           }
 
           input[type=number] {
@@ -164,6 +120,12 @@
             display: none;
           }
         }
+      }
+    }
+
+    tfoot {
+      td {
+        padding: 7px 5px;
       }
     }
   }

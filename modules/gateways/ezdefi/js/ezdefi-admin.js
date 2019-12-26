@@ -8,6 +8,7 @@ jQuery(function($) {
         this.ezdefiData = JSON.parse($('#ezdefi-data').text());
         this.unpaid_invoices = this.ezdefiData.unpaid_invoices;
         this.configUrl = this.ezdefiData.config_url;
+        this.adminUrl = this.ezdefiData.admin_url;
 
         var init = this.init.bind(this);
 
@@ -17,8 +18,8 @@ jQuery(function($) {
     whmcs_ezdefi_admin.prototype.init = function() {
         var self = this;
 
-        this.addManageExceptionBtn();
-        this.addCurrencyTable();
+        this.addCurrencyTable.call(this);
+        this.addManageExceptionBtn.call(this);
 
         self.table = $('#ezdefi-currency-table');
         self.form = self.table.closest('form');
@@ -31,6 +32,7 @@ jQuery(function($) {
             self.renderCurrency.call(this, currency)
         }
 
+        self.customValidationRule.call(this);
         self.initValidation();
         self.initSort.call(this);
 
@@ -63,7 +65,7 @@ jQuery(function($) {
         var exceptionRow = $("<tr><td class='fieldlabel'>Manage Exceptions</td><td class='fieldarea'></td></tr>");
         settingsTable.find('tr:last').before(exceptionRow);
 
-        var btn = $("<a href='' class='btn btn-primary openModalBtn'>Open Exception Table</a>");
+        var btn = $("<a href='' class='openModalBtn'><img src='"+ this.adminUrl +"images/icons/browser.png' alt=''> Open Exception Table</a>");
         btn.appendTo(exceptionRow.find('.fieldarea'));
     };
 
@@ -93,7 +95,7 @@ jQuery(function($) {
         tableBody.appendTo(table);
 
         var tableFoot = $(
-            "<tfoot><tr><td colspan='6'><button class='saveBtn btn btn-primary btn-xs'>Save currency</button> <button class='addBtn btn btn-primary btn-xs'>Add currency</button></td></tr></tfoot>"
+            "<tfoot><tr><td colspan='6'><a href='' class='saveBtn'><img src='"+ this.adminUrl +"images/icons/save.png' alt=''> Save currency</a> <a href='' class='addBtn'><img src='"+ this.adminUrl +"images/icons/add.png' alt=''> Add currency</a></td></tr></tfoot>"
         );
         tableFoot.appendTo(table);
     };
@@ -121,8 +123,8 @@ jQuery(function($) {
                 "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[0][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[0][decimal]' /></div></td>" +
                 "<td class='actions'>" +
-                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
+                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
+                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
                 "</td>" +
             "</tr>" +
             "<tr class='editing'>" +
@@ -146,8 +148,8 @@ jQuery(function($) {
                 "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' /></div></td>" +
                 "<td class='actions'>" +
-                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
+                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn btn btn-danger btn-xs' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
+                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
                 "</td>" +
             "</tr>"
         );
@@ -180,13 +182,24 @@ jQuery(function($) {
                     "<td class='block_confirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
                     "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' /></div></td>" +
                     "<td class='actions'>" +
-                    "<div class='view'><a class='editBtn btn btn-primary btn-xs' href=''>Edit</a> <a class='deleteBtn btn btn-danger btn-xs' href=''>Delete</a></div>" +
-                    "<div class='edit'><a class='cancelBtn btn btn-default btn-xs' href=''>Cancel</a></div>" +
+                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
+                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
                     "</td>" +
                 "</tr>";
             rows += row;
         }
         $(rows).appendTo(this.table.find('tbody'));
+    };
+
+    whmcs_ezdefi_admin.prototype.customValidationRule = function() {
+        jQuery.validator.addMethod('paymentMethodRequired', function(value, element) {
+            var amount_id_checked = $(selectors.amountIdCheckbox).is(':checked');
+            var ezdefi_wallet_checked = $(selectors.ezdefiWalletCheckbox).is(':checked');
+            return amount_id_checked || ezdefi_wallet_checked;
+        }, 'Please select at least one payment method');
+        jQuery.validator.addMethod('greaterThanZero', function(value, element) {
+            return parseFloat(value) > 0;
+        }, 'Please enter a value greater than 0');
     };
 
     whmcs_ezdefi_admin.prototype.initValidation = function() {
@@ -214,30 +227,14 @@ jQuery(function($) {
                         }
                     },
                     number: true,
-                    min: 0,
+                    greaterThanZero: true,
                     max: 100
                 },
                 'field[amountId]': {
-                    required: {
-                        depends: function(element) {
-                            return ! self.form.find(selectors.ezdefiWalletCheckbox).is(':checked');
-                        }
-                    }
+                    paymentMethodRequired: true
                 },
                 'field[ezdefiWallet]': {
-                    required: {
-                        depends: function(element) {
-                            return ! self.form.find(selectors.amountIdCheckbox).is(':checked');
-                        }
-                    }
-                }
-            },
-            messages: {
-                'field[amountId]': {
-                    required: 'Please select at least one payment method'
-                },
-                'field[ezdefiWallet]': {
-                    required: 'Please select at least one payment method'
+                    paymentMethodRequired: true
                 }
             }
         });
@@ -432,6 +429,11 @@ jQuery(function($) {
         e.preventDefault();
 
         var self = this;
+
+        if(self.table.find('tbody tr').length === 1) {
+            alert('You must select at least 1 accepted currency');
+            return false;
+        }
 
         if(confirm('Do you want to delete this row')) {
             $(e.target).closest('tr').remove();
