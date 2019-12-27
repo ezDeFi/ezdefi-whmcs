@@ -121,9 +121,53 @@ class Ezdefi {
 		<?php return ob_get_clean();
 	}
 
-    public function callbackHandle($invoiceId, $paymentId)
+    public function callbackHandle($data)
     {
-        $invoiceId = substr( $invoiceId, 0, strpos( $invoiceId,'-' ) );
+	    if(isset($data['uoid'] ) && isset($data['paymentid'])) {
+		    $invoiceId = $data['uoid'];
+		    $paymentId = $data['paymentid'];
+
+		    return $this->process_payment_callback($invoiceId, $paymentId);
+	    }
+
+	    if(
+		    isset($data['value']) && isset($data['explorerUrl']) &&
+		    isset($data['currency']) && isset($data['id']) &&
+		    isset($data['decimal'])
+	    ) {
+		    $value = $data['value'];
+		    $decimal = $data['decimal'];
+		    $value = $value / pow(10, $decimal);
+		    $explorerUrl = $data['explorerUrl'];
+		    $currency = $data['currency'];
+		    $id = $data['id'];
+
+		    return $this->process_transaction_callback($value, $explorerUrl, $currency, $id);
+	    }
+
+	    die();
+    }
+
+    protected function process_transaction_callback($value, $explorerUrl, $currency, $id)
+    {
+	    $transaction = $this->api->getTransaction($id);
+
+	    if(!$transaction || $transaction['status'] != 'ACCEPTED') {
+		    die();
+	    }
+
+	    $data = array(
+		    'amount_id' => number_format($value, 12),
+		    'currency' => $currency,
+		    'explorer_url' => $explorerUrl,
+	    );
+
+	    $this->db->add_exception($data);
+    }
+
+    protected function process_payment_callback($invoiceId, $paymentId)
+    {
+	    $invoiceId = substr( $invoiceId, 0, strpos( $invoiceId,'-' ) );
 	    $invoiceId = checkCbInvoiceID($invoiceId, 'ezdefi');
 
 	    checkCbTransID($paymentId);

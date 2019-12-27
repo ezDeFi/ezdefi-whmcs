@@ -13,16 +13,11 @@ if(!$gatewayParams['type']) {
 	die('Gateway not active');
 }
 
-if(!isset($_GET['uoid']) || !isset($_GET['paymentid'])) {
-	die('Something wrong happen. Please contact admin.');
-}
-
-$invoiceId = $_GET['uoid'];
-$paymentId = $_GET['paymentid'];
-
-if(empty($invoiceId) || empty($paymentId)) {
+if(empty($_GET)) {
 	die('Something wrong happen. Please contact admin.');
 }
 
 $ezdefi = Ezdefi::instance();
-$ezdefi->callbackHandle($invoiceId, $paymentId);
+$ezdefi->callbackHandle($_GET);
+
+die();
