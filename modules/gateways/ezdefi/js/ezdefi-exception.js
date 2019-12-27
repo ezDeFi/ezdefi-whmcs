@@ -211,8 +211,8 @@ jQuery(function($) {
             if(row['status'] === 'done') {
                 last_td = $(
                     "<td width='220px'>" +
-                    "<button class='btn btn-primary btn-sm reverseBtn'>Reverse</button> " +
-                    "<button class='btn btn-danger btn-sm removeBtn'>Remove</button>" +
+                    "<a href='' class='reverseBtn'><img src='"+ self.adminUrl +"images/icons/navback.png' alt=''> Reverse</a> " +
+                    "<a href='' class='removeBtn'><img src='"+ self.adminUrl +"images/icons/delete.png' alt=''> Remove</a>" +
                     "</td>"
                 );
             } else {
