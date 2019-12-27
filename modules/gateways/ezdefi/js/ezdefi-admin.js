@@ -517,6 +517,7 @@ jQuery(function($) {
         }
 
         self.table.find('tbody tr').each(function() {
+            $(this).removeClass('editing');
             $(this).closest('tr').find('input, select').each(function () {
                 var name = $(this).attr('name');
                 var value = $(this).val();
