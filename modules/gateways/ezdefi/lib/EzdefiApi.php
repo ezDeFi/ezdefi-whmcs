@@ -106,8 +106,8 @@ class EzdefiApi {
 
 	public function createPayment($order_data, $currency_data, $amountId = false)
 	{
-		$subtotal = intval($order_data['amount']);
-		$discount = intval($currency_data['discount']);
+		$subtotal = $order_data['amount'];
+		$discount = $currency_data['discount'];
 		$value = $subtotal - ($subtotal * ($discount / 100));
 
 		if($amountId) {
