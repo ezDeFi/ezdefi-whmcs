@@ -414,21 +414,22 @@ jQuery(function($) {
         var self = this;
         var pagination = '';
         var total_page = data['last_page'];
+        if(total_page == 0) {
+            self.$pagination.empty().append(pagination);
+            self.$pagination.show();
+            return;
+        }
         var current_page = parseInt(data['current_page']);
-        if(total_page == 1) {
-            pagination += "<li class='active'><a href=''>1</a></li>";
+        if(current_page == 1) {
+            pagination += "<li class='disabled'><a href='' class='prev'><</a></li>";
         } else {
-            if(current_page == 1) {
-                pagination += "<li class='disabled'><a href='' class='prev'><</a></li>";
-            } else {
-                pagination += "<li><a href='' class='prev'><</a></li>";
-            }
-            if(current_page > 2) {
-                pagination += "<li><a href=''>1</a></li>";
-            }
-            if(current_page > 3) {
-                pagination += "<li class='disabled'><a href=''>...</a></li>";
-            }
+            pagination += "<li><a href='' class='prev'><</a></li>";
+        }
+        if(current_page > 2) {
+            pagination += "<li><a href=''>1</a></li>";
+        }
+        if(current_page > 3) {
+            pagination += "<li class='disabled'><a href=''>...</a></li>";
         }
         if((current_page - 1) > 0) {
             pagination += "<li><a href=''>"+(current_page - 1)+"</a></li>";
