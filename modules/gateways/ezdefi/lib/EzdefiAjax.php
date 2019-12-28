@@ -385,9 +385,17 @@ class EzdefiAjax
         return $this->json_success_response($clients);
     }
 
-    public function get_unpaid_invoices()
+    public function get_unpaid_invoices($data)
     {
-	    $unpaid_invoices = $this->db->get_unpaid_invoices();
+        if(isset($data['keyword']) && !empty($data['keyword'])) {
+	        $unpaid_invoices = $this->db->get_unpaid_invoice($data['keyword']);
+        } else {
+	        $unpaid_invoices = $this->db->get_unpaid_invoices();
+        }
+
+        if(empty($unpaid_invoices)) {
+	        return $this->json_success_response();
+        }
 
 	    $currency = $this->db->getDefaultCurrency();
 

@@ -334,6 +334,17 @@ class EzdefiDb {
 					->get();
 	}
 
+	public function get_unpaid_invoice($invoiceId)
+	{
+		return Capsule::table('tblinvoices')
+		              ->join('tblclients', function($join) use ($invoiceId) {
+			              $join->on('tblinvoices.userid', '=', 'tblclients.id')->where('tblinvoices.status', '=', 'Unpaid')->where('tblinvoices.id', '=', $invoiceId);
+		              })
+		              ->select('tblinvoices.id', 'tblinvoices.total', 'tblinvoices.date', 'tblinvoices.duedate', 'tblclients.firstname', 'tblclients.lastname')
+		              ->orderBy('tblinvoices.date', 'desc')
+		              ->get();
+	}
+
 	public function check_invoice_exist($invoiceId)
 	{
 		$count = Capsule::table('tblinvoices')
