@@ -355,7 +355,7 @@ class EzdefiAjax
 
 	    $offset = 0;
 
-	    $per_page = 9;
+	    $per_page = 10;
 
 	    if(isset($_POST['page']) && $_POST['page'] > 1) {
 		    $offset = $per_page * ($_POST['page'] - 1);

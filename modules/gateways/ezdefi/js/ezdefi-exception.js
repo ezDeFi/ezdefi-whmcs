@@ -31,6 +31,7 @@ jQuery(function($) {
         var onHideInvoiceSelect = this.onHideInvoiceSelect.bind(this);
         var onNext = this.onNext.bind(this);
         var onPrev = this.onPrev.bind(this);
+        var onChangePage = this.onChangePage.bind(this);
 
         $(this.$table)
             .on('click', '.next', onNext)
@@ -39,7 +40,8 @@ jQuery(function($) {
             .on('click', '.hideSelectBtn', onHideInvoiceSelect)
             .on('click', '.assignBtn', onAssign)
             .on('click', '.removeBtn', onRemove)
-            .on('click', '.reverseBtn', onReverse);
+            .on('click', '.reverseBtn', onReverse)
+            .on('click', '.pagination a', onChangePage);
 
         var onClearFilter = this.onClearFilter.bind(this);
         var onSearch = this.onSearch.bind(this);
@@ -95,14 +97,14 @@ jQuery(function($) {
         var tableFoot = $(
             "<tfoot>" +
             "<tr>" +
-            "<td colspan='2'><ul class='pagination'><li><a class='prev' href=''><</a></li><li><a class='next' href=''>></a></li></ul></td>" +
+            "<td colspan='2'><ul class='pagination'></ul></td>" +
             "</tr>" +
             "</tfoot>"
         );
         tableFoot.appendTo(table);
 
         var modal = $("<div id='ezdefi-modal'><div id='ezdefi-modal__overlay'></div><div id='ezdefi-modal__content'></div></div>");
-        var search = $("<div id='ezdefi-exception-search'><input type='number' name='amount_id' placeholder='Amount'><input type='text' name='currency' placeholder='Currency'><input type='number' name='order_id' placeholder='Invoice ID'><select name='clientid' id='client'></select><select name='payment_method' id=''><option value='' selected=''>Any Payment Method</option><option value='ezdefi_wallet'>Pay with ezDeFi wallet</option><option value='amount_id'>Pay with any crypto wallet</option></select><select name='status' id=''><option value='' selected=''>Any Status</option><option value='expired_done'>Paid after expired</option><option value='not_paid'>Not paid</option><option value='done'>Paid on time</option></select><a href='' class='closeModalBtn'><img src='"+ self.adminUrl +"images/icons/disabled.png' alt=''></a></div>");
+        var search = $("<div id='ezdefi-exception-search'><input type='number' name='amount_id' placeholder='Amount'><input type='text' name='currency' placeholder='Currency'><input type='number' name='order_id' placeholder='Invoice ID'><select name='clientid' id='client'></select><select name='payment_method' id=''><option value='' selected=''>Any Payment Method</option><option value='ezdefi_wallet'>Pay with ezDeFi wallet</option><option value='amount_id'>Pay with any crypto wallet</option></select><select name='status' id=''><option value='' selected=''>Any Status</option><option value='expired_done'>Paid after expired</option><option value='not_paid'>Not paid</option><option value='done'>Paid on time</option></select><a href='' class='closeModalBtn'><img src='"+ self.adminUrl +"images/error.png' alt=''></a></div>");
         modal.find('#ezdefi-modal__content').append(search);
         $(search).find('#client').select2({
             width: '100%',
@@ -410,18 +412,63 @@ jQuery(function($) {
 
     whmcs_ezdefi_exception.prototype.renderPagination = function(data) {
         var self = this;
-        if(data['current_page'] == 1) {
-            self.$pagination.find('li:first-child').addClass('disabled');
+        var pagination = '';
+        var total_page = data['last_page'];
+        var current_page = parseInt(data['current_page']);
+        if(total_page == 1) {
+            pagination += "<li class='active'><a href=''>1</a></li>";
         } else {
-            self.$pagination.find('li:first-child').removeClass('disabled');
+            if(current_page == 1) {
+                pagination += "<li class='disabled'><a href='' class='prev'><</a></li>";
+            } else {
+                pagination += "<li><a href='' class='prev'><</a></li>";
+            }
+            if(current_page > 2) {
+                pagination += "<li><a href=''>1</a></li>";
+            }
+            if(current_page > 3) {
+                pagination += "<li class='disabled'><a href=''>...</a></li>";
+            }
         }
-        if((data['current_page'] == data['last_page']) || data['last_page'] == 0) {
-            self.$pagination.find('li:last-child').addClass('disabled');
-        } else {
-            self.$pagination.find('li:last-child').removeClass('disabled');
+        if((current_page - 1) > 0) {
+            pagination += "<li><a href=''>"+(current_page - 1)+"</a></li>";
         }
+        pagination += "<li class='active'><a href=''>"+current_page+"</a></li>";
+        if((current_page + 1) < total_page) {
+            pagination += "<li><a href=''>"+(current_page + 1)+"</a></li>";
+        }
+        if(current_page < total_page) {
+            if(current_page < (total_page -2)) {
+                pagination += "<li class='disabled'><a href=''>...</a></li>";
+            }
+            pagination += "<li><a href=''>"+total_page+"</a></li>";
+            if(current_page == total_page) {
+                pagination += "<li class='disabled'><a href='' class='next'>></a></li>";
+            } else {
+                pagination += "<li><a href='' class='next'>></a></li>";
+            }
+        }
+        self.$pagination.empty().append(pagination);
         self.$pagination.show();
     };
+
+    whmcs_ezdefi_exception.prototype.onChangePage = function(e) {
+        e.preventDefault();
+        
+        var target = $(e.target);
+
+        if(target.hasClass('next') || target.hasClass('prev')) {
+            return false;
+        }
+
+        if(target.closest('li').hasClass('disabled')) {
+            return false;
+        }
+
+        var page = target.text();
+        this.getException(page);
+    };
+
 
     whmcs_ezdefi_exception.prototype.onNext = function(e) {
         e.preventDefault();
