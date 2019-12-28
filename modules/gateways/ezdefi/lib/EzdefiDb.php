@@ -410,7 +410,7 @@ class EzdefiDb {
 			return $sql->limit(1)->delete();
 		}
 
-		return $sql->delete();
+		return $sql->limit(1)->delete();
 	}
 
 	public function delete_exceptions_by_invoice_id($invoice_id)
