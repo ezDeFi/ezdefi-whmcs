@@ -75,7 +75,7 @@ jQuery(function($) {
         var tableHead = $(
             "<thead>" +
             "<tr>" +
-            "<th width='32px'>#</th>" +
+            "<th width='60px'>#</th>" +
             "<th width='200px'>Received Amount</th>" +
             "<th width='120px'>Currency</th>" +
             "<th>Invoice</th>" +
@@ -169,7 +169,7 @@ jQuery(function($) {
             }
             var html = $(
                 "<tr>" +
-                "<td width='32px'>" + number + "</td>" +
+                "<td width='60px'>" + number + "</td>" +
                 "<td width='200px' class='amount-id-column'>" +
                 "<span>" + row['amount_id'] + "</span>" +
                 "<input type='hidden' class='amount-id-input' value='" + row['amount_id'] + "' >" +
@@ -454,14 +454,14 @@ jQuery(function($) {
 
     whmcs_ezdefi_exception.prototype.onChangePage = function(e) {
         e.preventDefault();
-        
+
         var target = $(e.target);
 
         if(target.hasClass('next') || target.hasClass('prev')) {
             return false;
         }
 
-        if(target.closest('li').hasClass('disabled')) {
+        if(target.closest('li').hasClass('disabled') || target.closest('li').hasClass('active')) {
             return false;
         }
 

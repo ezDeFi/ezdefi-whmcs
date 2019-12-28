@@ -355,13 +355,13 @@ class EzdefiAjax
 
 	    $offset = 0;
 
-	    $per_page = 10;
+	    $per_page = 15;
 
 	    if(isset($_POST['page']) && $_POST['page'] > 1) {
 		    $offset = $per_page * ($_POST['page'] - 1);
 	    }
 
-	    $current_page = (isset($_POST['page'])) ? $_POST['page'] : 1;
+	    $current_page = (isset($_POST['page'])) ? (int) $_POST['page'] : 1;
 
         $data = $this->db->get_exceptions($params, $offset, $per_page);
 
