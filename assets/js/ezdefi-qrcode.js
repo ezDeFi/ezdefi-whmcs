@@ -179,7 +179,7 @@ jQuery(function($) {
                 countDown.text('0:0');
                 self.timeout(panel);
             } else {
-                countDown.text(t.minutes + ':' + t.seconds);
+                countDown.text(t.text);
             }
         }, 1000);
     };
@@ -187,11 +187,10 @@ jQuery(function($) {
     whmcs_ezdefi_qrcode.prototype.getTimeRemaining = function(endTime) {
         var t = new Date(endTime).getTime() - new Date().getTime();
         var minutes = Math.floor((t / 60000));
-        var seconds = (t % 60000 / 1000).toFixed(0);
+        var seconds = ((t % 60000) / 1000).toFixed(0);
         return {
             'total': t,
-            'minutes': minutes,
-            'seconds': seconds
+            'text': (seconds == 60 ? (minutes +1) + ":00" : minutes + ":" + (seconds < 10 ? "0" : "") + seconds)
         };
     };
 
