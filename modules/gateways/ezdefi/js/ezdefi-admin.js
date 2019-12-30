@@ -9,6 +9,7 @@ jQuery(function($) {
         this.unpaid_invoices = this.ezdefiData.unpaid_invoices;
         this.configUrl = this.ezdefiData.config_url;
         this.adminUrl = this.ezdefiData.admin_url;
+        this.systemUrl = this.ezdefiData.system_url;
 
         var init = this.init.bind(this);
 
@@ -101,16 +102,16 @@ jQuery(function($) {
             "<tr class='editing'>" +
                 "<td class='sortable-handle'><span><i class='fas fa-align-justify'></i></span></td>" +
                 "<td class='logo'>" +
-                    "<img src='https://s2.coinmarketcap.com/static/img/coins/64x64/2714.png' class='ezdefi-currency-logo'>" +
+                    "<img src='" + this.systemUrl + "/modules/gateways/ezdefi/images/newsd-icon.png' class='ezdefi-currency-logo'>" +
                 "</td>" +
                 "<td class='name'>" +
-                    "<input class='currency-symbol' type='hidden' name='currency[0][symbol]' value='nusd'>" +
-                    "<input class='currency-name' type='hidden' name='currency[0][name]' value='nusd'>" +
-                    "<input class='currency-desc' type='hidden' name='currency[0][desc]' value='nusd desc'>" +
-                    "<input class='currency-logo' type='hidden' name='currency[0][logo]' value='https://s2.coinmarketcap.com/static/img/coins/64x64/2714.png'>" +
-                    "<div class='view'><span>Nusd</span></div>" +
+                    "<input class='currency-symbol' type='hidden' name='currency[0][symbol]' value='newsd'>" +
+                    "<input class='currency-name' type='hidden' name='currency[0][name]' value='NewSD'>" +
+                    "<input class='currency-desc' type='hidden' name='currency[0][desc]' value='NewSD - Stablecoin token for payment'>" +
+                    "<input class='currency-logo' type='hidden' name='currency[0][logo]' value='" + this.systemUrl + "/modules/gateways/ezdefi/images/newsd-icon.png'>" +
+                    "<div class='view'><span>NewSD</span></div>" +
                     "<div class='edit'><select name='currency[0][id]' class='select-select2'>" +
-                        "<option value='nusd' selected='selected'>nusd</option>" +
+                        "<option value='newsd' selected='selected'>NewSD</option>" +
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[0][discount]' /> %</div></td>" +
@@ -126,16 +127,16 @@ jQuery(function($) {
             "<tr class='editing'>" +
                 "<td class='sortable-handle'><span><i class='fas fa-align-justify'></i></span></td>" +
                 "<td class='logo'>" +
-                    "<img src='https://s2.coinmarketcap.com/static/img/coins/64x64/2714.png' class='ezdefi-currency-logo'>" +
+                    "<img src='" + this.systemUrl + "/modules/gateways/ezdefi/images/bitcoin-icon.png' class='ezdefi-currency-logo'>" +
                 "</td>" +
                 "<td class='name'>" +
-                    "<input class='currency-symbol' type='hidden' name='currency[1][symbol]' value='ntf'>" +
-                    "<input class='currency-name' type='hidden' name='currency[1][name]' value='ntf'>" +
-                    "<input class='currency-desc' type='hidden' name='currency[1][desc]' value='ntf desc'>" +
-                    "<input class='currency-logo' type='hidden' name='currency[0][logo]' value='https://s2.coinmarketcap.com/static/img/coins/64x64/2714.png'>" +
-                    "<div class='view'><span>ntf</span></div>" +
+                    "<input class='currency-symbol' type='hidden' name='currency[1][symbol]' value='btc'>" +
+                    "<input class='currency-name' type='hidden' name='currency[1][name]' value='Bitcoin'>" +
+                    "<input class='currency-desc' type='hidden' name='currency[1][desc]' value=''>" +
+                    "<input class='currency-logo' type='hidden' name='currency[1][logo]' value='" + this.systemUrl + "/modules/gateways/ezdefi/images/bitcoin-icon.png'>" +
+                    "<div class='view'><span>Bitcoin</span></div>" +
                     "<div class='edit'><select name='currency[1][id]' class='select-select2'>" +
-                    "<option value='ntf' selected='selected'>ntf</option>" +
+                    "<option value='btc' selected='selected'>Bitcoin</option>" +
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[1][discount]' /> %</div></td>" +
@@ -144,7 +145,32 @@ jQuery(function($) {
                 "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
                 "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' class='currency-decimal' /></div></td>" +
                 "<td class='actions'>" +
-                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn btn btn-danger btn-xs' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
+                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
+                    "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
+                "</td>" +
+            "</tr>" +
+            "<tr class='editing'>" +
+                "<td class='sortable-handle'><span><i class='fas fa-align-justify'></i></span></td>" +
+                "<td class='logo'>" +
+                    "<img src='" + this.systemUrl + "/modules/gateways/ezdefi/images/ethereum-icon.png' class='ezdefi-currency-logo'>" +
+                "</td>" +
+                "<td class='name'>" +
+                    "<input class='currency-symbol' type='hidden' name='currency[2][symbol]' value='eth'>" +
+                    "<input class='currency-name' type='hidden' name='currency[2][name]' value='Ethereum'>" +
+                    "<input class='currency-desc' type='hidden' name='currency[2][desc]' value=''>" +
+                    "<input class='currency-logo' type='hidden' name='currency[2][logo]' value='" + this.systemUrl + "/modules/gateways/ezdefi/images/ethereum-icon.png'>" +
+                    "<div class='view'><span>Ethereum</span></div>" +
+                    "<div class='edit'><select name='currency[2][id]' class='select-select2'>" +
+                        "<option value='eth' selected='selected'>Ethereum</option>" +
+                    "</select></div>" +
+                "</td>" +
+                "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[2][discount]' /> %</div></td>" +
+                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[2][lifetime]' /> s</div></td>" +
+                "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[2][wallet]' /></div></td>" +
+                "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[2][block_confirm]' /></div></td>" +
+                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[2][decimal]' class='currency-decimal' /></div></td>" +
+                "<td class='actions'>" +
+                    "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
                 "</td>" +
             "</tr>"

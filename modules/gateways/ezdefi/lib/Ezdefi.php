@@ -106,6 +106,7 @@ class Ezdefi {
 			'gateway_params' => $gatewayParams,
 			'config_url' => $ezdefiConfigUrl,
 			'admin_url' => $ezdefiAdminUrl,
+            'system_url' => $systemUrl
 		);
 		ob_start(); ?>
 		<link rel="stylesheet" href="<?php echo $systemUrl . '/modules/gateways/ezdefi/css/select2.min.css'; ?>">
