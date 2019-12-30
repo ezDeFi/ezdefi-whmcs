@@ -132,8 +132,7 @@ class EzdefiApi {
 			'value' => $value,
 			'safedist' => ( isset( $currency_data['block_confirm'] ) ) ? $currency_data['block_confirm'] : '',
 			'duration' => ( isset( $currency_data['lifetime'] ) ) ? $currency_data['lifetime'] : '',
-//			'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php',
-			'callback' => 'http://d86cc091.ngrok.io/callback',
+			'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php',
 		];
 
 		if($amountId) {
