@@ -83,7 +83,7 @@ jQuery(function($) {
 
         var tableHead = $(
             "<thead>" +
-            "<tr><th></th><th></th><th>Currency</th><th>Discount</th><th>Expiration</th><th>Wallet</th><th>Block Confirmation</th><th>Decimal</th><th></th></tr>" +
+            "<tr><th></th><th></th><th>Currency</th><th>Discount</th><th>Expiration</th><th>Wallet Address</th><th>Block Confirmation</th><th>Decimal</th><th></th></tr>" +
             "</thead>"
         );
         tableHead.appendTo(table);
