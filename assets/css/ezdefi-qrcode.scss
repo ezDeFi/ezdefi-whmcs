@@ -455,6 +455,26 @@
     }
   }
 
+  #amount_id {
+    .ezdefi-payment {
+      .qrcode {
+        &:not(.expired) {
+          padding-bottom: 12px;
+        }
+      }
+    }
+  }
+
+  #ezdefi_wallet {
+    .ezdefi-payment {
+      .qrcode {
+        &:not(.expired) {
+          padding: 8px 8px 20px 8px !important;
+        }
+      }
+    }
+  }
+
   .whmcs-ezdefi-loader {
     border: 3px solid #eee;
     -webkit-animation: spin 1s linear infinite;
