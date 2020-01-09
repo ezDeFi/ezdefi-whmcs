@@ -119,11 +119,11 @@ jQuery(function($) {
                         "<option value='newsd' selected='selected'>NewSD</option>" +
                     "</select></div>" +
                 "</td>" +
-                "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[0][discount]' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[0][lifetime]' /> s</div></td>" +
+                "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[0][discount]' value='0' /> %</div></td>" +
+                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[0][lifetime]' value='15' /> s</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[0][wallet]' /></div></td>" +
-                "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[0][block_confirm]' /></div></td>" +
-                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[0][decimal]' class='currency-decimal' /></div></td>" +
+                "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[0][block_confirm]' value='1' /></div></td>" +
+                "<td class='decimal'><div class='view'>4</div><div class='edit'><input type='number' name='currency[0][decimal]' class='currency-decimal' value='4' /></div></td>" +
                 "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -144,11 +144,11 @@ jQuery(function($) {
                     "<option value='btc' selected='selected'>Bitcoin</option>" +
                     "</select></div>" +
                 "</td>" +
-                "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[1][discount]' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[1][lifetime]' /> s</div></td>" +
+                "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[1][discount]' value='0' /> %</div></td>" +
+                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[1][lifetime]' value='15' /> s</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[1][wallet]' /></div></td>" +
-                "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[1][block_confirm]' /></div></td>" +
-                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[1][decimal]' class='currency-decimal' /></div></td>" +
+                "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[1][block_confirm]' value='1' /></div></td>" +
+                "<td class='decimal'><div class='view'>8</div><div class='edit'><input type='number' name='currency[1][decimal]' class='currency-decimal' value='8' /></div></td>" +
                 "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -169,11 +169,11 @@ jQuery(function($) {
                         "<option value='eth' selected='selected'>Ethereum</option>" +
                     "</select></div>" +
                 "</td>" +
-                "<td class='discount'><div class='view'></div><div class='edit'><input type='number' name='currency[2][discount]' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'></div><div class='edit'><input type='number' name='currency[2][lifetime]' /> s</div></td>" +
+                "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[2][discount]' value='0' /> %</div></td>" +
+                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[2][lifetime]' value='15' /> s</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[2][wallet]' /></div></td>" +
-                "<td class='block_confirm'><div class='view'></div><div class='edit'><input type='number' name='currency[2][block_confirm]' /></div></td>" +
-                "<td class='decimal'><div class='view'></div><div class='edit'><input type='number' name='currency[2][decimal]' class='currency-decimal' /></div></td>" +
+                "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[2][block_confirm]' value='1' /></div></td>" +
+                "<td class='decimal'><div class='view'>8</div><div class='edit'><input type='number' name='currency[2][decimal]' class='currency-decimal' value='8' /></div></td>" +
                 "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
