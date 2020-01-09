@@ -79,6 +79,13 @@ class EzdefiApi {
 		return $result;
 	}
 
+	public function checkApiKey()
+	{
+		$response = $this->call('user/show', 'get');
+
+		return $response;
+	}
+
 	public function getToken($keyword = '')
 	{
 		$response = $this->call('token/list', 'get', array(

@@ -1,5 +1,6 @@
 jQuery(function($) {
     var selectors = {
+        apiKeyInput: 'input[name="field[apiKey]"]',
         amountIdCheckbox: 'input[name="field[amountId]"]',
         ezdefiWalletCheckbox: 'input[name="field[ezdefiWallet]"]',
     };
@@ -33,6 +34,8 @@ jQuery(function($) {
             self.renderCurrency.call(this, currency)
         }
 
+        self.form.find(selectors.apiKeyInput).attr('autocomplete', 'off');
+
         self.customValidationRule.call(this);
         self.initValidation();
         self.initSort.call(this);
@@ -48,6 +51,7 @@ jQuery(function($) {
         var toggleAmountSetting = this.toggleAmountSetting.bind(this);
         var onChangeDecimal = this.onChangeDecimal.bind(this);
         var onBlurDecimal = this.onBlurDecimal.bind(this);
+        var onChangeApiKey = this.onChangeApiKey.bind(this);
 
         self.toggleAmountSetting(this);
 
@@ -59,7 +63,8 @@ jQuery(function($) {
             .on('click', '.saveBtn', saveCurrency)
             .on('change', selectors.amountIdCheckbox, toggleAmountSetting)
             .on('focus', '.currency-decimal', onChangeDecimal)
-            .on('blur', '.currency-decimal', onBlurDecimal);
+            .on('blur', '.currency-decimal', onBlurDecimal)
+            .on('keyup', selectors.apiKeyInput, onChangeApiKey);
     };
 
     whmcs_ezdefi_admin.prototype.addManageExceptionBtn = function() {
@@ -604,6 +609,43 @@ jQuery(function($) {
     whmcs_ezdefi_admin.prototype.removeAttr = function(row) {
         row.find('input, select').each(function () {
             $(this).removeAttr('aria-describedby').removeAttr('aria-invalid');
+        });
+    };
+
+    whmcs_ezdefi_admin.prototype.onChangeApiKey = function(e) {
+        var self = this;
+        var $input = $(e.target);
+        $input.rules('add', {
+            remote: {
+                url: self.configUrl,
+                type: 'POST',
+                data: {
+                    action: 'check_api_key',
+                    api_url: function() {
+                        return self.form.find('input[name="field[apiUrl]"]').val();
+                    },
+                    api_key: function() {
+                        return self.form.find('input[name="field[apiKey]"]').val();
+                    }
+                },
+                beforeSend: function() {
+                    self.form.find(selectors.apiKeyInput).addClass('pending');
+                },
+                complete: function (data) {
+                    self.form.find(selectors.apiKeyInput).removeClass('pending');
+                    var response = data.responseText;
+                    var $inputWrapper = self.form.find(selectors.apiKeyInput).closest('td');
+                    if (response === 'true') {
+                        $inputWrapper.append('<span class="correct">Correct</span>');
+                        window.setTimeout(function () {
+                            $inputWrapper.find('.correct').remove();
+                        }, 1000);
+                    }
+                }
+            },
+            messages: {
+                remote: "API Key is not correct. Please check again"
+            }
         });
     };
 

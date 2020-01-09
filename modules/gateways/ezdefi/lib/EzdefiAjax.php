@@ -50,6 +50,28 @@ class EzdefiAjax
 		}
 	}
 
+	public function check_api_key($data)
+	{
+		if(!isset($data['api_url']) || !isset( $data['api_key'])) {
+			die('false');
+		}
+
+		$api_url = $data['api_url'];
+		$api_key = $data['api_key'];
+
+		$api = new EzdefiApi($api_url, $api_key);
+
+		$response = $api->checkApiKey();
+
+		$response = json_decode($response, true);
+
+		if($response['code'] != 1) {
+			die('false');
+		}
+
+		die('true');
+	}
+
 	public function get_token($data)
 	{
 		if(!$this->validate_token_data($data)) {
@@ -77,46 +99,6 @@ class EzdefiAjax
 		$keyword = $_POST['keyword'];
 
 		if(empty($api_url) || empty($keyword) || empty($api_key)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public function check_wallet($data)
-	{
-		if(!$this->validate_wallet_data($data)) {
-			return 'false';
-		}
-
-		$address = $data['address'];
-		$apiUrl = $data['apiUrl'];
-		$apiKey = $data['apiKey'];
-
-		$api = new EzdefiApi($apiUrl, $apiKey);
-
-		$response = $api->getListWallet();
-
-		$response = json_decode($response, true);
-
-		$list_wallet = $response['data'];
-
-		$key = array_search( $address, array_column( $list_wallet, 'address' ) );
-
-		if($key !== false) {
-			$status = $list_wallet[$key]['status'];
-
-			if($status === 'ACTIVE') {
-				return 'true';
-			}
-		}
-
-		return 'false';
-	}
-
-	protected function validate_wallet_data($data)
-	{
-		if(!isset($data['address']) || !isset($data['apiUrl']) || !isset($data['apiKey'])) {
 			return false;
 		}
 

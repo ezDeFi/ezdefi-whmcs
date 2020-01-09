@@ -9,6 +9,21 @@
     display: block;
     color: #cc0000;;
   }
+
+  span.correct {
+    display: block;
+    color: #567622;
+  }
+
+  input[name="field[apiKey]"] {
+    &.pending {
+      background-image: url(../images/spinner-2x.gif) !important;
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+      background-position: 99% center;
+    }
+  }
+
   #ezdefi-currency-table {
     font-size: 13px;
     width: 100%;
