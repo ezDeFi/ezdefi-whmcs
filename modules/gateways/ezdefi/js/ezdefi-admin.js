@@ -120,7 +120,7 @@ jQuery(function($) {
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[0][discount]' value='0' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[0][lifetime]' value='15' /> s</div></td>" +
+                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[0][lifetime]' value='15' /> m</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[0][wallet]' /></div></td>" +
                 "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[0][block_confirm]' value='1' /></div></td>" +
                 "<td class='decimal'><div class='view'>4</div><div class='edit'><input type='number' name='currency[0][decimal]' class='currency-decimal' value='4' /></div></td>" +
@@ -145,7 +145,7 @@ jQuery(function($) {
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[1][discount]' value='0' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[1][lifetime]' value='15' /> s</div></td>" +
+                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[1][lifetime]' value='15' /> m</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[1][wallet]' /></div></td>" +
                 "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[1][block_confirm]' value='1' /></div></td>" +
                 "<td class='decimal'><div class='view'>8</div><div class='edit'><input type='number' name='currency[1][decimal]' class='currency-decimal' value='8' /></div></td>" +
@@ -170,7 +170,7 @@ jQuery(function($) {
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[2][discount]' value='0' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[2][lifetime]' value='15' /> s</div></td>" +
+                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[2][lifetime]' value='15' /> m</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[2][wallet]' /></div></td>" +
                 "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[2][block_confirm]' value='1' /></div></td>" +
                 "<td class='decimal'><div class='view'>8</div><div class='edit'><input type='number' name='currency[2][decimal]' class='currency-decimal' value='8' /></div></td>" +
@@ -204,7 +204,7 @@ jQuery(function($) {
                         "</select></div>" +
                     "</td>" +
                     "<td class='discount'><div class='view'><span>"+((config['discount'].length > 0) ? config['discount'] : 0)+"%</span></div><div class='edit'><input type='number' name='currency["+i+"][discount]' value='"+config['discount']+"' /> %</div></td>" +
-                    "<td class='lifetime'><div class='view'><span>"+((config['lifetime']).length > 0 ? config['lifetime'] + 's' : '')+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+config['lifetime']+"' /> s</div></td>" +
+                    "<td class='lifetime'><div class='view'><span>"+((config['lifetime']).length > 0 ? config['lifetime'] + 'm' : '')+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+(config['lifetime']/60)+"' /> m</div></td>" +
                     "<td class='wallet'><div class='view'><span>"+config['wallet']+"</span></div><div class='edit'><input type='text' name='currency["+i+"][wallet]' value='"+config['wallet']+"' /></div></td>" +
                     "<td class='block_confirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
                     "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' class='currency-decimal' /></div></td>" +

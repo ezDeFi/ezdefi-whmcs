@@ -26,6 +26,10 @@ class EzdefiAjax
 			return $this->json_error_response();
 		};
 
+		foreach($data as $index => $value) {
+		    $data[$index]['lifetime'] = $value['lifetime'] * 60;
+        }
+
 		$save = $this->save_currency_config($config);
 
 		if(!$save) {
