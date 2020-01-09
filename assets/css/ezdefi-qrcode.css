@@ -348,12 +348,12 @@
   width: auto;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment .copy-to-clipboard img {
-  width: 14px;
+  width: 17px;
   display: inline-block;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  right: 3px;
+  right: 2px;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment .note {
   color: #f73f2e;
