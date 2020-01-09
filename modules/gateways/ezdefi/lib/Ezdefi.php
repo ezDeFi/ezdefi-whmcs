@@ -61,7 +61,7 @@ class Ezdefi {
 			'apiKey' => array(
 				'FriendlyName' => 'Gateway API Key',
 				'Type' => 'text',
-				'Description' => 'Enter your gateway API Key',
+				'Description' => sprintf('<a style="text-decoration: underline" target="_blank" href="%s">Register to get API Key</a>', 'https://merchant.ezdefi.com/register?utm_source=whmcs-download' ),
 			),
 			'amountId' => array(
 				'FriendlyName' => 'Pay with any crypto wallet',
