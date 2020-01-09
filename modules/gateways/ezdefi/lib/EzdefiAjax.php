@@ -57,9 +57,10 @@ class EzdefiAjax
 		};
 
 		$api_url = $_POST['api_url'];
+		$api_key = $_POST['api_key'];
 		$keyword = $_POST['keyword'];
 
-		$api = new EzdefiApi($api_url);
+		$api = new EzdefiApi($api_url, $api_key);
 		$token = $api->getToken($keyword);
 
 		return json_encode($token);
@@ -67,14 +68,15 @@ class EzdefiAjax
 
 	protected function validate_token_data($data)
 	{
-		if(!isset($data['keyword']) || !isset($data['api_url'])) {
+		if(!isset($data['keyword']) || !isset($data['api_url']) || !isset($data['api_key'])) {
 			return false;
 		}
 
 		$api_url = $_POST['api_url'];
+		$api_key = $_POST['api_key'];
 		$keyword = $_POST['keyword'];
 
-		if(empty($api_url) || empty($keyword)) {
+		if(empty($api_url) || empty($keyword) || empty($api_key)) {
 			return false;
 		}
 

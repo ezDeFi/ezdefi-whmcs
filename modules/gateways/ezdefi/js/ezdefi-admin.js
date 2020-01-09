@@ -406,6 +406,7 @@ jQuery(function($) {
                     var query = {
                         action: 'get_token',
                         api_url: self.form.find('input[name="field[apiUrl]"]').val(),
+                        api_key: self.form.find('input[name="field[apiKey]"]').val(),
                         keyword: params.term
                     };
 
