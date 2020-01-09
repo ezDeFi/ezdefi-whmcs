@@ -242,8 +242,8 @@ class EzdefiAjax
                 <p class="note">If you have difficulty for sending exact amount, try to use <a href="" class="ezdefiEnableBtn">ezDeFi Wallet</a></p>
 			<?php else : ?>
                 <p class="app-link-list">
-                    <a href="http://ezdefi.com/ios"><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/ios-icon.png'; ?>" />Download ezDefi for IOS</a>
-                    <a href="http://ezdefi.com/android"><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/android-icon.png'; ?>" />Download ezDefi for Android</a>
+                    <a target="_blank" href="http://ezdefi.com/ios"><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/ios-icon.png'; ?>" />Download ezDefi for IOS</a>
+                    <a target="_blank" href="http://ezdefi.com/android"><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/android-icon.png'; ?>" />Download ezDefi for Android</a>
                 </p>
 			<?php endif; ?>
 		</div>
