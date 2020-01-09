@@ -203,8 +203,8 @@ jQuery(function($) {
                             "<option value='"+config['symbol']+"' selected='selected'>"+config['symbol']+"</option>" +
                         "</select></div>" +
                     "</td>" +
-                    "<td class='discount'><div class='view'><span>"+((config['discount'].length > 0) ? config['discount'] : 0)+"%</span></div><div class='edit'><input type='number' name='currency["+i+"][discount]' value='"+config['discount']+"' /> %</div></td>" +
-                    "<td class='lifetime'><div class='view'><span>"+((config['lifetime']).length > 0 ? config['lifetime'] + 'm' : '')+"</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+(config['lifetime']/60)+"' /> m</div></td>" +
+                    "<td class='discount'><div class='view'><span>"+config['discount']+"%</span></div><div class='edit'><input type='number' name='currency["+i+"][discount]' value='"+config['discount']+"' /> %</div></td>" +
+                    "<td class='lifetime'><div class='view'><span>"+(config['lifetime'] / 60)+"m</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+(config['lifetime']/60)+"' /> m</div></td>" +
                     "<td class='wallet'><div class='view'><span>"+config['wallet']+"</span></div><div class='edit'><input type='text' name='currency["+i+"][wallet]' value='"+config['wallet']+"' /></div></td>" +
                     "<td class='block_confirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
                     "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' class='currency-decimal' /></div></td>" +
@@ -595,6 +595,8 @@ jQuery(function($) {
             td.find('.currency-desc').val('');
         }
         tr.find('.logo img').attr('src', data.logo);
+        tr.find('td.decimal').find('input').val(data.suggestedDecimal);
+        tr.find('td.decimal').find('.view').text(data.suggestedDecimal);
         td.find('.view span').text(data.name);
     };
 
