@@ -177,10 +177,9 @@ class EzdefiAjax
 		} else {
 			$value = $payment['value'] / pow( 10, $payment['decimal'] );
 		}
-		$value = rtrim(number_format($value, 12), '0');
 
 		$data = array(
-			'amount_id' => $value,
+			'amount_id' => str_replace( ',', '', $value),
 			'currency' => $symbol,
 			'order_id' => substr($payment['uoid'], 0, strpos($payment['uoid'],'-' )),
 			'status' => 'not_paid',
@@ -206,9 +205,13 @@ class EzdefiAjax
                 } else {
                     $value = $payment['value'] / pow( 10, $payment['decimal']);
                 }
-                $value = rtrim( number_format( $value, 12, '.', '' ), '0' );
-                if(substr($value, -1) == '.') {
-                    $value = $value + 0;
+                
+                $notation = explode('E', $value);
+
+                if(count($notation) === 2){
+                    $exp = abs(end($notation)) + strlen($notation[0]);
+                    $decimal = number_format($value, $exp);
+                    $value = rtrim($decimal, '.0');
                 }
             ?>
 			<p class="exchange">

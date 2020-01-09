@@ -158,7 +158,7 @@ class Ezdefi {
 	    }
 
 	    $data = array(
-		    'amount_id' => number_format($value, 12),
+		    'amount_id' => number_format( $value, 12, '.', '' ),
 		    'currency' => $currency,
 		    'explorer_url' => $explorerUrl,
 	    );
@@ -191,7 +191,7 @@ class Ezdefi {
 		    $amount_id = $payment['value'] / pow( 10, $payment['decimal'] );
 	    }
 
-	    $amount_id = number_format( $amount_id, 12 );
+	    $amount_id = number_format( $amount_id, 12, '.', '' );
 
 	    $currency = $payment['currency'];
 
