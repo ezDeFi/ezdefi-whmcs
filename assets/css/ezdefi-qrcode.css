@@ -172,6 +172,7 @@
   padding: 10px 0;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-top: none;
+  background: transparent !important;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment {
   padding: 20px 20px 0 20px;
@@ -219,6 +220,20 @@
 #whmcs_ezdefi_qrcode .ezdefi-payment .qrcode {
   display: inline-block;
   position: relative;
+  text-decoration: none;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode:not(.expired) {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  padding-bottom: 12px;
+}
+#whmcs_ezdefi_qrcode .ezdefi-payment .qrcode:not(.expired):after {
+  content: "Click to pay";
+  font-size: 14px;
+  line-height: 12px;
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment .qrcode.expired:before {
   content: "";

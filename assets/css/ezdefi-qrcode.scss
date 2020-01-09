@@ -191,6 +191,7 @@
       padding: 10px 0;
       border: 1px solid rgba(0,0,0,.125);
       border-top: none;
+      background: transparent !important;
     }
   }
 
@@ -242,6 +243,23 @@
     .qrcode {
       display: inline-block;
       position: relative;
+
+      text-decoration: none;
+
+      &:not(.expired) {
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        padding-bottom: 12px;
+
+        &:after {
+          content: "Click to pay";
+          font-size: 14px;
+          line-height: 12px;
+          position: absolute;
+          bottom: 4px;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
 
       &.expired {
         &:before {
