@@ -89,7 +89,9 @@ class EzdefiApi {
 	public function getToken($keyword = '')
 	{
 		$response = $this->call('token/list', 'get', array(
-			'keyword' => $keyword
+			'keyword' => $keyword,
+			'domain' => $_SERVER['SERVER_NAME'],
+			'platform' => 'whmcs'
 		));
 
 		return $response;
