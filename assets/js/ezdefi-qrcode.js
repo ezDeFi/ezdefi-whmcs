@@ -15,7 +15,8 @@ jQuery(function($) {
         ezdefiEnableBtn: '.ezdefiEnableBtn',
         loader: '.whmcs-ezdefi-loader',
         copy: '.copy-to-clipboard',
-        qrcode: '.qrcode'
+        qrcode: '.qrcode',
+        changeQrcodeBtn: '.changeQrcodeBtn'
     };
 
     var whmcs_ezdefi_qrcode = function() {
@@ -31,6 +32,7 @@ jQuery(function($) {
         var init = this.init.bind(this);
         var onSelectItem = this.onSelectItem.bind(this);
         var onClickEzdefiLink = this.onClickEzdefiLink.bind(this);
+        var onUseAltQrcode = this.onUseAltQrcode.bind(this);
         var onClickQrcode = this.onClickQrcode.bind(this);
 
         init();
@@ -38,7 +40,8 @@ jQuery(function($) {
         $(document.body)
             .on('click', selectors.item, onSelectItem)
             .on('click', selectors.ezdefiEnableBtn, onClickEzdefiLink)
-            .on('click', selectors.qrcode, onClickQrcode);
+            .on('click', selectors.qrcode, onClickQrcode)
+            .on('click', selectors.changeQrcodeBtn, onUseAltQrcode);
     };
 
     whmcs_ezdefi_qrcode.prototype.init = function() {
@@ -143,6 +146,14 @@ jQuery(function($) {
         var self = this;
         e.preventDefault();
         self.$tabs.tabs('option', 'active', 1);
+    };
+
+    whmcs_ezdefi_qrcode.prototype.onUseAltQrcode = function(e) {
+        e.preventDefault();
+        this.$tabs.find('.qrcode img').hide();
+        this.$tabs.find('.qrcode__info--main').hide();
+        this.$tabs.find('.qrcode img.alt').show();
+        this.$tabs.find('.qrcode__info--alt').show();
     };
 
     whmcs_ezdefi_qrcode.prototype.checkOrderStatus = function() {
