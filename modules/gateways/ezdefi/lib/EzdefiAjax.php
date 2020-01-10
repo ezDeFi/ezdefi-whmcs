@@ -221,9 +221,16 @@ class EzdefiAjax
 			</p>
 			<p>You have <span class="count-down" data-endtime="<?php echo $payment['expiredTime']; ?>"></span> to scan this QR Code</p>
 			<p>
-				<a class="qrcode" href="<?php echo $payment['deepLink']; ?>">
-					<img src="<?php echo $payment['qr']; ?>" />
-				</a>
+				<?php
+                    if( isset( $payment['amountId'] ) && $payment['amountId'] === true ) {
+                        $deepLink = $payment['deepLink'];
+                    } else {
+                        $deepLink = 'ezdefi://' . $payment['deepLink'];
+                    }
+				?>
+                <a class="qrcode <?php echo (time() > strtotime($payment['expiredTime'])) ? 'expired' : ''; ?>" href="<?php echo $deepLink; ?>">
+                    <img src="<?php echo $payment['qr']; ?>" />
+                </a>
 			</p>
 			<?php if(isset( $payment['amountId'] ) && $payment['amountId'] == true) : ?>
                 <p class="receive-address">
