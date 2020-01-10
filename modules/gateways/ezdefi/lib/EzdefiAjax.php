@@ -242,8 +242,8 @@ class EzdefiAjax
                 </p>
                 <p class="payment-amount">
                     <strong>Amount:</strong>
-                    <span class="copy-to-clipboard" data-clipboard-text="<?php echo $payment['originValue']; ?>" title="Copy to clipboard">
-                        <span class="copy-content"><?php echo $payment['originValue']; ?></span>
+                    <span class="copy-to-clipboard" data-clipboard-text="<?php echo $value; ?>" title="Copy to clipboard">
+                        <span class="copy-content"><?php echo $value; ?></span>
                         <span class="amount"><?php echo $payment['token']['symbol'] ?></span>
                         <img src="<?php echo $this->db->getSystemUrl() . '/assets/img/copy-icon.svg'; ?>" />
                     </span>
