@@ -229,7 +229,7 @@ class EzdefiAjax
                     }
 				?>
                 <a class="qrcode <?php echo (time() > strtotime($payment['expiredTime'])) ? 'expired' : ''; ?>" href="<?php echo $deepLink; ?>">
-                    <img src="<?php echo $payment['qr']; ?>" />
+                    <img class="main" src="<?php echo $payment['qr']; ?>" />
 	                <?php if( isset( $payment['amountId'] ) && $payment['amountId'] === true ) : ?>
                         <img class="alt" style="display: none" src="<?php echo 'https://chart.googleapis.com/chart?cht=qr&chl='.$payment['to'].'&chs=200x200&chld=L|0'; ?>" alt="">
 	                <?php endif; ?>
@@ -242,27 +242,32 @@ class EzdefiAjax
 
                 <div class="qrcode__info--alt" style="display: none">
                     <p class="receive-address">
-                    <strong>Address:</strong>
-                    <span class="copy-to-clipboard" data-clipboard-text="<?php echo $payment['to']; ?>" title="Copy to clipboard">
-                        <span class="copy-content"><?php echo $payment['to']; ?></span>
-                        <img src="<?php echo $this->db->getSystemUrl() .  '/assets/img/copy-icon.svg'; ?>" />
-                    </span>
-                </p>
+                        <strong>Address:</strong>
+                        <span class="copy-to-clipboard" data-clipboard-text="<?php echo $payment['to']; ?>" title="Copy to clipboard">
+                            <span class="copy-content"><?php echo $payment['to']; ?></span>
+                            <img src="<?php echo $this->db->getSystemUrl() .  '/assets/img/copy-icon.svg'; ?>" />
+                        </span>
+                    </p>
                     <p class="payment-amount">
-                    <strong>Amount:</strong>
-                    <span class="copy-to-clipboard" data-clipboard-text="<?php echo $value; ?>" title="Copy to clipboard">
-                        <span class="copy-content"><?php echo $value; ?></span>
-                        <span class="amount"><?php echo $payment['token']['symbol'] ?></span>
-                        <img src="<?php echo $this->db->getSystemUrl() . '/assets/img/copy-icon.svg'; ?>" />
-                    </span>
-                </p>
+                        <strong>Amount:</strong>
+                        <span class="copy-to-clipboard" data-clipboard-text="<?php echo $value; ?>" title="Copy to clipboard">
+                            <span class="copy-content"><?php echo $value; ?></span>
+                            <span class="amount"><?php echo $payment['token']['symbol'] ?></span>
+                            <img src="<?php echo $this->db->getSystemUrl() . '/assets/img/copy-icon.svg'; ?>" />
+                        </span>
+                    </p>
                     <p class="note">You have to pay exact amount so that your order can be handle property.<br/></p>
                     <p class="note">If you have difficulty for sending exact amount, try to use <a href="" class="ezdefiEnableBtn">ezDeFi Wallet</a></p>
+                    <p style="margin-top: 1rem">
+                        <a class="changeQrcodeBtn" href="">
+                            <strong>Use previous QR Code</strong>
+                        </a>
+                    </p>
                 </div>
 			<?php else : ?>
                 <p class="app-link-list">
-                    <a target="_blank" href="http://ezdefi.com/ios"><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/ios-icon.png'; ?>" />Download ezDefi for IOS</a>
-                    <a target="_blank" href="http://ezdefi.com/android"><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/android-icon.png'; ?>" />Download ezDefi for Android</a>
+                    <a target="_blank" href="http://ezdefi.com/ios?utm=whmcs-download"><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/ios-icon.png'; ?>" />Download ezDefi for IOS</a>
+                    <a target="_blank" href="http://ezdefi.com/android?utm=whmcs-download"><img src="<?php echo $this->db->getSystemUrl() . '/assets/img/android-icon.png'; ?>" />Download ezDefi for Android</a>
                 </p>
 			<?php endif; ?>
 		</div>

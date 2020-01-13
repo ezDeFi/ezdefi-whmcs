@@ -158,7 +158,7 @@ class Ezdefi {
 	    }
 
 	    $data = array(
-		    'amount_id' => number_format( $value, 12, '.', '' ),
+		    'amount_id' => $this->sanitize_float_value($value),
 		    'currency' => $currency,
 		    'explorer_url' => $explorerUrl,
 	    );
@@ -191,8 +191,6 @@ class Ezdefi {
 		    $amount_id = $payment['value'] / pow( 10, $payment['decimal'] );
 	    }
 
-	    $amount_id = number_format( $amount_id, 12, '.', '' );
-
 	    $currency = $payment['currency'];
 
 	    $exception_data = array(
@@ -201,7 +199,7 @@ class Ezdefi {
 	    );
 
 	    $wheres = array(
-		    'amount_id' => $amount_id,
+		    'amount_id' => $this->sanitize_float_value($amount_id),
 		    'currency' => (string) $currency,
 		    'order_id' => (int) $invoiceId
 	    );
@@ -240,4 +238,17 @@ class Ezdefi {
 
 	    die();
     }
+
+	protected function sanitize_float_value( $value )
+	{
+		$notation = explode('E', $value);
+
+		if(count($notation) === 2){
+			$exp = abs(end($notation)) + strlen($notation[0]);
+			$decimal = number_format($value, $exp);
+			$value = rtrim($decimal, '.0');
+		}
+
+		return str_replace( ',', '', $value );
+	}
 }

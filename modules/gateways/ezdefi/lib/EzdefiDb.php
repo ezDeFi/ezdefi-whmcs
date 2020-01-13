@@ -141,8 +141,8 @@ class EzdefiDb {
 			Capsule::schema()->create('tblezdefiamountids', function($table) {
 				$table->increments('id');
 				$table->integer('amount_key');
-				$table->decimal('price', 20, 12);
-				$table->decimal('amount_id', 20, 12);
+				$table->decimal('price', 60, 30);
+				$table->decimal('amount_id', 60, 30);
 				$table->string('currency');
 				$table->timestamp('expired_time');
 				$table->unique(['amount_id', 'currency']);
@@ -165,7 +165,7 @@ class EzdefiDb {
 		try {
 			Capsule::schema()->create('tblezdefiexceptions', function($table) {
 				$table->increments('id');
-				$table->decimal('amount_id', 20, 12);
+				$table->decimal('amount_id', 60, 30);
 				$table->string('currency');
 				$table->integer('order_id')->nullable();
 				$table->string('status')->nullable();
@@ -187,11 +187,11 @@ class EzdefiDb {
 		try {
 			$pdo->exec("
 				CREATE PROCEDURE IF NOT EXISTS `ezdefi_generate_amount_id`(
-		            IN value DECIMAl(20,12),
+		            IN value DECIMAl(60,30),
 				    IN token VARCHAR(10),
 				    IN decimal_number INT(2),
 				    IN life_time INT(11),
-				    OUT amount_id DECIMAL(20,12)
+				    OUT amount_id DECIMAL(60,30)
 				)
 				BEGIN
 				    DECLARE unique_id INT(11) DEFAULT 0;
@@ -438,7 +438,11 @@ class EzdefiDb {
 		}
 
 		foreach($wheres as $column => $value)  {
-			$sql->where($column, $value);
+			if($column == 'amount_id') {
+				$sql->where($column, 'LIKE', "$value%");
+			} else {
+				$sql->where($column, $value);
+			}
 		}
 
 		return $sql->update($data);

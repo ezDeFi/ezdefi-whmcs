@@ -171,7 +171,7 @@ jQuery(function($) {
                 "<tr>" +
                 "<td width='60px'>" + number + "</td>" +
                 "<td width='200px' class='amount-id-column'>" +
-                "<span>" + row['amount_id'] + "</span>" +
+                "<span>" + (row['amount_id'] * 1) + "</span>" +
                 "<input type='hidden' class='amount-id-input' value='" + row['amount_id'] + "' >" +
                 "</td>" +
                 "<td width='120px'>" +

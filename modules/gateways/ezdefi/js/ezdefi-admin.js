@@ -120,10 +120,10 @@ jQuery(function($) {
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[0][discount]' value='0' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[0][lifetime]' value='15' /> m</div></td>" +
+                "<td class='lifetime'><div class='view'>15m</div><div class='edit'><input type='number' name='currency[0][lifetime]' value='15' /> m</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[0][wallet]' /></div></td>" +
                 "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[0][block_confirm]' value='1' /></div></td>" +
-                "<td class='decimal'><div class='view'>4</div><div class='edit'><input type='number' name='currency[0][decimal]' class='currency-decimal' value='4' /></div></td>" +
+                "<td class='decimal'><div class='view'>4</div><div class='edit'><input type='number' name='currency[0][decimal]' class='currency-decimal' value='4' /><input type='hidden' class='currency-decimal-max' name='currency[0][decimal_max]' value='6'></div></td>" +
                 "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -145,10 +145,10 @@ jQuery(function($) {
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[1][discount]' value='0' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[1][lifetime]' value='15' /> m</div></td>" +
+                "<td class='lifetime'><div class='view'>15m</div><div class='edit'><input type='number' name='currency[1][lifetime]' value='15' /> m</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[1][wallet]' /></div></td>" +
                 "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[1][block_confirm]' value='1' /></div></td>" +
-                "<td class='decimal'><div class='view'>8</div><div class='edit'><input type='number' name='currency[1][decimal]' class='currency-decimal' value='8' /></div></td>" +
+                "<td class='decimal'><div class='view'>8</div><div class='edit'><input type='number' name='currency[1][decimal]' class='currency-decimal' value='8' /><input type='hidden' class='currency-decimal-max' name='currency[1][decimal_max]' value='8'></div></td>" +
                 "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -170,10 +170,10 @@ jQuery(function($) {
                     "</select></div>" +
                 "</td>" +
                 "<td class='discount'><div class='view'>0</div><div class='edit'><input type='number' name='currency[2][discount]' value='0' /> %</div></td>" +
-                "<td class='lifetime'><div class='view'>15 minutes</div><div class='edit'><input type='number' name='currency[2][lifetime]' value='15' /> m</div></td>" +
+                "<td class='lifetime'><div class='view'>15m</div><div class='edit'><input type='number' name='currency[2][lifetime]' value='15' /> m</div></td>" +
                 "<td class='wallet'><div class='view'></div><div class='edit'><input type='text' name='currency[2][wallet]' /></div></td>" +
                 "<td class='block_confirm'><div class='view'>1</div><div class='edit'><input type='number' name='currency[2][block_confirm]' value='1' /></div></td>" +
-                "<td class='decimal'><div class='view'>8</div><div class='edit'><input type='number' name='currency[2][decimal]' class='currency-decimal' value='8' /></div></td>" +
+                "<td class='decimal'><div class='view'>8</div><div class='edit'><input type='number' name='currency[2][decimal]' class='currency-decimal' value='8' /><input type='hidden' class='currency-decimal-max' name='currency[2][decimal_max]' value='18'></div></td>" +
                 "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -188,7 +188,7 @@ jQuery(function($) {
         for (var i = 0; i < currency.length; i++) {
             var config = currency[i];
             var row =
-                "<tr>" +
+                "<tr data-saved='1'>" +
                     "<td class='sortable-handle'><span><i class='fas fa-align-justify'></i></span></td>" +
                     "<td class='logo'>" +
                         "<img src='"+config['logo']+"' class='ezdefi-currency-logo'>" +
@@ -207,7 +207,7 @@ jQuery(function($) {
                     "<td class='lifetime'><div class='view'><span>"+(config['lifetime'] / 60)+"m</span></div><div class='edit'><input type='number' name='currency["+i+"][lifetime]' value='"+(config['lifetime']/60)+"' /> m</div></td>" +
                     "<td class='wallet'><div class='view'><span>"+config['wallet']+"</span></div><div class='edit'><input type='text' name='currency["+i+"][wallet]' value='"+config['wallet']+"' /></div></td>" +
                     "<td class='block_confirm'><div class='view'><span>"+config['block_confirm']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][block_confirm]' value='"+config['block_confirm']+"' /></div></td>" +
-                    "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' class='currency-decimal' /></div></td>" +
+                    "<td class='decimal'><div class='view'><span>"+config['decimal']+"</span></div><div class='edit'><input type='number' name='currency["+i+"][decimal]' value='"+config['decimal']+"' class='currency-decimal' /><input type='hidden' name='currency["+i+"][decimal_max]' value='"+config['decimal_max']+"' class='currency-decimal-max' /></div></td>" +
                     "<td class='actions'>" +
                     "<div class='view'><a class='editBtn' href=''><img src='"+ this.adminUrl +"images/edit.gif' alt=''></a> <a class='deleteBtn' href=''><img src='"+ this.adminUrl +"images/icons/delete.png' alt=''></a></div>" +
                     "<div class='edit'><a class='cancelBtn' href=''>Cancel</a></div>" +
@@ -240,9 +240,10 @@ jQuery(function($) {
                 if(element.hasClass('select-select2')) {
                     error.insertAfter(element.closest('.edit').find('.select2-container'));
                 } else {
-                    if(element.closest('td').find('span.error').length === 0) {
-                        error.appendTo(element.closest('td'));
+                    if (element.closest('td').find('span.error').length > 0) {
+                        element.closest('td').find('span.error').remove();
                     }
+                    error.appendTo(element.closest('td'));
                 }
             },
             highlight: function(element) {
@@ -258,16 +259,6 @@ jQuery(function($) {
                 },
                 'field[apiKey]': {
                     required: true
-                },
-                'field[variation]': {
-                    required: {
-                        depends: function(element) {
-                            return self.form.find(selectors.amountIdCheckbox).is(':checked');
-                        }
-                    },
-                    number: true,
-                    greaterThanZero: true,
-                    max: 100
                 },
                 'field[amountId]': {
                     paymentMethodRequired: true
@@ -291,7 +282,15 @@ jQuery(function($) {
             stop: function() {
                 $(this).find('tr').each(function (rowIndex) {
                     var row = $(this);
-                    self.updateAttr(row, rowIndex)
+                    self.updateAttr(row, rowIndex);
+                    row.find(".currency-decimal").rules("remove", "max");
+                    row.find(".currency-decimal").rules("add", {
+                        max: parseInt(row.find('.currency-decimal-max').val()),
+                        messages: {
+                            max: jQuery.validator.format("Max: {0}")
+                        }
+                    });
+                    row.find(".currency-decimal").valid();
                 });
                 $(this).find('tr .saveBtn').trigger('click');
             }
@@ -306,7 +305,11 @@ jQuery(function($) {
             if(name.indexOf('discount') > 0) {
                 $('input[name="'+name+'"]').rules('add', {
                     min: 0,
-                    max: 100
+                    max: 100,
+                    messages: {
+                        min: jQuery.validator.format("Min: {0}"),
+                        max: jQuery.validator.format("Max: {0}")
+                    }
                 });
             }
 
@@ -340,19 +343,24 @@ jQuery(function($) {
             if(name.indexOf('block_confirm') > 0) {
                 var $input = $('input[name="'+name+'"]');
                 $input.rules('add', {
-                    min: 0
+                    min: 0,
+                    messages: {
+                        min: jQuery.validator.format("Min: {0}")
+                    }
                 });
             }
 
-            if(name.indexOf('decimal') > 0) {
+            if(name.indexOf('decimal') > 0 && name.indexOf("decimal_max") < 0) {
                 var $input = $('input[name="'+name+'"]');
+                var decimal_max = parseInt($input.parent().find(".currency-decimal-max").val());
                 $input.rules('add', {
                     required: true,
                     min: 2,
-                    max: 12,
+                    max: decimal_max,
                     messages: {
-                        required: 'Please enter number of decimal',
-                        min: 'Please enter number equal or greater than 2',
+                        min: jQuery.validator.format("Min: {0}"),
+                        max: jQuery.validator.format("Max: {0}"),
+                        required: "Required"
                     }
                 });
             }
@@ -365,7 +373,10 @@ jQuery(function($) {
                             return ($input.val().length > 0);
                         }
                     },
-                    min: 0
+                    min: 0,
+                    messages: {
+                        min: jQuery.validator.format("Min: {0}")
+                    }
                 });
             }
         });
@@ -373,23 +384,25 @@ jQuery(function($) {
 
     whmcs_ezdefi_admin.prototype.toggleAmountSetting = function() {
         var checked = this.form.find(selectors.amountIdCheckbox).is(':checked');
-        var amount_settings = this.form.find('input[name="field[variation]"]').closest('tr');
+        var variation_setting = this.form.find('input[name*="variation"]');
         if(checked) {
-            amount_settings.each(function() {
-                $(this).show();
+            variation_setting.show();
+            this.form.find('input[name*="variation"]').rules('add', {
+                required: true,
+                greaterThanZero: true,
+                max: 100
             });
         } else {
-            amount_settings.each(function() {
-                $(this).hide();
-            });
+            variation_setting.hide();
+            this.form.find('input[name*="variation"]').rules('remove', 'required greaterThanZero max');
         }
     };
 
     whmcs_ezdefi_admin.prototype.onChangeDecimal = function(e) {
         var input = $(e.target);
-        if(input.val().length > 0) {
+        if(input.val().length > 0 && input.closest("tr").attr("data-saved") == "1") {
             var td = $(e.target).closest('td');
-            if(td.find('span.error').length === 0) {
+            if (td.find("span.error").length === 0) {
                 td.find('.edit').append('<span class="error">Changing decimal can cause to payment interruption</span>');
             }
         }
@@ -397,7 +410,7 @@ jQuery(function($) {
 
     whmcs_ezdefi_admin.prototype.onBlurDecimal = function(e) {
         var td = $(e.target).closest('td');
-        td.find('.edit').find('.error').remove();
+        td.find('.edit').find('.decimal-warning').remove();
     };
 
     whmcs_ezdefi_admin.prototype.initCurrencySelect = function(element) {
@@ -476,6 +489,7 @@ jQuery(function($) {
         var selectName = $clone.find('select').attr('name')
         var $select = $('<select name="'+selectName+'" class="select-select2"></select>');
 
+        $clone.attr('data-saved', '0');
         $clone.find('select, .select2-container').remove();
         $clone.find('.logo img').attr('src', '');
         $clone.find('.name .view span').empty();
@@ -610,8 +624,17 @@ jQuery(function($) {
             td.find('.currency-desc').val('');
         }
         tr.find('.logo img').attr('src', data.logo);
-        tr.find('td.decimal').find('input').val(data.suggestedDecimal);
-        tr.find('td.decimal').find('.view').text(data.suggestedDecimal);
+        tr.find('.currency-decimal').val(data.suggestedDecimal);
+        tr.find('.currency-decimal').closest('td').find('.view').text(data.suggestedDecimal);
+        tr.find('.currency-decimal').rules('remove', 'max');
+        tr.find('.currency-decimal-max').val(data.decimal);
+        tr.find('.currency-decimal').rules('add', {
+            max: data.decimal,
+            messages: {
+                max: jQuery.validator.format("Max: {0}")
+            }
+        });
+        tr.find('.currency-decimal').valid();
         td.find('.view span').text(data.name);
     };
 

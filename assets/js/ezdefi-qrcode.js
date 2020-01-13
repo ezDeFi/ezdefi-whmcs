@@ -150,32 +150,32 @@ jQuery(function($) {
 
     whmcs_ezdefi_qrcode.prototype.onUseAltQrcode = function(e) {
         e.preventDefault();
-        this.$tabs.find('.qrcode img').hide();
-        this.$tabs.find('.qrcode__info--main').hide();
-        this.$tabs.find('.qrcode img.alt').show();
-        this.$tabs.find('.qrcode__info--alt').show();
+        this.$tabs.find('#amount_id .qrcode img.main').toggle();
+        this.$tabs.find('#amount_id .qrcode__info--main').toggle();
+        this.$tabs.find('#amount_id .qrcode img.alt').toggle();
+        this.$tabs.find('#amount_id .qrcode__info--alt').toggle();
     };
 
     whmcs_ezdefi_qrcode.prototype.checkOrderStatus = function() {
         var self = this;
-        // self.checkOrderLoop = setInterval(function() {
-        //     $.ajax({
-        //         url: self.urlData.ajaxUrl,
-        //         method: 'post',
-        //         data: {
-        //             action: 'check_invoice',
-        //             invoice_id: self.paymentData.uoid
-        //         },
-        //         beforeSend: function(jqXHR) {
-        //             self.xhrPool.push(jqXHR);
-        //         },
-        //         success: function(response) {
-        //             if(response.toLowerCase() === 'paid') {
-        //                 self.success();
-        //             }
-        //         }
-        //     });
-        // }, 600);
+        self.checkOrderLoop = setInterval(function() {
+            $.ajax({
+                url: self.urlData.ajaxUrl,
+                method: 'post',
+                data: {
+                    action: 'check_invoice',
+                    invoice_id: self.paymentData.uoid
+                },
+                beforeSend: function(jqXHR) {
+                    self.xhrPool.push(jqXHR);
+                },
+                success: function(response) {
+                    if(response.toLowerCase() === 'paid') {
+                        self.success();
+                    }
+                }
+            });
+        }, 600);
     };
 
     whmcs_ezdefi_qrcode.prototype.setTimeRemaining = function(panel) {
