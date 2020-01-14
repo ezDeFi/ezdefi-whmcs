@@ -383,18 +383,31 @@
     margin-bottom: 0.5rem;
   }
 }
+#whmcs_ezdefi_qrcode .ezdefi-payment .changeQrcode {
+  margin-top: 0.75rem;
+  font-weight: bold;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment .changeQrcode {
+    text-align: left;
+    font-size: 15px;
+    margin: 0.5rem 0;
+  }
+}
 #whmcs_ezdefi_qrcode .ezdefi-payment span.currency {
   text-transform: uppercase;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment .app-link-list a {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+  display: inline-block;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment .app-link-list a img {
-  width: 20px;
-  margin-right: 5px;
+  width: 120px;
+  margin: 0 5px;
+}
+@media screen and (max-width: 575.98px) {
+  #whmcs_ezdefi_qrcode .ezdefi-payment .app-link-list a img {
+    width: 85px;
+  }
 }
 #whmcs_ezdefi_qrcode #amount_id .ezdefi-payment .qrcode:not(.expired) {
   padding: 6px 6px 18px 6px;
