@@ -71,7 +71,7 @@ class Ezdefi {
 			'ezdefiWallet' => array(
 				'FriendlyName' => 'Pay with ezDeFi wallet',
 				'Type' => 'yesno',
-				'Description' => 'This method is more powerful when amount uniqueness above method reaches allowable limit. Users just need to install ezDeFi wallet then import their private key to pay using qrCode.',
+				'Description' => 'This method is more powerful when amount uniqueness of above method reaches allowable limit. Users need to install ezDeFi wallet then import their private key to pay using QR Code.',
 			),
 			'variation' => array(
 				'FriendlyName' => 'Acceptable Variation',

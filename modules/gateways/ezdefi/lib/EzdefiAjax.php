@@ -253,10 +253,10 @@ class EzdefiAjax
                 </div>
 
                 <div class="qrcode__info--alt" style="display: none">
-                    <p class="note">You have to pay exact amount so that your order can be handle property.<br/></p>
-                    <p class="note">If you have difficulty for sending exact amount, try to use <a href="" class="ezdefiEnableBtn">ezDeFi Wallet</a></p>
+                    <p class="note">You have to pay exact amount so that your order can be handled properly.<br/></p>
+                    <p class="note">If you have difficulty for sending exact amount, try <a href="" class="ezdefiEnableBtn">ezDeFi Wallet</a></p>
                     <p class="changeQrcode">
-                        <a class="changeQrcodeBtn" href="">Use previous QR Code</a>
+                        <a class="changeQrcodeBtn" href="">Use original QR Code</a>
                     </p>
                 </div>
 			<?php else : ?>
