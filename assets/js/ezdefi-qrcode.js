@@ -11,6 +11,7 @@ jQuery(function($) {
         submitBtn: '.submitBtn',
         ezdefiPayment: '.ezdefi-payment',
         tabs: '.ezdefi-payment-tabs',
+        tabsNavLink: '.ezdefi-tabs-nav a',
         panel: '.ezdefi-payment-panel',
         ezdefiEnableBtn: '.ezdefiEnableBtn',
         loader: '.whmcs-ezdefi-loader',
@@ -30,6 +31,7 @@ jQuery(function($) {
         this.checkOrderLoop;
 
         var init = this.init.bind(this);
+        var onClickTabsNavLink = this.onClickTabsNavLink.bind(this);
         var onSelectItem = this.onSelectItem.bind(this);
         var onClickEzdefiLink = this.onClickEzdefiLink.bind(this);
         var onUseAltQrcode = this.onUseAltQrcode.bind(this);
@@ -38,6 +40,7 @@ jQuery(function($) {
         init();
 
         $(document.body)
+            .on('click', selectors.tabsNavLink, onClickTabsNavLink)
             .on('click', selectors.item, onSelectItem)
             .on('click', selectors.ezdefiEnableBtn, onClickEzdefiLink)
             .on('click', selectors.qrcode, onClickQrcode)
@@ -47,20 +50,14 @@ jQuery(function($) {
     whmcs_ezdefi_qrcode.prototype.init = function() {
         var self = this;
 
-        self.$tabs.tabs({
-            activate: function(event, ui) {
-                if(!ui.newPanel || ui.newPanel.is(':empty')) {
-                    var method = ui.newPanel.attr('id');
-                    self.onActivateTab.call(self, method, ui.newPanel);
-                }
-                window.history.replaceState(null, null, ui.newPanel.selector);
-            }
-        });
+        var li = this.$tabs.find('.ezdefi-tabs-nav li:first-child');
+        var id = li.find('a').attr('href');
+        var panel = this.$tabs.find('div' + id);
 
-        var active = self.$tabs.find('div.ui-tabs-panel[aria-hidden="false"]');
-        var method = active.attr('id');
+        li.addClass('active');
+        panel.addClass('active');
 
-        self.onActivateTab.call(self, method, active);
+        this.onActivateTab.call(this, panel.attr('id'), panel);
 
         var clipboard = new ClipboardJS(selectors.copy);
         clipboard.on('success', function(e) {
@@ -71,6 +68,28 @@ jQuery(function($) {
                 trigger.classList.remove('copied');
             }, 2000);
         });
+    };
+
+    whmcs_ezdefi_qrcode.prototype.onClickTabsNavLink = function(e) {
+        e.preventDefault();
+        this.$tabs.find('ul li').removeClass('active');
+        this.$tabs.find(selectors.panel).removeClass('active');
+
+        var target = $(e.target);
+
+        if(!target.is('li')) {
+            target = target.closest('li');
+        }
+
+        var id = target.find('a').attr('href');
+        var panel = this.$tabs.find(id);
+
+        target.addClass('active');
+        panel.addClass('active');
+
+        if(panel.html() === '') {
+            this.onActivateTab.call(this, panel.attr('id'), panel);
+        }
     };
 
     whmcs_ezdefi_qrcode.prototype.onClickQrcode = function(e) {
@@ -130,7 +149,7 @@ jQuery(function($) {
         } else {
             target.closest(selectors.itemWrap).find(selectors.item).addClass('selected');
         }
-        var active = self.$tabs.find('div.ui-tabs-panel[aria-hidden="false"]');
+        var active = self.$tabs.find('.ezdefi-payment-panel.active');
         var method = active.attr('id');
         self.createEzpayPayment.call(self, method).success(function(response) {
             self.$tabs.find(selectors.panel).empty();
@@ -145,7 +164,9 @@ jQuery(function($) {
     whmcs_ezdefi_qrcode.prototype.onClickEzdefiLink = function(e) {
         var self = this;
         e.preventDefault();
-        self.$tabs.tabs('option', 'active', 1);
+        self.$tabs.find('ul li').removeClass('active');
+        self.$tabs.find(selectors.panel).removeClass('active');
+        self.$tabs.find('a#tab-ezdefi_wallet').trigger('click');
     };
 
     whmcs_ezdefi_qrcode.prototype.onUseAltQrcode = function(e) {

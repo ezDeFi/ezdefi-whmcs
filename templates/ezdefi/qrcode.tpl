@@ -30,17 +30,17 @@
         {/foreach}
     </div>
     <div class="whmcs-ezdefi-loader"></div>
-    <div class="ezdefi-payment-tabs">
-        <ul>
+    <div class="ezdefi-payment-tabs" style="display: none">
+        <ul class="ezdefi-tabs-nav">
             {foreach $payment_method as $method}
                 <li>
                     {if $method === 'amount_id'}
-                        <a href="#{$method}" id="tab-{$method}">
+                        <a class="ezdefi-tabs-link" href="#{$method}" id="tab-{$method}">
                             <span class="large-screen">Pay with any crypto wallet</span>
                             <span class="small-screen">Any crypto wallet</span>
                         </a>
                     {elseif $method === 'ezdefi_wallet'}
-                        <a href="#{$method}" id="tab-{$method}" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">
+                        <a class="ezdefi-tabs-link" href="#{$method}" id="tab-{$method}" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">
                             <span class="large-screen">Pay with ezDeFi wallet</span>
                             <span class="small-screen" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">ezDeFi wallet</span>
                         </a>
@@ -54,5 +54,4 @@
     </div>
 </div>
 <script src="{$BASE_PATH_JS}/clipboard.min.js"></script>
-<script src="{$BASE_PATH_JS}/ezdefi-lib.js"></script>
 <script src="{$BASE_PATH_JS}/ezdefi-qrcode.js"></script>

@@ -129,7 +129,7 @@
           width: 50%;
         }
 
-        &.ui-tabs-active {
+        &.active {
           a {
             border: 1px solid rgba(0,0,0,.125);
             border-bottom-color: transparent;
@@ -137,7 +137,7 @@
         }
 
         a {
-          background-color: #fff;
+          background-color: transparent !important;
           padding: 10px 20px;
           display: block;
           text-decoration: none;
@@ -193,6 +193,11 @@
       border: 1px solid rgba(0,0,0,.125);
       border-top: none;
       background: transparent !important;
+      display: none;
+
+      &.active {
+        display: block !important;
+      }
     }
   }
 
