@@ -2,7 +2,7 @@
 
 namespace WHMCS\Module\Gateway\Ezdefi;
 
-require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '\includes\invoicefunctions.php';
+require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/includes/invoicefunctions.php';
 
 class Ezdefi {
 	const EXPLORER_URL = 'https://explorer.nexty.io/tx/';
