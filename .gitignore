@@ -15,7 +15,7 @@
 !/assets/js/ezdefi-qrcode.js
 !/assets/js/jquery.blockUI.js
 !/assets/js/clipboard.min.js
-!/assets/js/jquery-ui.min.js
+!/assets/js/ezdefi-lib.js
 !/assets/img/
 /assets/img/*
 !/assets/img/android-icon.png

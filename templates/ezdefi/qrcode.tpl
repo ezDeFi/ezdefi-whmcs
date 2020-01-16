@@ -54,5 +54,5 @@
     </div>
 </div>
 <script src="{$BASE_PATH_JS}/clipboard.min.js"></script>
-<script src="{$BASE_PATH_JS}/jquery-ui.min.js"></script>
+<script src="{$BASE_PATH_JS}/ezdefi-lib.js"></script>
 <script src="{$BASE_PATH_JS}/ezdefi-qrcode.js"></script>
