@@ -166,7 +166,7 @@ class EzdefiAjax
 
 		$payment = json_decode($payment, true);
 
-		if($payment['code'] == -1 && isset($payment['error'])) {
+		if($payment['code'] == -1 || isset($payment['error']) || !isset($payment['data']) || empty($payment['data'])) {
 			return false;
 		}
 

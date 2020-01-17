@@ -111,6 +111,10 @@ jQuery(function($) {
             self.$loader.hide();
             self.$tabs.show();
             self.checkOrderStatus.call(self);
+        }).error(function() {
+            panel.text("Something wrong happens. Please contact support for more information.");
+            self.$loader.hide();
+            self.$tabs.show();
         });
     };
 
@@ -158,7 +162,11 @@ jQuery(function($) {
             self.$loader.hide();
             self.$tabs.show();
             self.checkOrderStatus.call(self);
-        });
+        }).error(function() {
+            active.text("Something wrong happens. Please contact support for more information.");
+            self.$loader.hide();
+            self.$tabs.show();
+        });;
     };
 
     whmcs_ezdefi_qrcode.prototype.onClickEzdefiLink = function(e) {
