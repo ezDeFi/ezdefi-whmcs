@@ -187,24 +187,21 @@ jQuery(function($) {
 
     whmcs_ezdefi_qrcode.prototype.checkOrderStatus = function() {
         var self = this;
-        self.checkOrderLoop = setInterval(function() {
-            $.ajax({
-                url: self.urlData.ajaxUrl,
-                method: 'post',
-                data: {
-                    action: 'check_invoice',
-                    invoice_id: self.paymentData.uoid
-                },
-                beforeSend: function(jqXHR) {
-                    self.xhrPool.push(jqXHR);
-                },
-                success: function(response) {
-                    if(response.toLowerCase() === 'paid') {
-                        self.success();
-                    }
-                }
-            });
-        }, 600);
+        $.ajax({
+            url: self.urlData.ajaxUrl,
+            method: 'post',
+            data: {
+                action: 'check_invoice',
+                invoice_id: self.paymentData.uoid
+            }
+        }).done(function(response) {
+            if (response.toLowerCase() === 'paid') {
+                self.success();
+            } else {
+                var checkOrderStatus = self.checkOrderStatus.bind(self);
+                setTimeout(checkOrderStatus, 600);
+            }
+        });
     };
 
     whmcs_ezdefi_qrcode.prototype.setTimeRemaining = function(panel) {
