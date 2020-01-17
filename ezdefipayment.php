@@ -17,10 +17,10 @@ if(!isset($_POST) || empty($_POST)){
 
 $ca = new ClientArea();
 
-$ca->setPageTitle('ezDeFi QRCode');
+$ca->setPageTitle('Pay with cryptocurrency');
 
 $ca->addToBreadCrumb('index.php', Lang::trans('globalsystemname'));
-$ca->addToBreadCrumb('ezdefipayment.php', 'ezDefi Payment Gateway');
+$ca->addToBreadCrumb('ezdefipayment.php', 'Pay with cryptocurrency');
 
 $ca->initPage();
 
