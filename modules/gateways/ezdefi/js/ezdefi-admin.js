@@ -375,7 +375,8 @@ jQuery(function($) {
                     },
                     min: 0,
                     messages: {
-                        min: jQuery.validator.format("Min: {0}")
+                        min: jQuery.validator.format("Min: {0}"),
+                        digits: 'Only digits'
                     }
                 });
             }
