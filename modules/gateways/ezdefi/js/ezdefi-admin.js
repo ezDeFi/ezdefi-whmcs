@@ -44,6 +44,7 @@ jQuery(function($) {
            self.initCurrencySelect($(this));
         });
 
+        var onChangeInput = this.onChangeInput.bind(this);
         var addCurrency = this.addCurrency.bind(this);
         var removeCurrency = this.removeCurrency.bind(this);
         var toggleEdit = this.toggleEdit.bind(this);
@@ -56,6 +57,7 @@ jQuery(function($) {
         self.toggleAmountSetting(this);
 
         $(self.form)
+            .on('change', 'input', onChangeInput)
             .on('click', '.addBtn', addCurrency)
             .on('click', '.editBtn', toggleEdit)
             .on('click', '.cancelBtn', toggleEdit)
@@ -65,6 +67,21 @@ jQuery(function($) {
             .on('focus', '.currency-decimal', onChangeDecimal)
             .on('blur', '.currency-decimal', onBlurDecimal)
             .on('keyup', selectors.apiKeyInput, onChangeApiKey);
+    };
+
+    whmcs_ezdefi_admin.prototype.onChangeInput = function(e) {
+        var input = $(e.target);
+        if(input.is('input[name*="discount"]') || input.is('input[name*="lifetime"]') || input.is('input[name*="wallet"]') || input.is('input[name*="block_confirm"]') || (input.is('input[name*="decimal"]') && !input.is('input[name*="decimal_max"]'))) {
+            var value = input.val();
+            var td = input.closest('td');
+            if(td.is('.discount')) {
+                td.find('.view').text(value + '%');
+            } else if(td.is('.lifetime')) {
+                td.find('.view').text(value + 'm');
+            } else {
+                td.find('.view').text(value);
+            }
+        }
     };
 
     whmcs_ezdefi_admin.prototype.addManageExceptionBtn = function() {
@@ -404,7 +421,7 @@ jQuery(function($) {
         if(input.val().length > 0 && input.closest("tr").attr("data-saved") == "1") {
             var td = $(e.target).closest('td');
             if (td.find("span.error").length === 0) {
-                td.find('.edit').append('<span class="error">Changing decimal can cause to payment interruption</span>');
+                td.find('.edit').append('<span class="error decimal-warning">Changing decimal can cause to payment interruption</span>');
             }
         }
     };
@@ -564,7 +581,7 @@ jQuery(function($) {
         var self = this;
         var $row = $(e.target).closest('tr');
 
-        if($row.find('.currency-symbol').val() === '') {
+        if($row.find('.currency-symbol').val() === '' || $row.attr("data-saved") == "0") {
             self.removeCurrency(e);
         } else {
             $row.toggleClass('editing');
@@ -587,16 +604,6 @@ jQuery(function($) {
                 var name = $(this).attr('name');
                 var value = $(this).val();
                 data[name] = value;
-                if(($(this).is('input[name*="discount"]') && !$(this).is('input[name*="discount_max"]')) || $(this).is('input[name*="lifetime"]') || $(this).is('input[name*="wallet"]') || $(this).is('input[name*="block_confirm"]') || $(this).is('input[name*="decimal"]')) {
-                    var td = $(this).closest('td');
-                    if(td.is('.discount')) {
-                        td.find('.view').text(value + '%');
-                    } else if(td.is('.lifetime')) {
-                        td.find('.view').text(value + 'm');
-                    } else {
-                        td.find('.view').text(value);
-                    }
-                }
             });
         });
 
@@ -614,19 +621,6 @@ jQuery(function($) {
             },
             success:function(response) {
                 self.table.closest('td').unblock();
-                self.table.find('tbody input').each(function() {
-                    var value = $(this).val();
-                    var td = $(this).closest('td');
-                    if(!td.hasClass('name')) {
-                        if(td.is('.discount')) {
-                            td.find('.view').text(value + '%');
-                        } else if(td.is('.lifetime')) {
-                            td.find('.view').text(value + 'm');
-                        } else {
-                            td.find('.view').text(value);
-                        }
-                    }
-                });
             }
         })
     };
