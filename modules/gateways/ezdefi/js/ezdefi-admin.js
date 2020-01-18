@@ -384,7 +384,7 @@ jQuery(function($) {
 
     whmcs_ezdefi_admin.prototype.toggleAmountSetting = function() {
         var checked = this.form.find(selectors.amountIdCheckbox).is(':checked');
-        var variation_setting = this.form.find('input[name*="variation"]');
+        var variation_setting = this.form.find('input[name*="variation"]').closest('tr');
         if(checked) {
             variation_setting.show();
             this.form.find('input[name*="variation"]').rules('add', {
