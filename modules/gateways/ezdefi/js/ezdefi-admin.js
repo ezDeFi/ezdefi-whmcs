@@ -497,17 +497,20 @@ jQuery(function($) {
         $clone.find('input').each(function() {
             var input = $(this);
             var td = input.closest('td');
+            if(!td.hasClass('name')) {
+                td.find('.view').empty();
+            }
             if(input.is('input[name*="discount"]')) {
+                td.find('.view').text(0);
                 input.val(0);
             } else if(input.is('input[name*="lifetime"]')) {
+                td.find('.view').text(15);
                 input.val(15);
             } else if(input.is('input[name*="block_confirm"]')) {
+                td.find('.view').text(1);
                 input.val(1);
             } else {
                 input.val('');
-            }
-            if(!td.hasClass('name')) {
-                td.find('.view').empty();
             }
         });
         $clone.find('td').each(function() {
@@ -562,9 +565,9 @@ jQuery(function($) {
 
         if($row.find('.currency-symbol').val() === '') {
             self.removeCurrency(e);
+        } else {
+            $row.toggleClass('editing');
         }
-
-        $row.toggleClass('editing');
     };
 
     whmcs_ezdefi_admin.prototype.saveCurrency = function(e) {
@@ -583,6 +586,16 @@ jQuery(function($) {
                 var name = $(this).attr('name');
                 var value = $(this).val();
                 data[name] = value;
+                if(($(this).is('input[name*="discount"]') && !$(this).is('input[name*="discount_max"]')) || $(this).is('input[name*="lifetime"]') || $(this).is('input[name*="wallet"]') || $(this).is('input[name*="block_confirm"]') || $(this).is('input[name*="decimal"]')) {
+                    var td = $(this).closest('td');
+                    if(td.is('.discount')) {
+                        td.find('.view').text(value + '%');
+                    } else if(td.is('.lifetime')) {
+                        td.find('.view').text(value + 'm');
+                    } else {
+                        td.find('.view').text(value);
+                    }
+                }
             });
         });
 
@@ -604,7 +617,13 @@ jQuery(function($) {
                     var value = $(this).val();
                     var td = $(this).closest('td');
                     if(!td.hasClass('name')) {
-                        td.find('.view span').text(value);
+                        if(td.is('.discount')) {
+                            td.find('.view').text(value + '%');
+                        } else if(td.is('.lifetime')) {
+                            td.find('.view').text(value + 'm');
+                        } else {
+                            td.find('.view').text(value);
+                        }
                     }
                 });
             }
@@ -635,6 +654,7 @@ jQuery(function($) {
             }
         });
         tr.find('.currency-decimal').valid();
+        tr.find('.currency-decimal').closest('td').find('.view').text(data.suggestedDecimal);
         td.find('.view span').text(data.name);
     };
 
