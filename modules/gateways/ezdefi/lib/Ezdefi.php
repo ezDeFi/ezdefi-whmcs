@@ -216,8 +216,7 @@ class Ezdefi {
 		    $paymentFee = 0;
 		    $symbol = $payment['symbol'];
 		    $currency = $this->db->getCurrencyBySymbol($symbol);
-		    $paymentAmount = $payment['originValue'];
-		    $paymentAmount = $paymentAmount / (100 - $currency['discount']) * 100;
+		    $paymentAmount = $this->db->getInvoiceTotal($invoiceId);
 
 		    addInvoicePayment(
 			    $invoiceId,

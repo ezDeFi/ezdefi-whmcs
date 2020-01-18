@@ -98,6 +98,13 @@ class EzdefiDb {
 		              ->first();
 	}
 
+	public function getInvoiceTotal($invoiceId)
+	{
+		return Capsule::table('tblinvoices')
+					->where('id', $invoiceId)
+					->value('total');
+	}
+
 	public function getInvoiceStatus($invoiceId)
 	{
 		return Capsule::table('tblinvoices')
