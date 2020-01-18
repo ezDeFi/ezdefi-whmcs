@@ -110,11 +110,13 @@ jQuery(function($) {
             self.setTimeRemaining.call(self, panel);
             self.$loader.hide();
             self.$tabs.show();
+            self.$currencySelect.show();
             self.checkOrderStatus.call(self);
         }).error(function() {
             panel.text("Something wrong happens. Please contact support for more information.");
             self.$loader.hide();
             self.$tabs.show();
+            self.$currencySelect.show();
         });
     };
 
@@ -139,6 +141,7 @@ jQuery(function($) {
                     jqXHR.abort();
                 });
                 self.$loader.show();
+                self.$currencySelect.hide();
                 self.$tabs.hide();
             }
         });
@@ -160,11 +163,13 @@ jQuery(function($) {
             active.html(response.data);
             self.setTimeRemaining.call(self, active);
             self.$loader.hide();
+            self.$currencySelect.show();
             self.$tabs.show();
             self.checkOrderStatus.call(self);
         }).error(function() {
             active.text("Something wrong happens. Please contact support for more information.");
             self.$loader.hide();
+            self.$currencySelect.show();
             self.$tabs.show();
         });;
     };
