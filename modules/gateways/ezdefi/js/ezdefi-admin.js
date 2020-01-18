@@ -115,7 +115,7 @@ jQuery(function($) {
                     "<input class='currency-desc' type='hidden' name='currency[0][desc]' value='NewSD - Stablecoin token for payment'>" +
                     "<input class='currency-logo' type='hidden' name='currency[0][logo]' value='" + this.systemUrl + "/modules/gateways/ezdefi/images/newsd-icon.png'>" +
                     "<div class='view'><span>NewSD</span></div>" +
-                    "<div class='edit'><select name='currency[0][id]' class='select-select2'>" +
+                    "<div class='edit'><select name='currency[0][select]' class='select-select2'>" +
                         "<option value='newsd' selected='selected'>NewSD</option>" +
                     "</select></div>" +
                 "</td>" +
@@ -140,7 +140,7 @@ jQuery(function($) {
                     "<input class='currency-desc' type='hidden' name='currency[1][desc]' value=''>" +
                     "<input class='currency-logo' type='hidden' name='currency[1][logo]' value='" + this.systemUrl + "/modules/gateways/ezdefi/images/bitcoin-icon.png'>" +
                     "<div class='view'><span>Bitcoin</span></div>" +
-                    "<div class='edit'><select name='currency[1][id]' class='select-select2'>" +
+                    "<div class='edit'><select name='currency[1][select]' class='select-select2'>" +
                     "<option value='btc' selected='selected'>Bitcoin</option>" +
                     "</select></div>" +
                 "</td>" +
@@ -165,7 +165,7 @@ jQuery(function($) {
                     "<input class='currency-desc' type='hidden' name='currency[2][desc]' value=''>" +
                     "<input class='currency-logo' type='hidden' name='currency[2][logo]' value='" + this.systemUrl + "/modules/gateways/ezdefi/images/ethereum-icon.png'>" +
                     "<div class='view'><span>Ethereum</span></div>" +
-                    "<div class='edit'><select name='currency[2][id]' class='select-select2'>" +
+                    "<div class='edit'><select name='currency[2][select]' class='select-select2'>" +
                         "<option value='eth' selected='selected'>Ethereum</option>" +
                     "</select></div>" +
                 "</td>" +
@@ -199,7 +199,7 @@ jQuery(function($) {
                         "<input class='currency-desc' type='hidden' name='currency["+i+"][desc]' value='"+config['desc']+"'>" +
                         "<input class='currency-logo' type='hidden' name='currency["+i+"][logo]' value='"+config['logo']+"'>" +
                         "<div class='view'><span>"+config['name']+"</span></div>" +
-                        "<div class='edit'><select name='currency["+i+"][id]' class='select-select2'>" +
+                        "<div class='edit'><select name='currency["+i+"][select]' class='select-select2'>" +
                             "<option value='"+config['symbol']+"' selected='selected'>"+config['symbol']+"</option>" +
                         "</select></div>" +
                     "</td>" +
@@ -313,7 +313,7 @@ jQuery(function($) {
                 });
             }
 
-            if(name.indexOf('name') > 0) {
+            if(name.indexOf('select') > 0) {
                 var $select = $('select[name="'+name+'"]');
                 $select.rules('add', {
                     required: {
