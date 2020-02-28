@@ -16,47 +16,6 @@ class EzdefiAjax
 		$this->api = new EzdefiApi();
 	}
 
-	public function save_currency($data)
-	{
-		if(!isset($data['currency'])) {
-			return $this->json_error_response();
-		}
-
-		$config = $data['currency'];
-
-		if(!$this->validate_currency($config)) {
-			return $this->json_error_response();
-		};
-
-
-		foreach($config as $index => $value) {
-			$config[$index]['lifetime'] = $value['lifetime'] * 60;
-        }
-
-		$save = $this->save_currency_config($config);
-
-		if(!$save) {
-			return $this->json_error_response();
-		}
-
-		return $this->json_success_response();
-	}
-
-	protected function validate_currency($config)
-	{
-		return (is_array($config) && !empty($config));
-	}
-
-	protected function save_currency_config($data)
-	{
-		try {
-			$this->db->saveCurrency($data);
-			return true;
-		} catch (\Exception $e) {
-			return false;
-		}
-	}
-
 	public function check_api_key($data)
 	{
 		if(!isset($data['api_url']) || !isset( $data['api_key'])) {
@@ -79,38 +38,29 @@ class EzdefiAjax
 		die('true');
 	}
 
-	public function get_token($data)
-	{
-		if(!$this->validate_token_data($data)) {
-			return $this->json_error_response();
-		};
+    public function check_public_key($data)
+    {
+        if(!isset($data['api_url']) || !isset( $data['api_key']) || !isset( $data['public_key'])) {
+            die('false');
+        }
 
-		$api_url = $_POST['api_url'];
-		$api_key = $_POST['api_key'];
-		$keyword = $_POST['keyword'];
+        $api_url = $data['api_url'];
+        $api_key = $data['api_key'];
+        $public_key = $data['public_key'];
 
-		$api = new EzdefiApi($api_url, $api_key);
-		$token = $api->getToken($keyword);
+        $api = new EzdefiApi($api_url, $api_key);
+        $api->setPublicKey($public_key);
 
-		return json_encode($token);
-	}
+        $response = $api->getWebsiteConfig();
 
-	protected function validate_token_data($data)
-	{
-		if(!isset($data['keyword']) || !isset($data['api_url']) || !isset($data['api_key'])) {
-			return false;
-		}
+        $response = json_decode($response, true);
 
-		$api_url = $_POST['api_url'];
-		$api_key = $_POST['api_key'];
-		$keyword = $_POST['keyword'];
+        if($response['code'] != 1) {
+            die('false');
+        }
 
-		if(empty($api_url) || empty($keyword) || empty($api_key)) {
-			return false;
-		}
-
-		return true;
-	}
+        die('true');
+    }
 
 	public function create_payment($data)
 	{
@@ -119,10 +69,10 @@ class EzdefiAjax
 		}
 
 		$uoid = $data['uoid'];
-		$symbol = $data['symbol'];
+		$coin_data = $data['coin_data'];
 		$method = $data['method'];
 
-		$payment = $this->create_ezdefi_payment($uoid, $symbol, $method);
+		$payment = $this->create_ezdefi_payment($uoid, $coin_data, $method);
 
 		if(!$payment) {
 			return $this->json_error_response();
@@ -133,22 +83,22 @@ class EzdefiAjax
 
 	protected function validate_payment_data($data)
 	{
-		if(!isset($data['uoid']) || !isset($data['symbol']) || !isset($data['method'])) {
+		if(!isset($data['uoid']) || !isset($data['coin_data']) || !isset($data['method'])) {
 			return false;
 		}
 
 		$uoid = $data['uoid'];
-		$symbol = $data['symbol'];
+		$coin_data = $data['coin_data'];
 		$method = $data['method'];
 
-		if(empty($uoid) || empty($symbol) || empty($method)) {
+		if(empty($uoid) || empty($coin_data) || empty($method)) {
 			return false;
 		}
 
 		return true;
 	}
 
-	public function create_ezdefi_payment($invoiceId, $symbol, $method)
+	public function create_ezdefi_payment($invoiceId, $coin_data, $method)
 	{
 		$invoice = $this->db->getInvoice($invoiceId);
 
@@ -160,11 +110,9 @@ class EzdefiAjax
 			'currency' => $currency
 		);
 
-		$currency_data = $this->db->getCurrencyBySymbol($symbol);
-
 		$amount_id = ($method === 'amount_id') ? true : false;
 
-		$payment = $this->api->createPayment($order_data, $currency_data, $amount_id);
+		$payment = $this->api->createPayment($order_data, $coin_data, $amount_id);
 
 		$payment = json_decode($payment, true);
 
@@ -182,7 +130,7 @@ class EzdefiAjax
 
 		$data = array(
 			'amount_id' => str_replace( ',', '', $value),
-			'currency' => $symbol,
+			'currency' => $coin_data['symbol'],
 			'order_id' => substr($payment['uoid'], 0, strpos($payment['uoid'],'-' )),
 			'status' => 'not_paid',
 			'payment_method' => ($amount_id) ? 'amount_id' : 'ezdefi_wallet',

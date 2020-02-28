@@ -3,13 +3,16 @@
     <script type="application/json" id="order-data">{$order_data}</script>
     <script type="application/json" id="url-data">{$url_data}</script>
     <div class="currency-select">
-        {foreach $currency as $i => $c}
+        {foreach $coins as $i => $c}
             <div class="currency-item__wrap">
-                <div class="currency-item {($i eq 0) ? 'selected' : ''}" data-symbol="{$c['symbol']}" >
+                <div class="currency-item {($i eq 0) ? 'selected' : ''}" data-id="{$c['_id']}" data-symbol="{$c['token']['symbol']}">
+                    <script type="application/json">
+                        {$c['json_data']|@json_encode nofilter}
+                    </script>
                     <div class="item__logo">
-                        <img src="{$c['logo']}" alt="">
-                        {if $c['desc'] neq '' }
-                            <div class="item__desc">{$c['desc']}</div>
+                        <img src="{$c['token']['logo']}" alt="">
+                        {if $c['token']['desc'] neq '' }
+                            <div class="item__desc">{$c['token']['desc']}</div>
                         {/if}
                     </div>
                     <div class="item__text">
@@ -18,7 +21,7 @@
                         </div>
                         <div class="item__info">
                             <div class="item__symbol">
-                                {$c['symbol']}
+                                {$c['token']['symbol']}
                             </div>
                             <div class="item__discount">
                                 - {( intval($c['discount']) > 0) ? $c['discount'] : 0}%
@@ -32,25 +35,29 @@
     <div class="whmcs-ezdefi-loader"></div>
     <div class="ezdefi-payment-tabs" style="display: none">
         <ul class="ezdefi-tabs-nav">
-            {foreach $payment_method as $method}
+            {if $website_config['website']['payAnyWallet']}
                 <li>
-                    {if $method === 'amount_id'}
-                        <a class="ezdefi-tabs-link" href="#{$method}" id="tab-{$method}">
-                            <span class="large-screen">Pay with any crypto wallet</span>
-                            <span class="small-screen">Any crypto wallet</span>
-                        </a>
-                    {elseif $method === 'ezdefi_wallet'}
-                        <a class="ezdefi-tabs-link" href="#{$method}" id="tab-{$method}" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">
-                            <span class="large-screen">Pay with ezDeFi wallet</span>
-                            <span class="small-screen" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">ezDeFi wallet</span>
-                        </a>
-                    {/if}
+                    <a class="ezdefi-tabs-link" href="#amount_id" id="tab-amount_id">
+                        <span class="large-screen">Pay with any crypto wallet</span>
+                        <span class="small-screen">Any crypto wallet</span>
+                    </a>
                 </li>
-            {/foreach}
+            {/if}
+            {if $website_config['website']['payEzdefiWallet']}
+                <li>
+                    <a class="ezdefi-tabs-link" href="#ezdefi_wallet" id="tab-ezdefi_wallet" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">
+                        <span class="large-screen">Pay with ezDeFi wallet</span>
+                        <span class="small-screen" style="background-image: url({$WEB_ROOT}/assets/img/ezdefi-icon.png)">ezDeFi wallet</span>
+                    </a>
+                </li>
+            {/if}
         </ul>
-        {foreach $payment_method as $method}
-            <div id="{$method}" class="ezdefi-payment-panel"></div>
-        {/foreach}
+        {if $website_config['website']['payAnyWallet']}
+            <div id="amount_id" class="ezdefi-payment-panel"></div>
+        {/if}
+        {if $website_config['website']['payEzdefiWallet']}
+            <div id="ezdefi_wallet" class="ezdefi-payment-panel"></div>
+        {/if}
     </div>
 </div>
 <script src="{$BASE_PATH_JS}/clipboard.min.js"></script>

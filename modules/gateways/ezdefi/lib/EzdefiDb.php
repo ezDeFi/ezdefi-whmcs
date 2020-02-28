@@ -28,6 +28,14 @@ class EzdefiDb {
 				->value('value');
 	}
 
+    public function getPublicKey()
+    {
+        return Capsule::table('tblpaymentgateways')
+                      ->where('gateway', 'ezdefi')
+                      ->where('setting', 'publicKey')
+                      ->value('value');
+    }
+
 	public function getCurrency()
 	{
 		$data = Capsule::table('tblpaymentgateways')
@@ -235,13 +243,6 @@ class EzdefiDb {
 
 		try {
 			$pdo->exec("
-				CREATE EVENT IF NOT EXISTS ezdefi_clear_amount_table
-				ON SCHEDULE EVERY 3 DAY
-				DO
-					DELETE FROM tblezdefiamountids;
-			");
-
-			$pdo->exec("
 				CREATE EVENT IF NOT EXISTS ezdefi_clear_exception_table
 				ON SCHEDULE EVERY 7 DAY
 				DO
@@ -250,79 +251,8 @@ class EzdefiDb {
 
 			$pdo->commit();
 		} catch (\Exception $e) {
-			var_dump($e->getMessage());
 			$pdo->rollback();
 		}
-	}
-
-	public function generate_amount_id($price, $currency_data)
-	{
-		$decimal = $currency_data['decimal'];
-		$life_time = $currency_data['lifetime'];
-		$symbol = $currency_data['symbol'];
-
-		$price = round( $price, $decimal );
-
-		$pdo = Capsule::connection()->getPdo();
-		$pdo->beginTransaction();
-
-		try {
-			$call = $pdo->prepare("
-				CALL ezdefi_generate_amount_id(:price, :symbol, :decimal, :life_time, @amount_id)
-			");
-
-			$call->execute([
-				':price' => $price,
-				':symbol' => $symbol,
-				':decimal' => $decimal,
-				':life_time' => $life_time,
-			]);
-
-			$select = $pdo->prepare("SELECT @amount_id");
-
-			$select->execute();
-
-			$result = $select->fetchAll();
-
-			$pdo->commit();
-		} catch (\Exception $e) {
-			$pdo->rollBack();
-		}
-
-		if( ! $result ) {
-			return null;
-		}
-
-		$amount_id = floatval( $result[0]['@amount_id'] );
-
-		$acceptable_variation = $this->get_acceptable_variation();
-
-		$variation_percent = $acceptable_variation / 100;
-
-		$min = floatval( $price - ( $price * $variation_percent ) );
-		$max = floatval( $price + ( $price * $variation_percent ) );
-
-		if( ( $amount_id < $min ) || ( $amount_id > $max ) ) {
-			return null;
-		}
-
-		return $amount_id;
-	}
-
-	public function get_amount_decimals()
-	{
-		return Capsule::table('tblpaymentgateways')
-		              ->where('gateway', 'ezdefi')
-		              ->where('setting', 'decimal')
-		              ->value('value');
-	}
-
-	public function get_acceptable_variation()
-	{
-		return Capsule::table('tblpaymentgateways')
-		              ->where('gateway', 'ezdefi')
-		              ->where('setting', 'variation')
-		              ->value('value');
 	}
 
 	public function get_invoice($id)

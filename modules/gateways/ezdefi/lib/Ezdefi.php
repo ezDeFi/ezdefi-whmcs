@@ -31,9 +31,7 @@ class Ezdefi {
 
 	public function init()
 	{
-		$this->db->createAmountIdTable();
 		$this->db->createExceptionTable();
-		$this->db->addProcedure();
 		$this->db->addScheduleEvents();
 	}
 
@@ -63,22 +61,11 @@ class Ezdefi {
 				'Type' => 'text',
 				'Description' => sprintf('<a style="text-decoration: underline" target="_blank" href="%s">Register to get API Key</a>', 'https://merchant.ezdefi.com/register?utm_source=whmcs-download' ),
 			),
-			'amountId' => array(
-				'FriendlyName' => 'Pay with any crypto wallet',
-				'Type' => 'yesno',
-				'Description' => 'This method will adjust payment amount of each order by an acceptable number to help payment gateway identifying the uniqueness of that order.',
-			),
-			'ezdefiWallet' => array(
-				'FriendlyName' => 'Pay with ezDeFi wallet',
-				'Type' => 'yesno',
-				'Description' => 'This method is more powerful when amount uniqueness of above method reaches allowable limit. Users need to install ezDeFi wallet then import their private key to pay using QR Code.',
-			),
-			'variation' => array(
-				'FriendlyName' => 'Acceptable Variation',
-				'Type' => 'text',
-				'Default' => '0.01',
-				'Description' => 'Allowable amount variation (%)',
-			)
+            'publicKey' => array(
+                'FriendlyName' => 'Website ID',
+                'Type' => 'text',
+                'Description' => 'Enter your website\' ID',
+            ),
 		);
 	}
 

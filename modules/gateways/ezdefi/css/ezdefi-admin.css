@@ -18,86 +18,11 @@
   background-size: 20px 20px;
   background-position: 99% center;
 }
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table {
-  font-size: 13px;
-  width: 100%;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table thead th {
-  padding: 7px 5px;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td {
-  padding: 7px 5px;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td .select2-container .select2-selection {
-  text-transform: capitalize;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.sortable-handle {
-  cursor: move;
-  font-size: 15px;
-  text-align: center;
-  vertical-align: middle;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.sortable-handle span {
-  width: 10px;
-  font-size: 10px;
-  color: #999;
-  display: block;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.sortable-handle:hover span {
-  color: #333;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.logo {
-  text-align: center;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.logo img {
-  display: block;
-  width: 22px;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.name {
-  min-width: 200px;
-  text-transform: capitalize;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.name .select2-container .select2-selection {
-  border-color: #ccc !important;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.discount, #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.lifetime, #Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.decimal {
-  min-width: 90px;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.block_confirm {
-  min-width: 136px;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td.actions {
-  min-width: 50px;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td input {
-  font-size: 13px;
-  color: #555;
-  background-color: #fff;
-  background-image: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 4px 8px;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td input[type=number] {
-  width: 60px;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td .edit {
-  display: none;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td .view {
-  display: block;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr td:last-child {
-  text-align: right;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr.editing .edit {
-  display: block;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tbody tr.editing .view {
-  display: none;
-}
-#Payment-Gateway-Config-ezdefi #ezdefi-currency-table tfoot td {
-  padding: 7px 5px;
+#Payment-Gateway-Config-ezdefi input[name="field[publicKey]"].pending {
+  background-image: url(../images/spinner-2x.gif) !important;
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: 99% center;
 }
 #Payment-Gateway-Config-ezdefi #ezdefi-exception-table {
   font-size: 13px;
@@ -121,21 +46,6 @@
 }
 .select2-order .select2-order__row:last-child {
   margin-bottom: 0;
-}
-
-.select2-currency {
-  display: flex;
-  align-items: center;
-}
-.select2-currency .select2-currency__icon {
-  margin-right: 10px;
-}
-.select2-currency .select2-currency__icon img {
-  width: 24px;
-  display: block;
-}
-.select2-currency .select2-currency__name {
-  text-transform: capitalize;
 }
 
 /*# sourceMappingURL=ezdefi-admin.css.map */

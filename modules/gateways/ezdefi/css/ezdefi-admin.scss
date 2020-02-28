@@ -7,7 +7,7 @@
 
   span.error {
     display: block;
-    color: #cc0000;;
+    color: #cc0000;
   }
 
   span.correct {
@@ -15,7 +15,7 @@
     color: #567622;
   }
 
-  input[name="field[apiKey]"] {
+  input[name='field[apiKey]'] {
     &.pending {
       background-image: url(../images/spinner-2x.gif) !important;
       background-repeat: no-repeat;
@@ -24,124 +24,12 @@
     }
   }
 
-  #ezdefi-currency-table {
-    font-size: 13px;
-    width: 100%;
-
-    thead {
-      th {
-        padding: 7px 5px;
-      }
-    }
-
-    tbody {
-      tr {
-        td {
-          padding: 7px 5px;
-          .select2-container {
-            .select2-selection {
-              text-transform: capitalize;
-            }
-          }
-
-          &.sortable-handle {
-            cursor: move;
-            font-size: 15px;
-            text-align: center;
-            vertical-align: middle;
-
-            span {
-              width: 10px;
-              font-size: 10px;
-              color: #999;
-              display: block;
-            }
-
-            &:hover {
-              span {
-                color: #333;
-              }
-            }
-          }
-
-          &.logo {
-            text-align: center;
-            img {
-              display: block;
-              width: 22px;
-            }
-          }
-
-          &.name {
-            min-width: 200px;
-            text-transform: capitalize;
-
-            .select2-container {
-              .select2-selection {
-                border-color: #ccc !important;
-              }
-            }
-          }
-
-          &.discount, &.lifetime, &.decimal {
-            min-width: 90px;
-          }
-
-          &.wallet {
-
-          }
-
-          &.block_confirm {
-            min-width: 136px;
-          }
-
-          &.actions {
-            min-width: 50px;
-          }
-
-          input {
-            font-size: 13px;
-            color: #555;
-            background-color: #fff;
-            background-image: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 4px 8px;
-          }
-
-          input[type=number] {
-            width: 60px;
-          }
-
-          .edit {
-            display: none;
-          }
-
-          .view {
-            display: block;
-          }
-
-          &:last-child {
-            text-align: right;
-          }
-        }
-
-        &.editing {
-          .edit {
-            display: block;
-          }
-
-          .view {
-            display: none;
-          }
-        }
-      }
-    }
-
-    tfoot {
-      td {
-        padding: 7px 5px;
-      }
+  input[name='field[publicKey]'] {
+    &.pending {
+      background-image: url(../images/spinner-2x.gif) !important;
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+      background-position: 99% center;
     }
   }
 
@@ -178,23 +66,5 @@
     &:last-child {
       margin-bottom: 0;
     }
-  }
-}
-
-.select2-currency {
-  display: flex;
-  align-items: center;
-
-  .select2-currency__icon {
-    margin-right: 10px;
-
-    img {
-      width: 24px;
-      display: block;
-    }
-  }
-
-  .select2-currency__name {
-    text-transform: capitalize;
   }
 }

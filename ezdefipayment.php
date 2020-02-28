@@ -40,23 +40,34 @@ $order_data = array(
 
 $ca->assign('order_data', json_encode($order_data));
 
-$currency_config = $config->getCurrency();
+$website_config = $api->getWebsiteConfig();
 
-$to = implode(',', array_map(function ( $currency ) {
-	return $currency['symbol'];
-}, $currency_config ) );
+$website_config = json_decode($website_config, true)['data'];
+
+$website_coins = $website_config['coins'];
+
+$to = implode(',', array_map(function ( $coin ) {
+	return $coin['token']['symbol'];
+}, $website_coins ) );
 
 $exchanges = $api->getTokenExchanges($amount, $currency, $to);
 
-foreach ($currency_config as $i => $c) {
+foreach ($website_coins as $i => $c) {
 	$discount = (intval($c['discount']) > 0) ? $c['discount'] : 0;
-	$index = array_search( $c['symbol'], array_column($exchanges, 'token'));
+	$index = array_search( $c['token']['symbol'], array_column($exchanges, 'token'));
 	$amount = $exchanges[$index]['amount'];
 	$amount = $amount - ($amount * ($discount / 100));
-	$currency_config[$i]['price'] = number_format( $amount, 8 );
+    $website_coins[$i]['price'] = number_format( $amount, 8 );
+    $website_coins[$i]['json_data'] = array(
+        '_id' => $c['_id'],
+        'discount' => $c['discount'],
+        'wallet_address' => $c['walletAddress'],
+        'symbol' => $c['token']['symbol'],
+        'decimal' => $c['decimal']
+    );
 }
-
-$ca->assign('currency', $currency_config);
+$ca->assign('website_config', $website_config);
+$ca->assign('coins', $website_coins);
 
 $url_data = array(
 	'ajaxUrl' => $config->getSystemUrl() . 'ezdefiajax.php',
