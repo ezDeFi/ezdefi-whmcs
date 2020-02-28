@@ -2,6 +2,8 @@
 
 namespace WHMCS\Module\Gateway\Ezdefi;
 
+require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/includes/invoicefunctions.php';
+
 class EzdefiAjax
 {
 	protected $db;
@@ -453,7 +455,14 @@ class EzdefiAjax
 			return $this->json_error_response($invoice_id);
 		}
 
-		$this->db->update_invoice_status($invoice_id, 'Paid');
+//		$this->db->update_invoice_status($invoice_id, 'Paid');
+        addInvoicePayment(
+            $invoice_id,
+            '',
+            $this->db->getInvoiceTotal($invoice_id),
+            0,
+            'ezdefi'
+        );
 
 		if(is_null($old_invoice_id)) {
 			$this->db->delete_exceptions($amount_id, $currency, $old_invoice_id);
