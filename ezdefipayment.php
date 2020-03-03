@@ -63,7 +63,9 @@ foreach ($website_coins as $i => $c) {
         'discount' => $c['discount'],
         'wallet_address' => $c['walletAddress'],
         'symbol' => $c['token']['symbol'],
-        'decimal' => $c['decimal']
+        'decimal' => $c['decimal'],
+        'block_confirmation' => $c['blockConfirmation'],
+        'duration' => $c['expiration']
     );
 }
 $ca->assign('website_config', $website_config);

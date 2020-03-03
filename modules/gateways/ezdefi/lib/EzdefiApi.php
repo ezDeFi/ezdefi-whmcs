@@ -174,7 +174,9 @@ class EzdefiApi {
 			'uoid' => $uoid,
 			'to' => $coin_data['wallet_address'],
 			'value' => $value,
-			'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php',
+            'safedist' => $coin_data['block_confirm'],
+            'duration' => $coin_data['duration'] * 60,
+            'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php',
             'coinId' => $coin_data['_id']
 		];
 
