@@ -198,7 +198,7 @@ jQuery(function($) {
                 "</tr>"
             );
             if(row['explorer_url'] && row['explorer_url'].length > 0) {
-                var explore = $("<a class='explorer-url' href='" + row['explorer_url'] + "'>View Transaction Detail</a>");
+                var explore = $("<a target='_blank' class='explorer-url' href='" + row['explorer_url'] + "'>View Transaction Detail</a>");
                 html.find('td.amount-id-column').append(explore);
             }
 
