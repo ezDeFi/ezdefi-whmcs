@@ -64,7 +64,7 @@ class Ezdefi {
             'publicKey' => array(
                 'FriendlyName' => 'Website ID',
                 'Type' => 'text',
-                'Description' => 'Enter your website\' ID',
+                'Description' => 'Enter your website\'s ID',
             ),
 		);
 	}
