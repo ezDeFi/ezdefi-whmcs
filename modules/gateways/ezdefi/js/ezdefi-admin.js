@@ -1,5 +1,6 @@
 jQuery(function($) {
   var selectors = {
+    apiUrlInput: 'input[name="field[apiUrl]"]',
     apiKeyInput: 'input[name="field[apiKey]"]',
     publicKeyInput: 'input[name="field[publicKey]"]'
   };
@@ -27,10 +28,12 @@ jQuery(function($) {
 
     self.initValidation();
 
+    var onChangeApiUrl = this.onChangeApiUrl.bind(this);
     var onChangeApiKey = this.onChangeApiKey.bind(this);
     var onChangePublicKey = this.onChangePublicKey.bind(this);
 
     $(self.form)
+      .on('change', selectors.apiUrlInput, onChangeApiUrl)
       .on('change', selectors.apiKeyInput, onChangeApiKey)
       .on('change', selectors.publicKeyInput, onChangePublicKey);
   };
@@ -84,6 +87,13 @@ jQuery(function($) {
         }
       }
     });
+  };
+
+  whmcs_ezdefi_admin.prototype.onChangeApiUrl = function(e) {
+    var input = $(e.currentTarget);
+    if(input.val().length === 0) {
+      input.attr('placeholder', 'https://merchant-api.ezdefi.com/api/');
+    }
   };
 
   whmcs_ezdefi_admin.prototype.onChangeApiKey = function(e) {
