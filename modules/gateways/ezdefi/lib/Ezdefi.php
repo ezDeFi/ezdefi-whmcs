@@ -38,7 +38,7 @@ class Ezdefi {
 	public function getMetaData()
 	{
 		return array(
-			'DisplayName' => 'Pay with cryptocurrency',
+			'DisplayName' => 'Pay with cryptocurrencies',
 			'APIVersion' => '1.1'
 		);
 	}
