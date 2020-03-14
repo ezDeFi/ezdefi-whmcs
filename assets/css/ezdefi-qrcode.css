@@ -118,7 +118,7 @@
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li.active a {
   border: 1px solid rgba(0, 0, 0, 0.125);
-  border-bottom-color: transparent;
+  border-bottom-color: #fff;
 }
 #whmcs_ezdefi_qrcode .ezdefi-payment-tabs ul li a {
   background-color: transparent !important;
