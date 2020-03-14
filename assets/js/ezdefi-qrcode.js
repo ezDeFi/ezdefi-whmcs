@@ -128,16 +128,14 @@ jQuery(function($) {
   whmcs_ezdefi_qrcode.prototype.createEzpayPayment = function(method) {
     var self = this;
     var selectedCoin = this.$currencySelect.find(selectors.item + ".selected");
-    var coin_data = JSON.parse(
-      selectedCoin.find('script[type="application/json"]').html()
-    );
+    var coin_id = selectedCoin.attr('data-id');
     return $.ajax({
       url: self.urlData.ajaxUrl,
       method: "post",
       data: {
         action: "create_payment",
         uoid: self.paymentData.uoid,
-        coin_data: coin_data,
+        coin_id: coin_id,
         method: method
       },
       beforeSend: function() {

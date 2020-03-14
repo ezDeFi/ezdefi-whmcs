@@ -53,20 +53,11 @@ $to = implode(',', array_map(function ( $coin ) {
 $exchanges = $api->getTokenExchanges($amount, $currency, $to);
 
 foreach ($website_coins as $i => $c) {
-	$discount = (intval($c['discount']) > 0) ? $c['discount'] : 0;
+	$discount = (floatval($c['discount']) > 0) ? $c['discount'] : 0;
 	$index = array_search( $c['token']['symbol'], array_column($exchanges, 'token'));
 	$amount = $exchanges[$index]['amount'];
 	$amount = $amount - ($amount * ($discount / 100));
     $website_coins[$i]['price'] = number_format( $amount, 8 );
-    $website_coins[$i]['json_data'] = array(
-        '_id' => $c['_id'],
-        'discount' => $c['discount'],
-        'wallet_address' => $c['walletAddress'],
-        'symbol' => $c['token']['symbol'],
-        'decimal' => $c['decimal'],
-        'block_confirmation' => $c['blockConfirmation'],
-        'duration' => $c['expiration']
-    );
 }
 $ca->assign('website_config', $website_config);
 $ca->assign('coins', $website_coins);

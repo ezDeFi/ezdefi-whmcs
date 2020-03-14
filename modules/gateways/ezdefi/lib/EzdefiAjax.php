@@ -69,7 +69,28 @@ class EzdefiAjax
 		}
 
 		$uoid = $data['uoid'];
-		$coin_data = $data['coin_data'];
+
+		$coin_id = $data['coin_id'];
+
+		$website_coins = $this->api->getWebsiteCoins();
+
+		if(is_null($website_coins)) {
+			return $this->json_error_response();
+		}
+
+		$coin_data = array();
+
+		foreach($website_coins as $website_coin) {
+			if($website_coin['_id'] === $coin_id) {
+				$coin_data = $website_coin;
+				break;
+			}
+		}
+
+		if(empty($coin_data)) {
+			return $this->json_error_response();
+		}
+
 		$method = $data['method'];
 
 		$payment = $this->create_ezdefi_payment($uoid, $coin_data, $method);
@@ -83,15 +104,15 @@ class EzdefiAjax
 
 	protected function validate_payment_data($data)
 	{
-		if(!isset($data['uoid']) || !isset($data['coin_data']) || !isset($data['method'])) {
+		if(!isset($data['uoid']) || !isset($data['coin_id']) || !isset($data['method'])) {
 			return false;
 		}
 
 		$uoid = $data['uoid'];
-		$coin_data = $data['coin_data'];
+		$coin_id = $data['coin_id'];
 		$method = $data['method'];
 
-		if(empty($uoid) || empty($coin_data) || empty($method)) {
+		if(empty($uoid) || empty($coin_id) || empty($method)) {
 			return false;
 		}
 
@@ -130,7 +151,7 @@ class EzdefiAjax
 
 		$data = array(
 			'amount_id' => str_replace( ',', '', $value),
-			'currency' => $coin_data['symbol'],
+			'currency' => $coin_data['token']['symbol'],
 			'order_id' => substr($payment['uoid'], 0, strpos($payment['uoid'],'-' )),
 			'status' => 'not_paid',
 			'payment_method' => ($amount_id) ? 'amount_id' : 'ezdefi_wallet',
@@ -138,15 +159,14 @@ class EzdefiAjax
 
 		$this->db->add_exception($data);
 
-		return $this->renderPaymentHtml($payment, $order_data);
+		return $this->renderPaymentHtml($payment, $order_data, $coin_data);
 	}
 
-	protected function renderPaymentHtml($payment, $order_data)
+	protected function renderPaymentHtml($payment, $order_data, $coin_data)
 	{
 		$total = $order_data['amount'];
-		$discount = $this->db->getCurrencyBySymbol( $payment['currency'] )['discount'];
-		$discount = ( intval( $discount ) > 0 ) ? $discount : 0;
-		$total = $total - ( $total * ( $discount / 100 ) );
+		$discount = $coin_data['discount'];
+		$total = $total * (number_format((100 - $discount) / 100, 8));
 		$total = $this->convertNotation($total);
 		ob_start(); ?>
 		<div class="ezdefi-payment" data-paymentid="<?php echo $payment['_id']; ?>">

@@ -116,6 +116,8 @@ class EzdefiApi {
             return null;
         }
 
+        $website_config = json_decode($website_config, true)['data'];
+
         return $website_config['coins'];
     }
 
@@ -150,10 +152,10 @@ class EzdefiApi {
 	{
 		$subtotal = $order_data['amount'];
 		$discount = $coin_data['discount'];
-		$value = $subtotal - ($subtotal * ($discount / 100));
+		$value = $subtotal * (number_format((100 - $discount) / 100, 8));
 
 		if($amountId) {
-		    $rate = $this->getTokenExchange($order_data['currency'], $coin_data['symbol']);
+		    $rate = $this->getTokenExchange($order_data['currency'], $coin_data['token']['symbol']);
 
 		    if(!$rate) {
 		        return false;
@@ -172,19 +174,19 @@ class EzdefiApi {
 
 		$data = [
 			'uoid' => $uoid,
-			'to' => $coin_data['wallet_address'],
+			'to' => $coin_data['walletAddress'],
 			'value' => $value,
-            'safedist' => $coin_data['block_confirm'],
-            'duration' => $coin_data['duration'] * 60,
+            'safedist' => $coin_data['blockConfirmation'],
+            'duration' => $coin_data['expiration'] * 60,
             'callback' => $this->db->getSystemUrl() . '/modules/gateways/callback/ezdefi.php',
             'coinId' => $coin_data['_id']
 		];
 
 		if($amountId) {
 			$data['amountId'] = true;
-			$data['currency'] = $coin_data['symbol'] . ':' . $coin_data['symbol'];
+			$data['currency'] = $coin_data['token']['symbol'] . ':' . $coin_data['token']['symbol'];
 		} else {
-			$data['currency'] = $order_data['currency'] . ':' . $coin_data['symbol'];
+			$data['currency'] = $order_data['currency'] . ':' . $coin_data['token']['symbol'];
 		}
 
 		$response = $this->call('payment/create', 'post', $data);

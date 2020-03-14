@@ -6,9 +6,6 @@
         {foreach $coins as $i => $c}
             <div class="currency-item__wrap">
                 <div class="currency-item {($i eq 0) ? 'selected' : ''}" data-id="{$c['_id']}" data-symbol="{$c['token']['symbol']}">
-                    <script type="application/json">
-                        {$c['json_data']|@json_encode nofilter}
-                    </script>
                     <div class="item__logo">
                         <img src="{$c['token']['logo']}" alt="">
                         {if $c['token']['desc'] neq '' }
