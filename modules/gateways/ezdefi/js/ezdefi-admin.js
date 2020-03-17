@@ -33,7 +33,7 @@ jQuery(function($) {
     var onChangePublicKey = this.onChangePublicKey.bind(this);
 
     $(self.form)
-      .on('change', selectors.apiUrlInput, onChangeApiUrl)
+      .on('keyup', selectors.apiUrlInput, onChangeApiUrl)
       .on('change', selectors.apiKeyInput, onChangeApiKey)
       .on('change', selectors.publicKeyInput, onChangePublicKey);
   };
