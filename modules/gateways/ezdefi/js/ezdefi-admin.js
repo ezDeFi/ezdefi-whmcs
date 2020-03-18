@@ -75,6 +75,9 @@ jQuery(function($) {
           .removeClass('form-invalid');
       },
       rules: {
+        'field[name]': {
+          required: true,
+        },
         'field[apiUrl]': {
           required: true,
           url: true
