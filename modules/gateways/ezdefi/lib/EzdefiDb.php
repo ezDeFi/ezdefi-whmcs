@@ -426,6 +426,13 @@ class EzdefiDb {
 		return $sql->update($data);
 	}
 
+	public function add_invoice_note($invoiceId, $note)
+    {
+        return Capsule::table('tblinvoices')->where('id', $invoiceId)->update(array(
+            'notes' => $note
+        ));
+    }
+
 	public function get_clients()
 	{
 		return Capsule::table('tblclients')->get();

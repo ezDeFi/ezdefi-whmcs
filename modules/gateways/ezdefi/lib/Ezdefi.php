@@ -5,8 +5,6 @@ namespace WHMCS\Module\Gateway\Ezdefi;
 require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/includes/invoicefunctions.php';
 
 class Ezdefi {
-	const EXPLORER_URL = 'https://explorer.nexty.io/tx/';
-
 	private static $instance = null;
 
 	protected $config;
@@ -173,54 +171,58 @@ class Ezdefi {
 	    $status = $payment['status'];
 
 	    if(isset($payment['amountId']) && $payment['amountId'] === true) {
+	        $payment_method = 'amount_id';
 		    $amount_id = $payment['originValue'];
 	    } else {
+            $payment_method = 'ezdefi_wallet';
 		    $amount_id = $payment['value'] / pow( 10, $payment['decimal'] );
 	    }
 
-	    $currency = $payment['currency'];
+        $explorer_url = $payment['explorer']['tx'] . $payment['transactionHash'];
 
-	    $exception_data = array(
-		    'status' => strtolower($status),
-		    'explorer_url' => (string) self::EXPLORER_URL . $payment['transactionHash']
-	    );
-
-	    $wheres = array(
-		    'amount_id' => $this->sanitize_float_value($amount_id),
-		    'currency' => (string) $currency,
-		    'order_id' => (int) $invoiceId
-	    );
-
-	    if( isset( $payment['amountId'] ) && $payment['amountId'] = true ) {
-		    $wheres['payment_method'] = 'amount_id';
-	    } else {
-		    $wheres['payment_method'] = 'ezdefi_wallet';
-	    }
+        if($status != 'DONE' && $status != 'EXPIRED_DONE') {
+            die();
+        }
 
 	    logTransaction('ezdefi', $_GET, $status);
 
 	    if($status === 'DONE') {
-		    $paymentFee = 0;
-		    $symbol = $payment['symbol'];
-		    $currency = $this->db->getCurrencyBySymbol($symbol);
-		    $paymentAmount = $this->db->getInvoiceTotal($invoiceId);
-
 		    addInvoicePayment(
 			    $invoiceId,
 			    $paymentId,
-			    $paymentAmount,
-			    $paymentFee,
+                $this->db->getInvoiceTotal($invoiceId),
+			    0,
 			    'ezdefi'
 		    );
 
-		    $this->db->update_exception( $wheres, $exception_data );
+		    $this->db->add_invoice_note($invoiceId, "Explorer URL: $explorer_url");
 
-		    if( ! isset( $payment['amountId'] ) || ( isset( $payment['amountId'] ) && $payment['amountId'] != true ) ) {
-			    $this->db->delete_exceptions_by_invoice_id( $wheres['order_id'] );
-		    }
-	    } elseif($status === 'EXPIRED_DONE') {
-		    $this->db->update_exception($wheres, $exception_data);
+            if( $payment_method === 'ezdefi_wallet' ) {
+                $this->db->delete_exceptions( array(
+                    'order_id' => $invoiceId
+                ) );
+                die();
+            }
 	    }
+
+        $this->db->update_exceptions(
+            array(
+                'order_id' => $invoiceId,
+                'payment_method' => $payment_method,
+            ),
+            array(
+                'amount_id' => $this->sanitize_float_value( $amount_id ),
+                'currency' => $payment['token']['symbol'],
+                'status' => strtolower($status),
+                'explorer_url' => $explorer_url
+            ),
+            1
+        );
+
+        $this->db->delete_exceptions(array(
+            'order_id' => $invoiceId,
+            'explorer_url' => null,
+        ));
 
 	    die();
     }
