@@ -362,6 +362,11 @@ class EzdefiDb {
 		return $data;
 	}
 
+	public function get_exception($exception_id)
+    {
+        return Capsule::table('tblezdefiexceptions')->where('id', $exception_id)->first();
+    }
+
 	public function delete_exception($exception_id)
 	{
 		return Capsule::table('tblezdefiexceptions')->where('id', $exception_id)->delete();

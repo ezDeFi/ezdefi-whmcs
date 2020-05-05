@@ -433,11 +433,22 @@ class EzdefiAjax
 
 		$this->db->update_invoice_status($invoice_id, 'Unpaid');
 
+        $exception = $this->db->get_exception( $exception_id );
+
+        if(is_null($exception->explorer_url) || empty($exception->explorer_url)) {
+            $data_update = array(
+                'confirmed' => 0
+            );
+        } else {
+            $data_update = array(
+                'confirmed' => 0,
+                'order_id' => null,
+            );
+        }
+
         $this->db->update_exceptions(
             array( 'id' => (int) $exception_id ),
-            array(
-                'confirmed' => 0
-            )
+            $data_update
         );
 
         $this->db->update_exceptions(
