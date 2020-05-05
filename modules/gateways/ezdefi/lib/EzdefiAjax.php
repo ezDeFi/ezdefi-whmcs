@@ -285,49 +285,6 @@ class EzdefiAjax
 		return $this->db->getInvoiceStatus($invoiceId);
 	}
 
-	public function payment_timeout($data)
-	{
-		if(!$this->validate_payment_timeout_data($data)) {
-			return;
-		}
-
-		$paymentid = $data['paymentid'];
-
-		$this->set_amount_id_valid($paymentid);
-
-		return;
-	}
-
-	protected function validate_payment_timeout_data($data)
-	{
-		if(!isset($data['paymentid'])) {
-			return false;
-		}
-
-		$paymentid = $data['paymentid'];
-
-		if(empty($paymentid)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	protected function set_amount_id_valid($paymentid)
-	{
-		$payment = $this->api->getPayment($paymentid);
-
-		$payment = json_decode($payment, true);
-
-		if($payment['code'] == -1 && isset($payment['error'])) {
-			return;
-		}
-
-		$payment = $payment['data'];
-
-		$this->db->set_amount_id_valid($payment['originValue'], $payment['currency']);
-	}
-
 	public function get_exceptions()
     {
 	    $default = array(
@@ -336,7 +293,9 @@ class EzdefiAjax
 		    'order_id' => '',
 		    'clientid' => '',
 		    'payment_method' => '',
-		    'status' => ''
+            'status' => '',
+            'confirmed' => '',
+            'type' => 'pending'
 	    );
 
 	    $params = array_merge($default, $_POST);
@@ -405,13 +364,11 @@ class EzdefiAjax
 
 	public function assign_amount_id($data)
 	{
-		if(!isset($data['amount_id']) || !isset($data['invoice_id']) || ! isset($data['currency'])) {
+		if(!isset($data['invoice_id']) || !isset($data['exception_id'])) {
 			return $this->json_error_response();
 		}
 
-		$amount_id = $data['amount_id'];
-
-		$currency = $data['currency'];
+        $exception_id = $data['exception_id'];
 
 		$old_invoice_id = ($data['old_invoice_id'] && !empty($data['old_invoice_id'])) ? $data['old_invoice_id'] : null;
 
@@ -423,7 +380,6 @@ class EzdefiAjax
 			return $this->json_error_response($invoice_id);
 		}
 
-//		$this->db->update_invoice_status($invoice_id, 'Paid');
         addInvoicePayment(
             $invoice_id,
             '',
@@ -432,25 +388,40 @@ class EzdefiAjax
             'ezdefi'
         );
 
-		if(is_null($old_invoice_id)) {
-			$this->db->delete_exceptions($amount_id, $currency, $old_invoice_id);
-			$this->db->delete_exceptions_by_invoice_id($invoice_id);
-		} else {
-			$this->db->delete_exceptions_by_invoice_id($old_invoice_id);
-		}
+        if( $old_invoice_id && $old_invoice_id != $invoice_id && $this->db->get_invoice($invoice_id) ) {
+            $this->db->update_invoice_status($old_invoice_id, 'Unpaid');
+        }
+
+        $this->db->update_invoice_status($invoice_id, 'Unpaid');
+
+        $this->db->update_exceptions(
+            array( 'id' => (int) $exception_id ),
+            array(
+                'order_id' => $invoice_id,
+                'confirmed' => 1
+            )
+        );
+
+        $this->db->update_exceptions(
+            array(
+                'order_id' => $invoice_id,
+                'explorer_url' => null
+            ),
+            array(
+                'is_show' => 0
+            )
+        );
 
 		return $this->json_success_response();
 	}
 
 	public function reverse_invoice($data)
 	{
-		if(!isset($data['amount_id']) || ! isset($data['invoice_id']) || !isset($data['currency'])) {
+		if(!isset($data['invoice_id']) || !isset($data['exception_id'])) {
 			return $this->json_error_response();
 		}
 
-		$amount_id = $data['amount_id'];
-
-		$currency = $data['currency'];
+        $exception_id = $data['exception_id'];
 
 		$invoice_id = $data['invoice_id'];
 
@@ -462,33 +433,33 @@ class EzdefiAjax
 
 		$this->db->update_invoice_status($invoice_id, 'Unpaid');
 
-		$wheres = array(
-			'amount_id' => $amount_id,
-			'currency' => $currency,
-			'order_id' => $invoice_id,
-			'status' => 'done'
-		);
+        $this->db->update_exceptions(
+            array( 'id' => (int) $exception_id ),
+            array(
+                'confirmed' => 0
+            )
+        );
 
-		$data = array(
-			'order_id' => null,
-			'status' => null,
-			'payment_method' => null
-		);
-
-		$this->db->update_exception( $wheres, $data );
+        $this->db->update_exceptions(
+            array(
+                'order_id' => $invoice_id,
+                'explorer_url' => null
+            ),
+            array(
+                'is_show' => 1
+            )
+        );
 
 		return $this->json_success_response();
 	}
 
 	public function delete_exception($data)
 	{
-		$amount_id = $data['amount_id'];
+		if(!isset($data['exception_id'])) {
+		    return $this->json_error_response();
+        }
 
-		$order_id = (!empty($data['invoice_id'])) ? $data['invoice_id'] : null;
-
-		$currency = $data['currency'];
-
-		$this->db->delete_exceptions($amount_id, $currency, $order_id);
+		$this->db->delete_exception($data['exception_id']);
 	}
 
 	protected function json_response($code = 200, $data = '') {

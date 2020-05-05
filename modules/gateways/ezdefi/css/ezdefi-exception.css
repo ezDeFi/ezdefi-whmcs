@@ -29,6 +29,16 @@
   z-index: 99;
   height: 80%;
 }
+#ezdefi-modal #ezdefi-modal__content .nav-tabs li a {
+  background: #efefef;
+  padding: 8px 14px;
+}
+#ezdefi-modal #ezdefi-modal__content .nav-tabs li.active a {
+  background: #fff;
+}
+#ezdefi-modal #ezdefi-modal__content #ezdefi-modal__inner {
+  height: calc(100% - 40px);
+}
 #ezdefi-modal #ezdefi-modal__content .select2-container .select2-selection {
   border-color: #ccc;
   height: 30px;

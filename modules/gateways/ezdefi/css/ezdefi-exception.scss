@@ -30,6 +30,25 @@
     z-index: 99;
     height: 80%;
 
+    .nav-tabs {
+      li {
+        a {
+          background: #efefef;
+          padding: 8px 14px;
+        }
+
+        &.active {
+          a {
+            background: #fff;
+          }
+        }
+      }
+    }
+
+    #ezdefi-modal__inner {
+      height: calc(100% - 40px);
+    }
+
     .select2-container {
       .select2-selection {
         border-color: #ccc;

@@ -185,7 +185,9 @@ class EzdefiDb {
 				$table->integer('order_id')->nullable();
 				$table->string('status')->nullable();
 				$table->string('payment_method')->nullable();
-				$table->string('explorer_url')->nullable();
+				$table->string('explorer_url')->nullable()->default(null);
+				$table->tinyInteger('confirmed')->default(0);
+				$table->tinyInteger('is_show')->default(1);
 			});
 
 			return true;
@@ -320,21 +322,34 @@ class EzdefiDb {
 			->leftJoin('tblclients', 'tblinvoices.userid', '=', 'tblclients.id')
 			->select('tblezdefiexceptions.*', 'tblclients.firstname', 'tblclients.lastname', 'tblclients.id as clientid');
 
-		foreach($params as $column => $param) {
-			if(!empty($param)) {
-				switch ($column) {
-					case 'clientid':
-						$sql = $sql->where('tblclients.id', '=', $param);
-						break;
-					case 'amount_id':
-						$amount_id = $params['amount_id'];
-						$sql = $sql->where('amount_id', 'rlike', '^'.$amount_id);
-						break;
-					default:
-						$sql = $sql->where("tblezdefiexceptions.$column", '=', "$param");
-				}
-			}
-		}
+        foreach($params as $column => $param) {
+            if($column === 'type') {
+                switch ($params['type']) {
+                    case 'pending' :
+                        $sql->where('tblezdefiexceptions.confirmed', '=', 0)->whereNotNull('tblezdefiexceptions.explorer_url');
+                        break;
+                    case 'confirmed' :
+                        $sql->where('tblezdefiexceptions.confirmed', '=', 1);
+                        break;
+                    case 'archived' :
+                        $sql->where('tblezdefiexceptions.confirmed', '=', 0)->whereNull('tblezdefiexceptions.explorer_url')->where('tblezdefiexceptions.is_show', '=', 1);
+                        break;
+                }
+            }  elseif (!empty($param)) {
+                switch ($column) {
+                    case 'clientid':
+                        $sql = $sql->where('tblclients.id', '=', $param);
+                        break;
+                    case 'amount_id':
+                        $amount_id = $params['amount_id'];
+                        $sql = $sql->where('amount_id', 'rlike', '^'.$amount_id);
+                        break;
+                    default :
+                        $sql = $sql->where("tblezdefiexceptions.$column", '=', "$param");
+                        break;
+                }
+            }
+        }
 
 		$sql = $sql->orderBy('tblezdefiexceptions.id', 'desc');
 
@@ -347,26 +362,37 @@ class EzdefiDb {
 		return $data;
 	}
 
-	public function delete_exceptions($amount_id, $currency, $invoice_id)
+	public function delete_exception($exception_id)
 	{
-		$sql = Capsule::table('tblezdefiexceptions')
-		              ->where('amount_id', $amount_id)
-		              ->where('currency', $currency)
-		              ->where('order_id', $invoice_id);
-
-		if(is_null($invoice_id)) {
-			return $sql->limit(1)->delete();
-		}
-
-		return $sql->limit(1)->delete();
+		return Capsule::table('tblezdefiexceptions')->where('id', $exception_id)->delete();
 	}
 
-	public function delete_exceptions_by_invoice_id($invoice_id)
-	{
-		return Capsule::table('tblezdefiexceptions')->where('order_id', $invoice_id)->delete();
-	}
+	public function delete_exceptions($wheres = array())
+    {
+        $sql = Capsule::table('tblezdefiexceptions');
 
-	public function update_exception($wheres = array(), $data = array())
+        if(empty($wheres)) {
+            return;
+        }
+
+        foreach($wheres as $column => $value)  {
+            if(!empty( $value )) {
+                $type = gettype($value);
+                switch ($type) {
+                    case 'NULL' :
+                        $sql->whereNull($column);
+                        break;
+                    default :
+                        $sql->where($column, $value);
+                        break;
+                }
+            }
+        }
+
+        return $sql->delete();
+    }
+
+	public function update_exceptions($wheres = array(), $data = array(), $limit = null)
 	{
 		$sql = Capsule::table('tblezdefiexceptions');
 
@@ -374,13 +400,23 @@ class EzdefiDb {
 			return;
 		}
 
-		foreach($wheres as $column => $value)  {
-			if($column == 'amount_id') {
-				$sql->where($column, 'LIKE', "$value%");
-			} else {
-				$sql->where($column, $value);
-			}
-		}
+        foreach($wheres as $column => $value)  {
+            if(!empty( $value )) {
+                $type = gettype($value);
+                switch ($type) {
+                    case 'NULL' :
+                        $sql->whereNull($column);
+                        break;
+                    default :
+                        $sql->where($column, $value);
+                        break;
+                }
+            }
+        }
+
+        if(is_numeric($limit)) {
+            $sql->orderBy('id', 'desc')->limit($limit);
+        }
 
 		return $sql->update($data);
 	}

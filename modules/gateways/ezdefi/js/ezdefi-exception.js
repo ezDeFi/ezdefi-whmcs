@@ -1,5 +1,13 @@
 jQuery(function($) {
 
+    var selectors = {
+        expceptionIdInput: '.exception-id-input',
+        amountIdInput: '.amount-id-input',
+        currencyInput: '.currency-input',
+        invoiceIdInput: '.invoice-id-input',
+        oldInvoiceIdInput: '.old-invoice-id-input',
+    };
+
     var whmcs_ezdefi_exception = function() {
         this.ezdefiData = JSON.parse($('#ezdefi-data').text());
         this.configUrl = this.ezdefiData.config_url;
@@ -15,14 +23,18 @@ jQuery(function($) {
         this.$modal = $('#ezdefi-modal');
         this.$search = $('#ezdefi-exception-search');
         this.$table = $('#ezdefi-exception-table');
+        this.$tab = $('#ezdefi-exception-tab');
         this.$pagination = this.$table.find('.pagination');
 
         var openModal = this.openModal.bind(this);
         var closeModal = this.closeModal.bind(this);
+        var changeTab = this.changeTab.bind(this);
 
         $(document.body).on('click', '.openModalBtn', openModal);
 
         $(this.$modal).on('click', '.closeModalBtn', closeModal);
+
+        $(this.$tab).on('click', 'a', changeTab);
 
         var onAssign = this.onAssign.bind(this);
         var onRemove = this.onRemove.bind(this);
@@ -67,6 +79,13 @@ jQuery(function($) {
         this.$table.find('tbody tr').not('.spinner-row').remove();
     };
 
+    whmcs_ezdefi_exception.prototype.changeTab = function(e) {
+        e.preventDefault();
+        this.$tab.find('li').removeClass('active');
+        $(e.currentTarget).closest('li').addClass('active');
+        this.getException.call(this);
+    };
+
     whmcs_ezdefi_exception.prototype.addExceptionTable = function() {
         var self = this;
 
@@ -104,8 +123,12 @@ jQuery(function($) {
         tableFoot.appendTo(table);
 
         var modal = $("<div id='ezdefi-modal'><div id='ezdefi-modal__overlay'></div><div id='ezdefi-modal__content'></div></div>");
+        var tabs = $("<ul class='nav nav-tabs' id='ezdefi-exception-tab' roles='tablist'><li role='presentation' class='active'><a href='' title='Orders waiting for confirmation' data-type='pending'>Pending</a></li><li role='presentation'><a href='' title='Confirmed orders' data-type='confirmed'>Confirmed</a></li><li role='presentation'><a href='' title='Unpaid orders' data-type='archived'>Archived</a></li></ul>");
+        modal.find('#ezdefi-modal__content').append(tabs);
+        var contentInner = $("<div id='ezdefi-modal__inner'></div>");
+        modal.find('#ezdefi-modal__content').append(contentInner);
         var search = $("<div id='ezdefi-exception-search'><input type='number' name='amount_id' placeholder='Amount'><input type='text' name='currency' placeholder='Currency'><input type='number' name='order_id' placeholder='Invoice ID'><select name='clientid' id='client'></select><select name='payment_method' id=''><option value='' selected=''>Any Payment Method</option><option value='ezdefi_wallet'>Pay with ezDeFi wallet</option><option value='amount_id'>Pay with any crypto wallet</option></select><select name='status' id=''><option value='' selected=''>Any Status</option><option value='expired_done'>Paid after expired</option><option value='not_paid'>Not paid</option><option value='done'>Paid on time</option></select><a href='' class='closeModalBtn'><img src='"+ self.adminUrl +"images/error.png' alt=''></a></div>");
-        modal.find('#ezdefi-modal__content').append(search);
+        modal.find('#ezdefi-modal__inner').append(search);
         $(search).find('#client').select2({
             width: '100%',
             ajax: {
@@ -131,7 +154,7 @@ jQuery(function($) {
             templateResult: self.formatClientOption,
             templateSelection: self.formatClientSelection,
         });
-        modal.find('#ezdefi-modal__content').append(table);
+        modal.find('#ezdefi-modal__inner').append(table);
 
         modal.appendTo('body');
     };
@@ -173,6 +196,7 @@ jQuery(function($) {
                 "<td width='200px' class='amount-id-column'>" +
                 "<span>" + (row['amount_id'] * 1) + "</span>" +
                 "<input type='hidden' class='amount-id-input' value='" + row['amount_id'] + "' >" +
+                "<input type='hidden' class='exception-id-input' value='" + row['id'] + "' >" +
                 "</td>" +
                 "<td width='120px'>" +
                 "<span class='symbol'>" + row['currency'] + "</span>" +
@@ -210,7 +234,9 @@ jQuery(function($) {
 
             var last_td;
 
-            if(row['status'] === 'done') {
+            if(row['confirmed'] == 1) {
+                html.find('td.order-column .actions').remove();
+                html.find('td.order-column .select-order').remove();
                 last_td = $(
                     "<td width='220px'>" +
                     "<a href='' class='reverseBtn'><img src='"+ self.adminUrl +"images/icons/navback.png' alt=''> Reverse</a> " +
@@ -365,6 +391,7 @@ jQuery(function($) {
         var self = this;
         var data = {
             'action': 'get_exceptions',
+            'type': self.$tab.find('li.active a').attr('data-type')
         };
         self.$search.find('input, select').each(function() {
             var val = '';
@@ -508,16 +535,14 @@ jQuery(function($) {
         e.preventDefault();
         var self = this;
         var row = $(e.target).closest('tr');
-        var old_invoice_id = row.find('.old-invoice-id-input').val();
-        var invoice_id = row.find('.invoice-id-input').val();
-        var amount_id = row.find('.amount-id-input').val();
-        var currency = row.find('.currency-input').val();
+        var invoice_id = row.find(selectors.invoiceIdInput).val();
+        var old_invoice_id = row.find(selectors.oldInvoiceIdInput).val();
+        var exception_id = row.find(selectors.expceptionIdInput).val();
         var data = {
             action: 'assign_amount_id',
-            old_invoice_id: old_invoice_id,
             invoice_id: invoice_id,
-            amount_id: amount_id,
-            currency: currency
+            old_invoice_id: old_invoice_id,
+            exception_id: exception_id
         };
         this.callAjax.call(this, data).success(function() {
             self.getException();
@@ -531,14 +556,10 @@ jQuery(function($) {
         }
         var self = this;
         var row = $(e.target).closest('tr');
-        var invoice_id = row.find('.invoice-id-input').val();
-        var amount_id = row.find('.amount-id-input').val();
-        var currency = row.find('.currency-input').val();
+        var exception_id = row.find(selectors.expceptionIdInput).val();
         var data = {
             action: 'delete_exception',
-            invoice_id: invoice_id,
-            amount_id: amount_id,
-            currency: currency
+            exception_id: exception_id
         };
         this.callAjax.call(this, data).success(function() {
             var page = self.$table.attr('data-current-page');
@@ -550,14 +571,12 @@ jQuery(function($) {
         e.preventDefault();
         var self = this;
         var row = $(e.target).closest('tr');
-        var invoice_id = row.find('.invoice-id-input').val();
-        var amount_id = row.find('.amount-id-input').val();
-        var currency = row.find('.currency-input').val();
+        var invoice_id = row.find(selectors.invoiceIdInput).val();
+        var exception_id = row.find(selectors.expceptionIdInput).val();
         var data = {
             action: 'reverse_invoice',
             invoice_id: invoice_id,
-            amount_id: amount_id,
-            currency: currency
+            exception_id: exception_id
         };
         this.callAjax.call(this, data).success(function() {
             self.getException();
