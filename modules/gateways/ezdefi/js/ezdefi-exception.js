@@ -554,7 +554,7 @@ jQuery(function($) {
 
     whmcs_ezdefi_exception.prototype.onRemove = function(e) {
         e.preventDefault();
-        if(!confirm('Do you want to delete this exception')) {
+        if(!confirm('Do you want to delete this exception?')) {
             return false;
         }
         var self = this;
