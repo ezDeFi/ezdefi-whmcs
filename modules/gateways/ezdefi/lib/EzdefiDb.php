@@ -381,16 +381,14 @@ class EzdefiDb {
         }
 
         foreach($wheres as $column => $value)  {
-            if(!empty( $value )) {
-                $type = gettype($value);
-                switch ($type) {
-                    case 'NULL' :
-                        $sql->whereNull($column);
-                        break;
-                    default :
-                        $sql->where($column, $value);
-                        break;
-                }
+            $type = gettype($value);
+            switch ($type) {
+                case 'NULL' :
+                    $sql->whereNull($column);
+                    break;
+                default :
+                    $sql->where($column, $value);
+                    break;
             }
         }
 
