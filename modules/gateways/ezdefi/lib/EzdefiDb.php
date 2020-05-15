@@ -36,43 +36,13 @@ class EzdefiDb {
                       ->value('value');
     }
 
-	public function getCurrency()
-	{
-		$data = Capsule::table('tblpaymentgateways')
-		               ->where('gateway', 'ezdefi')
-		               ->where('setting', 'token')
-		               ->value('value');
-
-		return unserialize(base64_decode($data));
-	}
-
-	public function getCurrencyBySymbol($symbol)
-	{
-		$list_currency = $this->getCurrency();
-
-		$index = array_search($symbol, array_column($list_currency, 'symbol'));
-
-		$currency = $list_currency[$index];
-
-		return $currency;
-	}
-
-	public function saveCurrency($data)
-	{
-		$data = base64_encode(serialize($data));
-
-		$saved = Capsule::table( 'tblpaymentgateways' )->where( 'gateway', 'ezdefi' )->where( 'setting', 'token' )->get();
-
-		if($saved) {
-			return Capsule::table( 'tblpaymentgateways' )->where( 'gateway', 'ezdefi' )->where( 'setting', 'token' )->update(['value' => $data]);
-		}
-
-		return Capsule::table( 'tblpaymentgateways' )->insert([
-			'gateway' => 'ezdefi',
-			'setting' => 'token',
-			'value' => $data
-		]);
-	}
+    public function getVersion()
+    {
+        return Capsule::table('tblpaymentgateways')
+                      ->where('gateway', 'ezdefi')
+                      ->where('setting', 'version')
+                      ->value('value');
+    }
 
 	public function getPaymentMethod()
 	{
@@ -144,30 +114,36 @@ class EzdefiDb {
 		})->value('code');
 	}
 
-	public function createAmountIdTable()
-	{
-		$hasTable = Capsule::schema()->hasTable('tblezdefiamountids');
+    public function upgradeDatabase($currentVersion, $newVersion)
+    {
+        try {
+            $pdo = Capsule::connection()->getPdo();
+            $pdo->beginTransaction();
+            $statement = $pdo->prepare(
+                'ALTER TABLE tblezdefiexceptions ADD confirmed TinyInt(1) DEFAULT 0, ADD is_show TinyInt(1) DEFAULT 1, ALTER explorer_url SET DEFAULT NULL;'
+            );
+            $statement->execute();
+            $pdo->commit();
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+        }
 
-		if($hasTable) {
-			return;
-		}
-
-		try {
-			Capsule::schema()->create('tblezdefiamountids', function($table) {
-				$table->increments('id');
-				$table->integer('amount_key');
-				$table->decimal('price', 60, 30);
-				$table->decimal('amount_id', 60, 30);
-				$table->string('currency');
-				$table->timestamp('expired_time');
-				$table->unique(['amount_id', 'currency']);
-			});
-
-			return true;
-		} catch (\Exception $e) {
-			return false;
-		}
-	}
+        try {
+            if(is_null($currentVersion)) {
+                Capsule::table('tblpaymentgateways')->insert(
+                    ['gateway' => 'ezdefi', 'setting' => 'version', 'value' => $newVersion]
+                );
+            } else {
+                Capsule::table('tblpaymentgateways')->where('gateway', 'ezdefi')->where('setting', 'version')->update(
+                    ['value' => $newVersion]
+                );
+            }
+            return true;
+        } catch (\Exception $e) {
+            var_dump($e->getMessage());
+            return false;
+        }
+    }
 
 	public function createExceptionTable()
 	{
@@ -193,48 +169,6 @@ class EzdefiDb {
 			return true;
 		} catch (\Exception $e) {
 			return false;
-		}
-	}
-
-	public function addProcedure()
-	{
-		$pdo = Capsule::connection()->getPdo();
-		$pdo->beginTransaction();
-
-		try {
-			$pdo->exec("
-				CREATE PROCEDURE IF NOT EXISTS `ezdefi_generate_amount_id`(
-		            IN value DECIMAl(60,30),
-				    IN token VARCHAR(10),
-				    IN decimal_number INT(2),
-				    IN life_time INT(11),
-				    OUT amount_id DECIMAL(60,30)
-				)
-				BEGIN
-				    DECLARE unique_id INT(11) DEFAULT 0;
-				    IF EXISTS (SELECT 1 FROM tblezdefiamountids WHERE `currency` = token AND `price` = value) THEN
-				        IF EXISTS (SELECT 1 FROM tblezdefiamountids WHERE `currency` = token AND `price` = value AND `amount_key` = 0 AND `expired_time` > NOW()) THEN
-					        SELECT MIN(t1.amount_key+1) INTO unique_id FROM tblezdefiamountids t1 LEFT JOIN tblezdefiamountids t2 ON t1.amount_key + 1 = t2.amount_key AND t2.price = value AND t2.currency = token AND t2.expired_time > NOW() WHERE t2.amount_key IS NULL;
-					        IF((unique_id % 2) = 0) THEN
-					            SET amount_id = value + ((unique_id / 2) / POW(10, decimal_number));
-					        ELSE
-					            SET amount_id = value - ((unique_id - (unique_id DIV 2)) / POW(10, decimal_number));
-					        END IF;
-			            ELSE
-			                SET amount_id = value;
-			            END IF;
-				    ELSE
-				        SET amount_id = value;
-				    END IF;
-				    INSERT INTO tblezdefiamountids (amount_key, price, amount_id, currency, expired_time) 
-				        VALUES (unique_id, value, amount_id, token, NOW() + INTERVAL life_time SECOND + INTERVAL 10 SECOND)
-	                    ON DUPLICATE KEY UPDATE `expired_time` = NOW() + INTERVAL life_time SECOND + INTERVAL 10 SECOND;
-				END
-			");
-
-			$pdo->commit();
-		} catch (\Exception $e) {
-			$pdo->rollBack();
 		}
 	}
 

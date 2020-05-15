@@ -11,6 +11,12 @@ class Ezdefi {
 
 	protected $api;
 
+	protected $db;
+
+	protected $ajax;
+
+	protected $version = '2.0.0';
+
 	public function __construct()
 	{
 		$this->db = new EzdefiDb();
@@ -31,6 +37,12 @@ class Ezdefi {
 	{
 		$this->db->createExceptionTable();
 		$this->db->addScheduleEvents();
+
+        $currentVersion = $this->db->getVersion();
+
+        if(is_null($currentVersion) || version_compare($currentVersion, $this->version) < 0) {
+            $this->db->upgradeDatabase($currentVersion, $this->version);
+        }
 	}
 
 	public function getMetaData()
