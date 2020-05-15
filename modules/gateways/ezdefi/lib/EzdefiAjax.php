@@ -473,6 +473,13 @@ class EzdefiAjax
 		$this->db->delete_exception($data['exception_id']);
 	}
 
+	public function save_callback_url($data)
+    {
+        $save = $this->api->saveCallbackUrl($data['api_key'], $data['website_id'], $data['callback_url']);
+
+        return $this->json_success_response($save);
+    }
+
 	protected function json_response($code = 200, $data = '') {
 		header_remove();
 		http_response_code($code);

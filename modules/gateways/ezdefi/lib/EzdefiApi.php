@@ -70,7 +70,6 @@ class EzdefiApi {
 	{
 		$url = $this->buildPath($path);
 		$method = strtolower($method);
-
 		$curl = curl_init();
 		switch ($method) {
 			case 'post' :
@@ -78,6 +77,11 @@ class EzdefiApi {
 				if ($data)
 					curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 				break;
+            case 'put' :
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST , 'PUT');
+                if ($data)
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                break;
 			default :
 				if ($data)
 					$url = sprintf("%s?%s", $url, http_build_query($data));
@@ -236,4 +240,13 @@ class EzdefiApi {
 
 		return $response['data'];
 	}
+
+	public function saveCallbackUrl($apiKey, $websiteId, $callback)
+    {
+        return $this->call('website/update_callback', 'put', array(
+            'apiKey' => $apiKey,
+            'websiteId' => $websiteId,
+            'callback' => $callback
+        ));
+    }
 }

@@ -31,8 +31,10 @@ jQuery(function($) {
     var onChangeApiUrl = this.onChangeApiUrl.bind(this);
     var onChangeApiKey = this.onChangeApiKey.bind(this);
     var onChangePublicKey = this.onChangePublicKey.bind(this);
+    var beforeSubmitForm = this.beforeSubmitForm.bind(this);
 
     $(self.form)
+      .on('submit', null, beforeSubmitForm)
       .on('keyup', selectors.apiUrlInput, onChangeApiUrl)
       .on('change', selectors.apiKeyInput, onChangeApiKey)
       .on('change', selectors.publicKeyInput, onChangePublicKey);
@@ -174,6 +176,27 @@ jQuery(function($) {
         remote: "Website' ID is not correct. Please check again"
       }
     });
+  };
+
+  whmcs_ezdefi_admin.prototype.beforeSubmitForm = function(e) {
+    var self = this;
+    if(this.form.valid()) {
+      $.ajax({
+        url: self.configUrl,
+        type: 'POST',
+        data: {
+          action: 'save_callback_url',
+          api_key: self.form.find(selectors.apiKeyInput).val(),
+          website_id: self.form.find(selectors.publicKeyInput).val(),
+          callback_url: self.systemUrl + 'modules/gateways/callback/ezdefi.php'
+        },
+        beforeSend: function() {
+          self.form.find('input[type="submit"]').prop('disabled', true);
+        }
+      }).done(function() {
+        return true
+      })
+    }
   };
 
   new whmcs_ezdefi_admin();
