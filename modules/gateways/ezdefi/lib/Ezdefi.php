@@ -36,7 +36,6 @@ class Ezdefi {
 	public function init()
 	{
 		$this->db->createExceptionTable();
-		$this->db->addScheduleEvents();
 
         $currentVersion = $this->db->getVersion();
 

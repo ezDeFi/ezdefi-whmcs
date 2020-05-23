@@ -172,25 +172,6 @@ class EzdefiDb {
 		}
 	}
 
-	public function addScheduleEvents()
-	{
-		$pdo = Capsule::connection()->getPdo();
-		$pdo->beginTransaction();
-
-		try {
-			$pdo->exec("
-				CREATE EVENT IF NOT EXISTS ezdefi_clear_exception_table
-				ON SCHEDULE EVERY 7 DAY
-				DO
-					DELETE FROM tblezdefiexceptions;
-			");
-
-			$pdo->commit();
-		} catch (\Exception $e) {
-			$pdo->rollback();
-		}
-	}
-
 	public function get_invoice($id)
 	{
 		return Capsule::table('tblinvoices')->find($id);
