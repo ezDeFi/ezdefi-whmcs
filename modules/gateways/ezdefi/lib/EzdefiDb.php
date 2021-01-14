@@ -2,9 +2,15 @@
 
 namespace WHMCS\Module\Gateway\Ezdefi;
 
+require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/init.php';
+require_once dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/includes/gatewayfunctions.php';
+
 use WHMCS\Database\Capsule;
 
-class EzdefiDb {
+use \WHMCS\Module\GatewaySetting;
+
+class EzdefiDb 
+{
 	public function getSystemUrl()
 	{
 		return Capsule::table('tblconfiguration')
@@ -12,36 +18,35 @@ class EzdefiDb {
 				->value('value');
 	}
 
+	protected function getSettingValue($name)
+	{
+		$setting = GatewaySetting::where('gateway', '=', 'ezdefi')->where('setting', '=', $name)->first();
+
+		if($setting->value) {
+			return $setting->value;
+		}
+
+		return '';
+	}
+
 	public function getApiUrl()
 	{
-		return Capsule::table('tblpaymentgateways')
-	              ->where('gateway', 'ezdefi')
-	              ->where('setting', 'apiUrl')
-	              ->value('value');
+		return $this->getSettingValue('apiUrl');
 	}
 
 	public function getApiKey()
 	{
-		return Capsule::table('tblpaymentgateways')
-				->where('gateway', 'ezdefi')
-				->where('setting', 'apiKey')
-				->value('value');
+		return $this->getSettingValue('apiKey');
 	}
 
     public function getPublicKey()
     {
-        return Capsule::table('tblpaymentgateways')
-                      ->where('gateway', 'ezdefi')
-                      ->where('setting', 'publicKey')
-                      ->value('value');
+		return $this->getSettingValue('publicKey');
     }
 
     public function getVersion()
     {
-        return Capsule::table('tblpaymentgateways')
-                      ->where('gateway', 'ezdefi')
-                      ->where('setting', 'version')
-                      ->value('value');
+		return $this->getSettingValue('version');
     }
 
 	public function getPaymentMethod()
